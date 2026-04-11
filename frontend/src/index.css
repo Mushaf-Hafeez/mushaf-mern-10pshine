@@ -1,0 +1,175 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/inter";
+
+/* Enable dark mode */
+@custom-variant dark (&:is(.dark *));
+
+/* ========================= */
+/* 🎨 THEME TOKENS */
+/* ========================= */
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Inter Variable', sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Radius scale (Nocturnal Architect style) */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* ========================= */
+/* ☀️ LIGHT MODE (Fallback) */
+/* ========================= */
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+
+  --primary: #8455ef;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+
+  --accent: #ede9fe;
+  --accent-foreground: #4c1d95;
+
+  --destructive: #ff6e84;
+
+  /* Ghost borders */
+  --border: rgba(72, 71, 74, 0.15);
+  --input: rgba(72, 71, 74, 0.15);
+  --ring: #8455ef;
+
+  --radius: 1rem;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #8455ef;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: rgba(72, 71, 74, 0.15);
+  --sidebar-ring: #8455ef;
+}
+
+/* ========================= */
+/* 🌙 DARK MODE (MAIN THEME) */
+/* ========================= */
+
+.dark {
+  /* Base */
+  --background: #0e0e10;
+  --foreground: #ffffff;
+
+  /* Surface layers */
+  --card: #131315;                /* surface_container_low */
+  --card-foreground: #ffffff;
+
+  --popover: #1f1f22;             /* surface_container_high */
+  --popover-foreground: #ffffff;
+
+  /* Brand */
+  --primary: #ba9eff;
+  --primary-foreground: #000000;
+
+  --secondary: #1a1a1d;
+  --secondary-foreground: #ffffff;
+
+  --muted: #18181b;
+  --muted-foreground: #adaaad;
+
+  --accent: #1f1f22;
+  --accent-foreground: #ffffff;
+
+  --destructive: #ff6e84;
+
+  /* No-line borders */
+  --border: rgba(72, 71, 74, 0.15);
+  --input: rgba(72, 71, 74, 0.15);
+  --ring: #ba9eff;
+
+  /* Sidebar glass */
+  --sidebar: rgba(31, 31, 34, 0.6);
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ba9eff;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #1f1f22;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(72, 71, 74, 0.15);
+  --sidebar-ring: #ba9eff;
+}
+
+/* ========================= */
+/* 🧱 BASE STYLES */
+/* ========================= */
+
+@layer base {
+  * {
+    @apply outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    @apply font-sans;
+  }
+}
+
+@utility flex-center{
+  @apply flex items-center justify-center;
+}
