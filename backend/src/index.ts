@@ -10,6 +10,10 @@ const PORT = process.env.PORT || 3000;
 // creating app
 const app: Application = express();
 
+// database connection
+import connectDB from "./config/db.config.ts";
+connectDB();
+
 // middleware
 app.use(express.json());
 
