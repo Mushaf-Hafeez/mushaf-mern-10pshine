@@ -24,8 +24,7 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
       trim: true,
-      //  uncomment it in production
-      // unique: true,
+      unique: true,
     },
     password: {
       type: String,
