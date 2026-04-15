@@ -92,6 +92,16 @@ export const signup = async (
 
     let userData: UserData = result.data;
 
+    // check if the user already exists in the database
+    let user = await User.findOne({ email: userData.email });
+
+    if (user) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists.",
+      });
+    }
+
     // verify the otp
     const isValidOTP = await verifyOTP(userData.otp, userData.email);
 
@@ -115,7 +125,7 @@ export const signup = async (
     }
 
     // store it in the database
-    const user = await User.create({
+    user = await User.create({
       name: userData.name,
       email: userData.email,
       password: hashedPassword,
