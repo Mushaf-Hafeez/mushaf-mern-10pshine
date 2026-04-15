@@ -1,9 +1,14 @@
 import type { Request, Response, NextFunction } from "express";
-import { emailValidation } from "../validators/validations";
-import { generateOTP, sendOTPMail } from "../utils/utils";
+import {
+  createUserValidation,
+  emailValidation,
+} from "../validators/validations";
+import { createJWT, generateOTP, sendOTPMail, verifyOTP } from "../utils/utils";
 import OTP from "../models/otp.model";
-import z from "zod";
+import bcrypt from "bcryptjs";
+import User from "../models/user.model";
 
+// sendOTP controller
 export const sendOTP = async (
   req: Request,
   res: Response,
@@ -31,7 +36,7 @@ export const sendOTP = async (
     // store the otp with the email in the database and then send the mail to the user.
     await OTP.create({
       otp,
-      expires_in: String(Date.now() + 5 * 60 * 1000),
+      expires_in: new Date(Date.now() + 5 * 60 * 1000),
       email,
     });
 
@@ -44,6 +49,93 @@ export const sendOTP = async (
     });
 
     // send success response
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+// signup controller
+export const signup = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    // validate user's data
+    const result = createUserValidation.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        error: result.error?.issues[0]?.message,
+      });
+    }
+
+    interface UserData {
+      name: string;
+      email: string;
+      password: string;
+      confirmPassword: string;
+      otp: string;
+    }
+
+    let userData: UserData = result.data;
+
+    // verify the otp
+    const isValidOTP = await verifyOTP(userData.otp, userData.email);
+
+    // handle invalid/expired otp
+    if (!isValidOTP) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid/expired OTP.",
+      });
+    }
+
+    // hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(userData.password, salt);
+
+    if (!hashedPassword) {
+      return res.status(500).json({
+        success: false,
+        message: "Error while hashing the password.",
+      });
+    }
+
+    // store it in the database
+    const user = await User.create({
+      name: userData.name,
+      email: userData.email,
+      password: hashedPassword,
+      profile_pic: `https://api.dicebear.com/9.x/avataaars/svg?seed=${generateOTP()}`,
+    });
+
+    if (!user) {
+      return res.status(500).json({
+        success: false,
+        message: "Error while creating the user.",
+      });
+    }
+
+    // delete all the otps
+    await OTP.deleteMany({ email: user.email });
+
+    const payload = {
+      id: String(user._id),
+      name: user.name,
+      email: user.email,
+    };
+
+    // get the jwt token
+    const token: string = createJWT(payload);
+
+    // return the response
+    return res.status(201).json({
+      success: true,
+      token,
+      message: "User created successfully.",
+    });
   } catch (error: any) {
     next(error);
   }
