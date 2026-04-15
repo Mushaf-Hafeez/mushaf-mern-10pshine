@@ -27,6 +27,17 @@ export const sendOTP = async (
 
     const email = result.data.email;
 
+    // check if the user already exists with this mail in the database
+    const user = await User.findOne({ email });
+
+    // return if user found
+    if (user) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists.",
+      });
+    }
+
     // generate otp and store it in the database
     const otp = generateOTP();
 
