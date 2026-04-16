@@ -1,14 +1,16 @@
 import type { Request, Response, NextFunction } from "express";
+
+import OTP from "../models/otp.model";
+import User from "../models/user.model";
+
 import {
   createUserValidation,
   emailValidation,
   loginValidation,
 } from "../validators/validations";
 import { createJWT, generateOTP, sendOTPMail, verifyOTP } from "../utils/utils";
-import OTP from "../models/otp.model";
+
 import bcrypt from "bcryptjs";
-import User from "../models/user.model";
-import { success } from "zod";
 
 // sendOTP controller
 export const sendOTP = async (
