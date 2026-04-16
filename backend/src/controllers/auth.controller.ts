@@ -161,3 +161,15 @@ export const signup = async (
     next(error);
   }
 };
+
+// login controller
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+  } catch (error: any) {
+    next(error);
+  }
+};
