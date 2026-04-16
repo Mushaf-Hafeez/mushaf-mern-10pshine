@@ -1,10 +1,10 @@
-import mongoose, { Schema, Types, Document } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 // defining interface
 export interface IOTP extends Document {
-  otp: number;
-  expires_in: string;
-  user: Types.ObjectId;
+  otp: string;
+  expires_in: Date;
+  email: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -13,16 +13,16 @@ export interface IOTP extends Document {
 const otpSchema = new Schema<IOTP>(
   {
     otp: {
-      type: Number,
-      required: true,
-    },
-    expires_in: {
       type: String,
       required: true,
     },
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+    expires_in: {
+      type: Date,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true },
