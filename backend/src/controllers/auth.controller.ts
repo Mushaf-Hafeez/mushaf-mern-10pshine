@@ -1,12 +1,16 @@
 import type { Request, Response, NextFunction } from "express";
+
+import OTP from "../models/otp.model";
+import User from "../models/user.model";
+
 import {
   createUserValidation,
   emailValidation,
+  loginValidation,
 } from "../validators/validations";
 import { createJWT, generateOTP, sendOTPMail, verifyOTP } from "../utils/utils";
-import OTP from "../models/otp.model";
+
 import bcrypt from "bcryptjs";
-import User from "../models/user.model";
 
 // sendOTP controller
 export const sendOTP = async (
@@ -157,6 +161,75 @@ export const signup = async (
       token,
       message: "User created successfully.",
     });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+// login controller
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    // validation
+    const result = loginValidation.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error?.issues[0]?.message,
+      });
+    }
+
+    interface LoginData {
+      email: string;
+      password: string;
+    }
+
+    // get the logi data
+    const loginData: LoginData = result.data;
+
+    // return if not user found with this email in the database
+    const user = await User.findOne({ email: loginData.email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Signup before logging in.",
+      });
+    }
+
+    // compare the password
+    const doesPasswordMatch: boolean = await bcrypt.compare(
+      loginData.password,
+      user.password,
+    );
+
+    if (!doesPasswordMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid password.",
+      });
+    } else {
+      // create token
+      const payload = {
+        id: String(user._id),
+        name: user.name,
+        email: user.email,
+      };
+
+      // get the jwt token
+      const token: string = createJWT(payload);
+
+      // return the response
+      return res.status(200).json({
+        success: true,
+        token,
+        message: "User logged in successfully.",
+      });
+    }
   } catch (error: any) {
     next(error);
   }

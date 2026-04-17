@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
-import { config } from "dotenv";
 
+import { config } from "dotenv";
 config();
 
 const transporter: Transporter = nodemailer.createTransport({

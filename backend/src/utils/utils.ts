@@ -1,10 +1,13 @@
 import OTP from "../models/otp.model";
-import transporter from "../config/nodemailer.config";
+
 import type { SendMailOptions } from "nodemailer";
-import jwt from "jsonwebtoken";
 import type { SignOptions } from "jsonwebtoken";
 
+import transporter from "../config/nodemailer.config";
+
 import { OTPMailTemplate } from "../templates/templates";
+
+import jwt from "jsonwebtoken";
 
 import { config } from "dotenv";
 config();
