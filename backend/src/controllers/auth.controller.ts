@@ -7,8 +7,15 @@ import {
   createUserValidation,
   emailValidation,
   loginValidation,
+  resetPasswordValidation,
 } from "../validators/validations";
-import { createJWT, generateOTP, sendOTPMail, verifyOTP } from "../utils/utils";
+import {
+  createJWT,
+  generateOTP,
+  sendOTPMail,
+  sendResetPasswordMail,
+  verifyOTP,
+} from "../utils/utils";
 
 import bcrypt from "bcryptjs";
 
@@ -230,6 +237,138 @@ export const login = async (
         message: "User logged in successfully.",
       });
     }
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+// forgotPassword controller
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    // validation
+    const result = emailValidation.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error?.issues[0]?.message,
+      });
+    }
+
+    const email = result.data.email;
+
+    // return if the user does not exists in the database
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not exists.",
+      });
+    }
+
+    // generate a reset_password_token
+    const reset_password_token: string = crypto.randomUUID();
+
+    // update the user
+    user.reset_password_token = reset_password_token;
+    user.reset_password_token_expires_in = new Date(Date.now() + 5 * 60 * 1000);
+
+    await user.save();
+
+    // create the link to reset password that will redirect the user to reset-password-page
+    const resetPasswordLink = `${process.env.FRONTEND_URL}/reset-password/${reset_password_token}`;
+
+    // send the reset password link to the user's mail
+    await sendResetPasswordMail(resetPasswordLink, email);
+
+    // send the success response
+    return res.status(200).json({
+      success: true,
+      message: "Mail sent successfully.",
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+// resetPassword controller
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    // validation
+    const result = resetPasswordValidation.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error?.issues[0]?.message,
+      });
+    }
+
+    // find the user
+    const user = await User.findOne({
+      $and: [
+        {
+          reset_password_token: result.data.reset_password_token,
+        },
+        {
+          reset_password_token_expires_in: { $gt: new Date() },
+        },
+      ],
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid/expired tokken.",
+      });
+    }
+
+    // hash the password
+    const salt: string = await bcrypt.genSalt(10);
+    const hashedPassword: string = await bcrypt.hash(
+      result.data.password,
+      salt,
+    );
+
+    if (!hashedPassword) {
+      return res.status(500).json({
+        success: false,
+        message: "Error while hashing the password.",
+      });
+    }
+
+    // update user
+    const updatedUser = await User.findByIdAndUpdate(user._id, {
+      $set: {
+        password: hashedPassword,
+      },
+      $unset: {
+        reset_password_token: "",
+        reset_password_token_expires_in: "",
+      },
+    });
+
+    if (!updatedUser) {
+      return res.status(500).json({
+        success: false,
+        message: "Error updating password.",
+      });
+    }
+
+    // send success response
+    return res.status(200).json({
+      success: true,
+      message: "Password has been updated.",
+    });
   } catch (error: any) {
     next(error);
   }

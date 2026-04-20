@@ -5,7 +5,10 @@ import type { SignOptions } from "jsonwebtoken";
 
 import transporter from "../config/nodemailer.config";
 
-import { OTPMailTemplate } from "../templates/templates";
+import {
+  OTPMailTemplate,
+  resetPasswordMailTemplate,
+} from "../templates/templates";
 
 import jwt from "jsonwebtoken";
 
@@ -25,6 +28,23 @@ export const sendOTPMail = async (otp: string, to: string) => {
     return true;
   } catch (error: any) {
     console.log("Error while send the OTP mail: ", error.message);
+    return false;
+  }
+};
+
+export const sendResetPasswordMail = async (resetLink: string, to: string) => {
+  const options: SendMailOptions = {
+    to,
+    from: process.env.MAIL_USER,
+    subject: "Note Flow Reset Password.",
+    html: resetPasswordMailTemplate(resetLink),
+  };
+
+  try {
+    const mailResponse = await transporter.sendMail(options);
+    return true;
+  } catch (error: any) {
+    console.log("Error while send the reset password mail: ", error.message);
     return false;
   }
 };
