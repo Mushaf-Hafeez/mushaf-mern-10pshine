@@ -7,6 +7,7 @@ import {
   createUserValidation,
   emailValidation,
   loginValidation,
+  resetPasswordValidation,
 } from "../validators/validations";
 import {
   createJWT,
@@ -289,6 +290,84 @@ export const forgotPassword = async (
     return res.status(200).json({
       success: true,
       message: "Mail sent successfully.",
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+// resetPassword controller
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    // validation
+    const result = resetPasswordValidation.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error?.issues[0]?.message,
+      });
+    }
+
+    // find the user
+    const user = await User.findOne({
+      $and: [
+        {
+          reset_password_token: result.data.reset_password_token,
+        },
+        {
+          reset_password_token_expires_in: { $gt: new Date() },
+        },
+      ],
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid/expired tokken.",
+      });
+    }
+
+    // hash the password
+    const salt: string = await bcrypt.genSalt(10);
+    const hashedPassword: string = await bcrypt.hash(
+      result.data.password,
+      salt,
+    );
+
+    if (!hashedPassword) {
+      return res.status(500).json({
+        success: false,
+        message: "Error while hashing the password.",
+      });
+    }
+
+    // update user
+    const updatedUser = await User.findByIdAndUpdate(user._id, {
+      $set: {
+        password: hashedPassword,
+      },
+      $unset: {
+        reset_password_token: "",
+        reset_password_token_expires_in: "",
+      },
+    });
+
+    if (!updatedUser) {
+      return res.status(500).json({
+        success: false,
+        message: "Error updating password.",
+      });
+    }
+
+    // send success response
+    return res.status(200).json({
+      success: true,
+      message: "Password has been updated.",
     });
   } catch (error: any) {
     next(error);
