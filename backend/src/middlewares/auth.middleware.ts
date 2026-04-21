@@ -6,6 +6,8 @@ import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 config();
 
+import AppError from "../utils/utils";
+
 // Extend Express Request to include `user`
 declare global {
   namespace Express {
@@ -34,10 +36,7 @@ export const isAuth = async (
 
     // validation
     if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "Token not found.",
-      });
+      return next(new AppError(401, "Token is required."));
     }
 
     // decode the token
@@ -47,10 +46,7 @@ export const isAuth = async (
     ) as Payload;
 
     if (typeof decode === "string") {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid token.",
-      });
+      return next(new AppError(401, "Invalid token."));
     }
 
     const user: IUser | null = await User.findById(decode.id).select(
@@ -58,10 +54,7 @@ export const isAuth = async (
     );
 
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "User not found.",
-      });
+      return next(new AppError(404, "User not found."));
     }
 
     req.user = user;

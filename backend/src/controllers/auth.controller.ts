@@ -9,6 +9,7 @@ import {
   loginValidation,
   resetPasswordValidation,
 } from "../validators/validations";
+import AppError from "../utils/utils";
 import {
   createJWT,
   generateOTP,
@@ -30,10 +31,12 @@ export const sendOTP = async (
     const result = emailValidation.safeParse(req.body);
 
     if (!result.success) {
-      return res.status(400).json({
-        success: false,
-        error: result.error?.issues[0]?.message,
-      });
+      return next(
+        new AppError(
+          400,
+          result?.error?.issues[0]?.message || "Validation error.",
+        ),
+      );
     }
 
     const email = result.data.email;
@@ -43,10 +46,7 @@ export const sendOTP = async (
 
     // return if user found
     if (user) {
-      return res.status(400).json({
-        success: false,
-        message: "User already exists.",
-      });
+      return next(new AppError(400, "User already exists."));
     }
 
     // generate otp and store it in the database
@@ -87,10 +87,12 @@ export const signup = async (
     const result = createUserValidation.safeParse(req.body);
 
     if (!result.success) {
-      return res.status(400).json({
-        success: false,
-        error: result.error?.issues[0]?.message,
-      });
+      return next(
+        new AppError(
+          400,
+          result?.error?.issues[0]?.message || "Validation error.",
+        ),
+      );
     }
 
     interface UserData {
@@ -107,10 +109,7 @@ export const signup = async (
     let user = await User.findOne({ email: userData.email });
 
     if (user) {
-      return res.status(400).json({
-        success: false,
-        message: "User already exists.",
-      });
+      return next(new AppError(400, "User already exists."));
     }
 
     // verify the otp
@@ -118,10 +117,7 @@ export const signup = async (
 
     // handle invalid/expired otp
     if (!isValidOTP) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid/expired OTP.",
-      });
+      return next(new AppError(400, "Invalid/expired OTP."));
     }
 
     // hash the password
@@ -129,10 +125,7 @@ export const signup = async (
     const hashedPassword = await bcrypt.hash(userData.password, salt);
 
     if (!hashedPassword) {
-      return res.status(500).json({
-        success: false,
-        message: "Error while hashing the password.",
-      });
+      return next(new AppError(500, "Error while hashing the password."));
     }
 
     // store it in the database
@@ -144,10 +137,7 @@ export const signup = async (
     });
 
     if (!user) {
-      return res.status(500).json({
-        success: false,
-        message: "Error while creating the user.",
-      });
+      return next(new AppError(500, "Error while creating the user."));
     }
 
     // delete all the otps
@@ -184,10 +174,12 @@ export const login = async (
     const result = loginValidation.safeParse(req.body);
 
     if (!result.success) {
-      return res.status(400).json({
-        success: false,
-        message: result.error?.issues[0]?.message,
-      });
+      return next(
+        new AppError(
+          400,
+          result?.error?.issues[0]?.message || "Validation error.",
+        ),
+      );
     }
 
     interface LoginData {
@@ -202,10 +194,7 @@ export const login = async (
     const user = await User.findOne({ email: loginData.email });
 
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "Signup before logging in.",
-      });
+      return next(new AppError(404, "Signup before logging in."));
     }
 
     // compare the password
@@ -215,10 +204,7 @@ export const login = async (
     );
 
     if (!doesPasswordMatch) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid password.",
-      });
+      return next(new AppError(400, "Invalid password."));
     } else {
       // create token
       const payload = {
@@ -253,10 +239,12 @@ export const forgotPassword = async (
     const result = emailValidation.safeParse(req.body);
 
     if (!result.success) {
-      return res.status(400).json({
-        success: false,
-        message: result.error?.issues[0]?.message,
-      });
+      return next(
+        new AppError(
+          400,
+          result?.error?.issues[0]?.message || "Validation error.",
+        ),
+      );
     }
 
     const email = result.data.email;
@@ -265,10 +253,7 @@ export const forgotPassword = async (
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not exists.",
-      });
+      return next(new AppError(404, "User not exists."));
     }
 
     // generate a reset_password_token
@@ -307,10 +292,12 @@ export const resetPassword = async (
     const result = resetPasswordValidation.safeParse(req.body);
 
     if (!result.success) {
-      return res.status(400).json({
-        success: false,
-        message: result.error?.issues[0]?.message,
-      });
+      return next(
+        new AppError(
+          400,
+          result?.error?.issues[0]?.message || "Validation error.",
+        ),
+      );
     }
 
     // find the user
@@ -340,10 +327,7 @@ export const resetPassword = async (
     );
 
     if (!hashedPassword) {
-      return res.status(500).json({
-        success: false,
-        message: "Error while hashing the password.",
-      });
+      return next(new AppError(500, "Error while hashing the password."));
     }
 
     // update user
@@ -358,10 +342,7 @@ export const resetPassword = async (
     });
 
     if (!updatedUser) {
-      return res.status(500).json({
-        success: false,
-        message: "Error updating password.",
-      });
+      return next(new AppError(500, "Error updating password."));
     }
 
     // send success response
