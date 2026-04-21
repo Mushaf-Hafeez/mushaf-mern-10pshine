@@ -373,3 +373,19 @@ export const resetPassword = async (
     next(error);
   }
 };
+
+// checkAuth controller
+export const checkAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.status(200).json({
+      success: true,
+      user: req.user,
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
