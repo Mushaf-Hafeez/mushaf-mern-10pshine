@@ -137,3 +137,13 @@ export const noteIdValidation = z.object({
       message: "Invalid MongoDB ObjectId",
     }),
 });
+
+export const createNoteValidation = z.object({
+  content: z
+    .string({
+      error: (iss) =>
+        iss.input === undefined ? "Content is required." : "Invalid content.",
+    })
+    .trim()
+    .min(1, { error: "Content cannot be empty." }),
+});

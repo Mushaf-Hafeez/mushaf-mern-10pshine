@@ -2,7 +2,10 @@ import Note from "../models/note.model";
 import AppError from "../utils/utils";
 
 import type { Request, Response, NextFunction } from "express";
-import { noteIdValidation } from "../validators/validations";
+import {
+  createNoteValidation,
+  noteIdValidation,
+} from "../validators/validations";
 
 // getNotes controller
 export const getNotes = async (
@@ -58,6 +61,48 @@ export const getNote = async (
 
     // return success response
     return res.status(200).json({
+      success: true,
+      note,
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+// createNote controller
+export const createNote = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    // validation
+    const result = createNoteValidation.safeParse(req.body);
+
+    if (!result.success) {
+      return next(
+        new AppError(
+          400,
+          result.error.issues[0]?.message || "Validation error.",
+        ),
+      );
+    }
+
+    const { content } = result.data;
+
+    // create note
+    const note = await Note.create({
+      content,
+      user: req.user!._id,
+    });
+
+    // returns if note has not been created
+    if (!note) {
+      return next(new AppError(500, "Error while creating the note."));
+    }
+
+    // return success response
+    return res.status(201).json({
       success: true,
       note,
     });
