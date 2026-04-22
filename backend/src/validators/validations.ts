@@ -147,3 +147,5 @@ export const createNoteValidation = z.object({
     .trim()
     .min(1, { error: "Content cannot be empty." }),
 });
+
+export const updateNoteValidation = createNoteValidation;

@@ -5,6 +5,7 @@ import type { Request, Response, NextFunction } from "express";
 import {
   createNoteValidation,
   noteIdValidation,
+  updateNoteValidation,
 } from "../validators/validations";
 
 // getNotes controller
@@ -105,6 +106,59 @@ export const createNote = async (
     return res.status(201).json({
       success: true,
       note,
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+// updateNote controller
+export const updateNote = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    // validation
+    const paramsResult = noteIdValidation.safeParse(req.params);
+    if (!paramsResult.success) {
+      return next(
+        new AppError(
+          400,
+          paramsResult.error.issues[0]?.message || "Validation error.",
+        ),
+      );
+    }
+
+    const bodyResult = updateNoteValidation.safeParse(req.body);
+    if (!bodyResult.success) {
+      return next(
+        new AppError(
+          400,
+          bodyResult.error.issues[0]?.message || "Validation error.",
+        ),
+      );
+    }
+
+    const { id } = paramsResult.data;
+    const { content } = bodyResult.data;
+
+    // update the note
+    const updatedNote = await Note.findOneAndUpdate(
+      { _id: id, user: req.user!._id },
+      { $set: { content } },
+      { new: true },
+    );
+
+    // return if not updated
+    if (!updatedNote) {
+      return next(new AppError(404, "Note not found."));
+    }
+
+    // success response
+    return res.status(200).json({
+      success: true,
+      note: updatedNote,
     });
   } catch (error: any) {
     next(error);
