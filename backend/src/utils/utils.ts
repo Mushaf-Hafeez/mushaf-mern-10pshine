@@ -89,15 +89,3 @@ export const createJWT = (payload: {
 
   return token;
 };
-
-// creating AppError class and extends it with Error
-class AppError extends Error {
-  statusCode: number;
-
-  constructor(statusCode: number, message: string) {
-    super(message);
-    this.statusCode = statusCode;
-  }
-}
-
-export default AppError;

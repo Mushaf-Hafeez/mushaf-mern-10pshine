@@ -3,6 +3,7 @@ import type { Application, Request, Response, NextFunction } from "express";
 
 // importing routes
 import authRoutes from "./routes/auth.route";
+import noteRoutes from "./routes/note.route";
 
 // environment variables
 import { config } from "dotenv";
@@ -22,6 +23,7 @@ app.use(express.json());
 
 // api versioning
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/notes", noteRoutes);
 
 // defining customError interface
 interface CustomError extends Error {
