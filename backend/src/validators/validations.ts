@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import z from "zod";
 
 export const emailValidation = z.object({
@@ -127,3 +128,12 @@ export const resetPasswordValidation = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+export const noteIdValidation = z.object({
+  id: z
+    .string()
+    .min(1, "ID is required")
+    .refine((val) => mongoose.Types.ObjectId.isValid(val), {
+      message: "Invalid MongoDB ObjectId",
+    }),
+});

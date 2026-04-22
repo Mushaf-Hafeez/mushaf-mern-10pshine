@@ -2,6 +2,7 @@ import Note from "../models/note.model";
 import AppError from "../utils/utils";
 
 import type { Request, Response, NextFunction } from "express";
+import { noteIdValidation } from "../validators/validations";
 
 // getNotes controller
 export const getNotes = async (
@@ -19,6 +20,46 @@ export const getNotes = async (
     return res.status(200).json({
       success: true,
       notes,
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+// getNote controller
+export const getNote = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    // validation
+    const result = noteIdValidation.safeParse(req.params);
+
+    if (!result.success) {
+      return next(
+        new AppError(
+          400,
+          result.error.issues[0]?.message || "Validation error.",
+        ),
+      );
+    }
+
+    // get the id
+    const id = result.data.id;
+
+    // find the note from the database
+    const note = await Note.findById(id).populate("user", "-password");
+
+    // returns if no note found
+    if (!note) {
+      return next(new AppError(404, "Note not found."));
+    }
+
+    // return success response
+    return res.status(200).json({
+      success: true,
+      note,
     });
   } catch (error: any) {
     next(error);
