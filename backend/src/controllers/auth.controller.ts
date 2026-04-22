@@ -34,7 +34,7 @@ export const sendOTP = async (
       return next(
         new AppError(
           400,
-          result?.error?.issues[0]?.message || "Validation error.",
+          result.error.issues[0]?.message || "Validation error.",
         ),
       );
     }
@@ -90,7 +90,7 @@ export const signup = async (
       return next(
         new AppError(
           400,
-          result?.error?.issues[0]?.message || "Validation error.",
+          result.error.issues[0]?.message || "Validation error.",
         ),
       );
     }
@@ -124,16 +124,12 @@ export const signup = async (
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(userData.password, salt);
 
-    if (!hashedPassword) {
-      return next(new AppError(500, "Error while hashing the password."));
-    }
-
     // store it in the database
     user = await User.create({
       name: userData.name,
       email: userData.email,
       password: hashedPassword,
-      profile_pic: `https://api.dicebear.com/9.x/avataaars/svg?seed=${generateOTP()}`,
+      profile_pic: `https://api.dicebear.com/9.x/avataaars/svg?seed=${crypto.randomUUID()}`,
     });
 
     if (!user) {
@@ -177,7 +173,7 @@ export const login = async (
       return next(
         new AppError(
           400,
-          result?.error?.issues[0]?.message || "Validation error.",
+          result.error.issues[0]?.message || "Validation error.",
         ),
       );
     }
@@ -194,7 +190,7 @@ export const login = async (
     const user = await User.findOne({ email: loginData.email });
 
     if (!user) {
-      return next(new AppError(404, "Signup before logging in."));
+      return next(new AppError(404, "User not found. Please register first."));
     }
 
     // compare the password
@@ -242,7 +238,7 @@ export const forgotPassword = async (
       return next(
         new AppError(
           400,
-          result?.error?.issues[0]?.message || "Validation error.",
+          result.error.issues[0]?.message || "Validation error.",
         ),
       );
     }
@@ -295,7 +291,7 @@ export const resetPassword = async (
       return next(
         new AppError(
           400,
-          result?.error?.issues[0]?.message || "Validation error.",
+          result.error.issues[0]?.message || "Validation error.",
         ),
       );
     }
@@ -315,31 +311,31 @@ export const resetPassword = async (
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "Invalid/expired tokken.",
+        message: "Invalid/expired token.",
       });
     }
 
     // hash the password
-    const salt: string = await bcrypt.genSalt(10);
-    const hashedPassword: string = await bcrypt.hash(
-      result.data.password,
-      salt,
-    );
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(result.data.password, salt);
 
     if (!hashedPassword) {
       return next(new AppError(500, "Error while hashing the password."));
     }
 
     // update user
-    const updatedUser = await User.findByIdAndUpdate(user._id, {
-      $set: {
-        password: hashedPassword,
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: user._id },
+      {
+        $set: {
+          password: hashedPassword,
+        },
+        $unset: {
+          reset_password_token: "",
+          reset_password_token_expires_in: "",
+        },
       },
-      $unset: {
-        reset_password_token: "",
-        reset_password_token_expires_in: "",
-      },
-    });
+    );
 
     if (!updatedUser) {
       return next(new AppError(500, "Error updating password."));
