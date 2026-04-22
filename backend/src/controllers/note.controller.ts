@@ -53,7 +53,10 @@ export const getNote = async (
     const id = result.data.id;
 
     // find the note from the database
-    const note = await Note.findById(id).populate("user", "-password");
+    const note = await Note.findOne({ _id: id, user: req.user!._id }).populate(
+      "user",
+      "-password",
+    );
 
     // returns if no note found
     if (!note) {
@@ -96,11 +99,6 @@ export const createNote = async (
       content,
       user: req.user!._id,
     });
-
-    // returns if note has not been created
-    if (!note) {
-      return next(new AppError(500, "Error while creating the note."));
-    }
 
     // return success response
     return res.status(201).json({
