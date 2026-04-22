@@ -164,3 +164,44 @@ export const updateNote = async (
     next(error);
   }
 };
+
+// deleteNote controller
+export const deleteNote = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    // validation
+    const result = noteIdValidation.safeParse(req.params);
+
+    if (!result.success) {
+      return next(
+        new AppError(
+          400,
+          result.error.issues[0]?.message || "Validation error.",
+        ),
+      );
+    }
+
+    const { id } = result.data;
+
+    // delete the note
+    const deletedNote = await Note.findOneAndDelete({
+      _id: id,
+      user: req.user!._id,
+    });
+
+    if (!deletedNote) {
+      return next(new AppError(404, "Note not found."));
+    }
+
+    // success response
+    return res.status(200).json({
+      success: true,
+      message: "Note has been deleted.",
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
