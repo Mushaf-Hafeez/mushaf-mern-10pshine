@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 config();
 
-import AppError from "../utils/utils";
+import AppError from "../utils/AppError";
 
 // Extend Express Request to include `user`
 declare global {

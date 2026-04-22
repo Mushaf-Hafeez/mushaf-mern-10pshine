@@ -9,7 +9,7 @@ import {
   loginValidation,
   resetPasswordValidation,
 } from "../validators/validations";
-import AppError from "../utils/utils";
+import AppError from "../utils/AppError";
 import {
   createJWT,
   generateOTP,

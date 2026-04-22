@@ -1,5 +1,5 @@
 import Note from "../models/note.model";
-import AppError from "../utils/utils";
+import AppError from "../utils/AppError";
 
 import type { Request, Response, NextFunction } from "express";
 import {
