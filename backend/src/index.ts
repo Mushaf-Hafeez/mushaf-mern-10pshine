@@ -5,6 +5,10 @@ import type { Application, Request, Response, NextFunction } from "express";
 import authRoutes from "./routes/auth.route";
 import noteRoutes from "./routes/note.route";
 
+// importing logger
+import logger from "./utils/logger";
+import httpLogger from "./utils/httpLogger";
+
 // environment variables
 import { config } from "dotenv";
 config();
@@ -20,6 +24,7 @@ connectDB();
 
 // middleware
 app.use(express.json());
+app.use(httpLogger);
 
 // api versioning
 app.use("/api/v1/auth", authRoutes);
@@ -33,7 +38,11 @@ interface CustomError extends Error {
 // global error handler
 app.use(
   (error: CustomError, req: Request, res: Response, next: NextFunction) => {
-    console.log(error.message);
+    req.log.error({
+      message: error.message,
+      path: req.originalUrl,
+      method: req.method,
+    });
 
     const statusCode = error.statusCode || 500;
     res.status(statusCode).json({
@@ -52,5 +61,5 @@ app.get("/", (req: Request, res: Response) => {
 
 // listen to the requests
 app.listen(PORT, () => {
-  console.log(`server is running on http://localhost:${PORT}`);
+  logger.info(`server is running on http://localhost:${PORT}`);
 });
