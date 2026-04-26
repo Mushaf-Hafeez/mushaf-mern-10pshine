@@ -11,5 +11,6 @@ describe("AppError Test", () => {
 
     assert.equal(error.statusCode, 400);
     assert.equal(error.message, "Bad request.");
+    assert.instanceOf(error, Error);
   });
 });
