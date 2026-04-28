@@ -3,6 +3,7 @@ import Navbar from "../components/custom/Navbar"
 import Hero from "../components/custom/Hero"
 import Features from "@/components/custom/Features"
 import Steps from "@/components/custom/Steps"
+import CTA from "@/components/custom/CTA"
 
 const LandingPage = () => {
   return (
@@ -15,6 +16,7 @@ const LandingPage = () => {
       <Hero />
       <Features />
       <Steps />
+      <CTA />
     </main>
   )
 }
