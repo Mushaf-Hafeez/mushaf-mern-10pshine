@@ -1,14 +1,14 @@
 import { PencilLine, ShieldCheck, Search, Sparkles } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
-export interface Feature {
+export interface FeatureItem {
   id: number
   title: string
   description: string
   icon: LucideIcon
 }
 
-export const features: Feature[] = [
+export const features: FeatureItem[] = [
   {
     id: 1,
     title: "Rich text editing",

@@ -1,6 +1,6 @@
-import type { Feature } from "@/constants/contant"
+import type { FeatureItem } from "@/constants/contant"
 
-type FeatureProps = Omit<Feature, "id">
+type FeatureProps = Omit<FeatureItem, "id">
 
 const Feature = ({ icon: Icon, title, description }: FeatureProps) => {
   return (
