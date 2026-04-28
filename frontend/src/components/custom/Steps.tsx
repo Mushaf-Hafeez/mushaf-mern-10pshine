@@ -3,7 +3,7 @@ import Step from "./Step"
 
 const Steps = () => {
   return (
-    <section className="flex-center h-screen w-full px-4 py-10">
+    <section className="flex-center h-full w-full px-4 py-10">
       <div className="mx-auto col-center w-5xl gap-10 rounded-2xl bg-neutral-800/30 px-8 py-10 outline outline-neutral-800 backdrop-blur-md md:py-20">
         <h2 className="text-center text-xl font-bold text-neutral-200 md:text-3xl">
           Three steps to mastery
