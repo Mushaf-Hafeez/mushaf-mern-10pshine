@@ -69,3 +69,29 @@ export const steps: StepItem[] = [
       "Leverage asymmetric tags and nested collections to find focus.",
   },
 ]
+
+export interface LinkItem {
+  name: string
+  href: string
+}
+
+// Static link data with no actual navigation
+export const productLinks: LinkItem[] = [
+  { name: "Features", href: "#" },
+  { name: "Security", href: "#" },
+  { name: "Releases", href: "#" },
+  { name: "Templates", href: "#" },
+]
+
+export const companyLinks: LinkItem[] = [
+  { name: "About Us", href: "#" },
+  { name: "Journal", href: "#" },
+  { name: "Contact", href: "#" },
+  { name: "Privacy", href: "#" },
+]
+
+export const legalLinks: LinkItem[] = [
+  { name: "Terms of Service", href: "#" },
+  { name: "Privacy Policy", href: "#" },
+  { name: "Cookie Settings", href: "#" },
+]

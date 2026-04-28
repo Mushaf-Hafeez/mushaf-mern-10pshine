@@ -4,6 +4,7 @@ import Hero from "../components/custom/Hero"
 import Features from "@/components/custom/Features"
 import Steps from "@/components/custom/Steps"
 import CTA from "@/components/custom/CTA"
+import Footer from "@/components/custom/Footer"
 
 const LandingPage = () => {
   return (
@@ -17,6 +18,7 @@ const LandingPage = () => {
       <Features />
       <Steps />
       <CTA />
+      <Footer />
     </main>
   )
 }
