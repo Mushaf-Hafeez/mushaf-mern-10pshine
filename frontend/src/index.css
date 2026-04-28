@@ -1,7 +1,9 @@
+/* importing google fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/inter";
 
 /* Enable dark mode */
 @custom-variant dark (&:is(.dark *));
@@ -11,8 +13,9 @@
 /* ========================= */
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: 'Inter Variable', sans-serif;
+  --font-heading: var(--font-inter);
+  --font-manrope: "Manrope", sans-serif;
+  --font-inter: 'Inter', sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -50,7 +53,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Radius scale (Nocturnal Architect style) */
+  /* Radius scale */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -61,7 +64,7 @@
 }
 
 /* ========================= */
-/* ☀️ LIGHT MODE (Fallback) */
+/* ☀️ LIGHT MODE */
 /* ========================= */
 
 :root {
@@ -74,82 +77,76 @@
   --popover: #ffffff;
   --popover-foreground: #0f172a;
 
-  --primary: #8455ef;
+  --primary: #8b5cf6;
   --primary-foreground: #ffffff;
 
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
+  --secondary: #6366f1;
+  --secondary-foreground: #ffffff;
 
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
 
   --accent: #ede9fe;
-  --accent-foreground: #4c1d95;
+  --accent-foreground: #5b21b6;
 
-  --destructive: #ff6e84;
+  --destructive: #fb7185;
 
-  /* Ghost borders */
-  --border: rgba(72, 71, 74, 0.15);
-  --input: rgba(72, 71, 74, 0.15);
-  --ring: #8455ef;
+  --border: rgba(0, 0, 0, 0.08);
+  --input: rgba(0, 0, 0, 0.08);
+  --ring: #8b5cf6;
 
   --radius: 1rem;
 
   --sidebar: #ffffff;
   --sidebar-foreground: #0f172a;
-  --sidebar-primary: #8455ef;
+  --sidebar-primary: #8b5cf6;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #f1f5f9;
   --sidebar-accent-foreground: #0f172a;
-  --sidebar-border: rgba(72, 71, 74, 0.15);
-  --sidebar-ring: #8455ef;
+  --sidebar-border: rgba(0, 0, 0, 0.08);
+  --sidebar-ring: #8b5cf6;
 }
 
 /* ========================= */
-/* 🌙 DARK MODE (MAIN THEME) */
+/* 🌙 DARK MODE */
 /* ========================= */
 
 .dark {
-  /* Base */
-  --background: #0e0e10;
+  --background: #09090b;
   --foreground: #ffffff;
 
-  /* Surface layers */
-  --card: #131315;                /* surface_container_low */
+  --card: #111113;
   --card-foreground: #ffffff;
 
-  --popover: #1f1f22;             /* surface_container_high */
+  --popover: #18181b;
   --popover-foreground: #ffffff;
 
-  /* Brand */
-  --primary: #ba9eff;
-  --primary-foreground: #000000;
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
 
-  --secondary: #1a1a1d;
+  --secondary: #6366f1;
   --secondary-foreground: #ffffff;
 
-  --muted: #18181b;
-  --muted-foreground: #adaaad;
-
-  --accent: #1f1f22;
+  --accent: #a855f7;
   --accent-foreground: #ffffff;
 
-  --destructive: #ff6e84;
+  --muted: #18181b;
+  --muted-foreground: #a1a1aa;
 
-  /* No-line borders */
-  --border: rgba(72, 71, 74, 0.15);
-  --input: rgba(72, 71, 74, 0.15);
-  --ring: #ba9eff;
+  --destructive: #fb7185;
 
-  /* Sidebar glass */
-  --sidebar: rgba(31, 31, 34, 0.6);
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #8b5cf6;
+
+  --sidebar: rgba(24, 24, 27, 0.6);
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: #ba9eff;
-  --sidebar-primary-foreground: #000000;
-  --sidebar-accent: #1f1f22;
+  --sidebar-primary: #8b5cf6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #18181b;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(72, 71, 74, 0.15);
-  --sidebar-ring: #ba9eff;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #8b5cf6;
 }
 
 /* ========================= */
@@ -166,10 +163,23 @@
   }
 
   html {
-    @apply font-sans;
+    @apply font-inter;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-manrope;
+  }
+
 }
 
-@utility flex-center{
+/* ========================= */
+/* 🧩 UTILITIES */
+/* ========================= */
+
+@utility flex-center {
   @apply flex items-center justify-center;
+}
+
+@utility gradient-primary {
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
 }

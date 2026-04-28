@@ -1,10 +1,18 @@
-import React from 'react'
+import { Route, Routes } from "react-router-dom"
+
+// importing pages
+import LandingPage from "./pages/LandingPage"
+import ErrorPage from "./pages/ErrorPage"
 
 const App = () => {
   return (
-    <main className='h-screen w-full'>
-      Setup shadcn, tailwind and color theme
-    </main>
+    <div>
+      {/* defining routes */}
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="*" element={<ErrorPage />} />
+      </Routes>
+    </div>
   )
 }
 
