@@ -5,7 +5,7 @@ import { Button } from "../ui/button"
 
 const Navbar = () => {
   return (
-    <header className="fixed top-4 left-1/2 flex w-full max-w-5xl -translate-x-1/2 items-center justify-between rounded-full bg-foreground/40 px-8 py-4 outline outline-neutral-800 backdrop-blur-md">
+    <header className="fixed top-4 left-1/2 z-50 flex w-full max-w-5xl -translate-x-1/2 items-center justify-between rounded-full bg-foreground/40 px-8 py-4 outline outline-neutral-800 backdrop-blur-md">
       <h2 className="cursor-pointer text-2xl font-bold">
         <Link to={"/"}>NoteFlow</Link>
       </h2>
