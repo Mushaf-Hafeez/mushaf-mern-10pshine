@@ -7,10 +7,10 @@ import { Button } from "../ui/button"
 
 const Hero = () => {
   return (
-    <section className="flex-center h-screen w-full overflow-hidden border border-red-500 py-10">
+    <section className="flex-center h-screen w-full overflow-hidden border border-red-500">
       <div className="col-center max-w-5xl gap-4">
         {/* Title */}
-        <h1 className="text-center text-7xl font-bold">
+        <h1 className="text-center text-5xl font-bold md:text-7xl">
           Your thoughts,{" "}
           <span className="text-gradient">
             organized
@@ -28,7 +28,10 @@ const Hero = () => {
 
         {/* CTA */}
         <Button className="bg-secondary p-4 tracking-wider">
-          <Link to={"/signup"} className="flex items-center gap-2">
+          <Link
+            to={"/signup"}
+            className="flex items-center gap-2 text-xs md:text-sm"
+          >
             GET STARTED <ArrowRight />
           </Link>
         </Button>

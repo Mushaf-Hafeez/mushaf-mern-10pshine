@@ -171,7 +171,7 @@
   }
 
   p {
-    @apply leading-6 font-light text-neutral-400;
+    @apply leading-4 md:leading-6 font-light text-neutral-400 text-xs md:text-sm;
   }
 
 }
