@@ -3,7 +3,7 @@ import Feature from "./Feature"
 
 const Features = () => {
   return (
-    <section className="col-center h-full w-full gap-4 md:gap-8">
+    <section className="col-center h-full w-full gap-4 py-10 md:gap-8">
       {/* headings */}
       <h6 className="text-sm font-semibold tracking-[3px] text-primary">
         UNCOMPROMISING TOOLS

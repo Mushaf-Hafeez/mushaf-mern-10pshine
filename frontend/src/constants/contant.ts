@@ -38,3 +38,34 @@ export const features: FeatureItem[] = [
     icon: Sparkles,
   },
 ]
+
+export interface StepItem {
+  id: number
+  step: string
+  title: string
+  description: string
+}
+
+export const steps: StepItem[] = [
+  {
+    id: 1,
+    step: "01",
+    title: "Sign up",
+    description:
+      "Join the collective in seconds. No complex onboarding required.",
+  },
+  {
+    id: 2,
+    step: "02",
+    title: "Create notes",
+    description:
+      "Start typing in our zero-distraction editor. Everything is autosaved.",
+  },
+  {
+    id: 3,
+    step: "03",
+    title: "Stay organized",
+    description:
+      "Leverage asymmetric tags and nested collections to find focus.",
+  },
+]
