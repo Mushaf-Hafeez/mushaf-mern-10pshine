@@ -1,0 +1,113 @@
+// importing shadcn components
+import { Button } from "../ui/button"
+import { Field, FieldError, FieldLabel } from "../ui/field"
+import { Input } from "../ui/input"
+
+import { Link } from "react-router-dom"
+import { useForm } from "react-hook-form"
+import type { SubmitHandler } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import Spinner from "./Spinner"
+
+const loginSchema = z.object({
+  email: z
+    .string({
+      error: (iss) =>
+        iss.input === undefined ? "Email is required." : "Invalid email.",
+    })
+    .trim()
+    .min(1, { error: "Email is required." })
+    .email({ error: "Invalid email." }),
+  password: z
+    .string({
+      error: (iss) =>
+        iss.input === undefined ? "Password is required." : "Invalid password.",
+    })
+    .min(8, { error: "Password must be at least 8 characters" })
+    .max(100, { error: "Password is too long" })
+    .regex(/[a-z]/, { error: "Must contain at least one lowercase letter" })
+    .regex(/[A-Z]/, { error: "Must contain at least one uppercase letter" })
+    .regex(/[0-9]/, { error: "Must contain at least one number" })
+    .regex(/[^a-zA-Z0-9]/, {
+      error: "Must contain at least one special character",
+    }),
+})
+
+type LoginData = z.infer<typeof loginSchema>
+
+const Login = () => {
+  const {
+    register,
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    reset,
+  } = useForm<LoginData>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    resolver: zodResolver(loginSchema),
+  })
+
+  const onSubmit: SubmitHandler<LoginData> = (data) => {
+    // make the api call to backend
+    console.log(data)
+    reset({ email: "", password: "" })
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-12 space-y-6">
+      <Field>
+        <FieldLabel htmlFor="email">EMAIL ADDRESS</FieldLabel>
+        <Input
+          {...register("email")}
+          aria-invalid={errors.email ? true : false}
+          id="email"
+          type="email"
+          placeholder={"Enter your email"}
+          className="border border-neutral-700 p-4"
+        />
+        {errors && errors.email && (
+          <FieldError>{errors.email.message}</FieldError>
+        )}
+      </Field>
+      <Field>
+        <div className="flex w-full justify-between">
+          <FieldLabel htmlFor="password">PASSWORD</FieldLabel>
+          <Link
+            to={"/"}
+            className="text-xs text-primary/60 transition-all duration-200 hover:text-primary"
+          >
+            FORGOT PASSWORD?
+          </Link>
+        </div>
+        <Input
+          {...register("password")}
+          aria-invalid={errors.password ? true : false}
+          id="password"
+          type="password"
+          placeholder="Enter your password"
+          className="border border-neutral-700 p-4"
+        />
+        {errors && errors.password && (
+          <FieldError>{errors.password.message}</FieldError>
+        )}
+      </Field>
+      <Button
+        type="submit"
+        className="w-full cursor-pointer p-4"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? <Spinner /> : "Login"}
+      </Button>
+
+      <p className="text-center text-xs">
+        By continuing, you agree to NoteFlow's <u>Terms of Service</u> and{" "}
+        <u>Privacy Policy</u>.
+      </p>
+    </form>
+  )
+}
+
+export default Login

@@ -13,14 +13,14 @@ const Navbar = () => {
       {/* Auth buttons */}
       <div className="flex items-center gap-2 text-sm">
         <Link
-          to={"/login"}
+          to={"/auth?mode=login"}
           className="text-xs font-light text-neutral-400 transition-colors duration-100 hover:text-primary md:text-sm"
         >
           LOGIN
         </Link>
 
         <Button className="bg-secondary text-xs tracking-wider md:text-sm">
-          <Link to={"/signup"}>GET STARTED</Link>
+          <Link to={"/auth?mode=signup"}>GET STARTED</Link>
         </Button>
       </div>
     </header>
