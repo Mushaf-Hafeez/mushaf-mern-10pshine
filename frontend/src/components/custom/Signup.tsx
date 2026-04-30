@@ -1,7 +1,10 @@
+import { useState } from "react"
+
 import { Button } from "../ui/button"
 import { Field, FieldError, FieldLabel } from "../ui/field"
 import { Input } from "../ui/input"
 
+import { Eye, EyeClosed } from "lucide-react"
 import { useForm } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -76,6 +79,19 @@ const Signup = () => {
     },
     resolver: zodResolver(signupSchema),
   })
+  const [isShowPassword, setIsShowPassword] = useState<boolean>(false)
+  const [isShowConfirmPassword, setIsShowConfirmPassword] =
+    useState<boolean>(false)
+
+  // function to show/hide the password
+  const handleShowPassword = () => {
+    setIsShowPassword((prev) => !prev)
+  }
+
+  // function to show/hide the confirmPassword
+  const handleShowConfirmPassword = () => {
+    setIsShowConfirmPassword((prev) => !prev)
+  }
 
   const onSubmit: SubmitHandler<SignupData> = (data) => {
     // make the api call to backend
@@ -117,28 +133,48 @@ const Signup = () => {
       </Field>
       <Field>
         <FieldLabel htmlFor="password">PASSWORD</FieldLabel>
-        <Input
-          {...register("password")}
-          aria-invalid={errors.password ? true : false}
-          id="password"
-          type="password"
-          placeholder="Enter your password"
-          className="border border-neutral-700 p-4"
-        />
+        <div className="relative flex">
+          <Input
+            {...register("password")}
+            aria-invalid={errors.password ? true : false}
+            id="password"
+            type={isShowPassword ? "text" : "password"}
+            placeholder="Enter your password"
+            className="border border-neutral-700 p-4"
+          />
+          <span
+            className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer"
+            onClick={handleShowPassword}
+          >
+            {isShowPassword ? <EyeClosed size={20} /> : <Eye size={20} />}
+          </span>
+        </div>
         {errors && errors.password && (
           <FieldError>{errors.password.message}</FieldError>
         )}
       </Field>
       <Field>
         <FieldLabel htmlFor="confirmPassword">CONFIRM PASSWORD</FieldLabel>
-        <Input
-          {...register("confirmPassword")}
-          aria-invalid={errors.confirmPassword ? true : false}
-          id="confirmPassword"
-          type="password"
-          placeholder="Enter your password again"
-          className="border border-neutral-700 p-4"
-        />
+        <div className="relative flex">
+          <Input
+            {...register("confirmPassword")}
+            aria-invalid={errors.confirmPassword ? true : false}
+            id="confirmPassword"
+            type={isShowConfirmPassword ? "text" : "password"}
+            placeholder="Enter your password again"
+            className="border border-neutral-700 p-4"
+          />
+          <span
+            className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer"
+            onClick={handleShowConfirmPassword}
+          >
+            {isShowConfirmPassword ? (
+              <EyeClosed size={20} />
+            ) : (
+              <Eye size={20} />
+            )}
+          </span>
+        </div>
         {errors && errors.confirmPassword && (
           <FieldError>{errors.confirmPassword.message}</FieldError>
         )}

@@ -1,9 +1,12 @@
+import { useState } from "react"
+
 // importing shadcn components
 import { Button } from "../ui/button"
 import { Field, FieldError, FieldLabel } from "../ui/field"
 import { Input } from "../ui/input"
 
 import { Link } from "react-router-dom"
+import { Eye, EyeClosed } from "lucide-react"
 import { useForm } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -49,6 +52,12 @@ const Login = () => {
     },
     resolver: zodResolver(loginSchema),
   })
+  const [isShowPassword, setIsShowPassword] = useState<boolean>(false)
+
+  // function to show/hide the password
+  const handleShowPassword = () => {
+    setIsShowPassword((prev) => !prev)
+  }
 
   const onSubmit: SubmitHandler<LoginData> = (data) => {
     // make the api call to backend
@@ -82,14 +91,22 @@ const Login = () => {
             FORGOT PASSWORD?
           </Link>
         </div>
-        <Input
-          {...register("password")}
-          aria-invalid={errors.password ? true : false}
-          id="password"
-          type="password"
-          placeholder="Enter your password"
-          className="border border-neutral-700 p-4"
-        />
+        <div className="relative flex">
+          <Input
+            {...register("password")}
+            aria-invalid={errors.password ? true : false}
+            id="password"
+            type={isShowPassword ? "text" : "password"}
+            placeholder="Enter your password"
+            className="border border-neutral-700 p-4"
+          />
+          <span
+            className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer"
+            onClick={handleShowPassword}
+          >
+            {isShowPassword ? <EyeClosed size={20} /> : <Eye size={20} />}
+          </span>
+        </div>
         {errors && errors.password && (
           <FieldError>{errors.password.message}</FieldError>
         )}
