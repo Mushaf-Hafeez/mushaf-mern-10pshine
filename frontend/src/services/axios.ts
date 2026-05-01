@@ -8,9 +8,8 @@ export const api = axios.create({
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = localStorage.getItem("token")
 
-  if (token && typeof token === "string") {
-    const parsedToken: string = JSON.parse(token)
-    config.headers.Authorization = `Bearer ${parsedToken}`
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
   }
 
   return config

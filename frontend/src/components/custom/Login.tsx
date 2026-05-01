@@ -45,6 +45,7 @@ const Login = () => {
   const {
     register,
     setError,
+    clearErrors,
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
@@ -65,10 +66,7 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
     // remove error first
-    setError("root", {
-      type: undefined,
-      message: undefined,
-    })
+    clearErrors("root")
 
     // make the api call to backend
     try {
@@ -76,16 +74,16 @@ const Login = () => {
 
       if (response.status === 200) {
         // store the token in localStorage
-        localStorage.setItem("token", JSON.stringify(response.data.token))
+        localStorage.setItem("token", response.data.token)
         navigate("/") // after creating notes page, redirect the user to notes page.
       }
 
       reset({ email: "", password: "" })
-    } catch (error) {
+    } catch (error: any) {
       console.log("error is: ", error.response.data)
       setError("root", {
         type: "backend",
-        message: error.response.data.message,
+        message: error.response.data.message || "Something went wrong.",
       })
     }
   }

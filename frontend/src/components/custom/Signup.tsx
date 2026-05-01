@@ -11,6 +11,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Spinner from "./Spinner"
 
+import { OTP } from "@/services/auth.service"
+import { useNavigate } from "react-router-dom"
+
+import { useSignup } from "@/zustand/useSignup"
+
 const signupSchema = z
   .object({
     name: z
@@ -67,6 +72,8 @@ type SignupData = z.infer<typeof signupSchema>
 const Signup = () => {
   const {
     register,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
@@ -82,6 +89,9 @@ const Signup = () => {
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false)
   const [isShowConfirmPassword, setIsShowConfirmPassword] =
     useState<boolean>(false)
+  const navigate = useNavigate()
+
+  const setData = useSignup((state) => state.setData)
 
   // function to show/hide the password
   const handleShowPassword = () => {
@@ -93,10 +103,28 @@ const Signup = () => {
     setIsShowConfirmPassword((prev) => !prev)
   }
 
-  const onSubmit: SubmitHandler<SignupData> = (data) => {
-    // make the api call to backend
-    console.log(data)
-    reset({ name: "", email: "", password: "", confirmPassword: "" })
+  const onSubmit: SubmitHandler<SignupData> = async (data) => {
+    // clear error first
+    clearErrors("root")
+
+    try {
+      const response = await OTP(data.email)
+
+      if (response.status === 200) {
+        // store the data in the state
+        setData(data)
+        // redirect the user to OTP verification page.
+        navigate("/otp-verification")
+      }
+
+      reset({ name: "", email: "", password: "", confirmPassword: "" })
+    } catch (error: any) {
+      console.log("error is: ", error.response.data)
+      setError("root", {
+        type: "backend",
+        message: error.response.data.message || "Seomething went wrong.",
+      })
+    }
   }
 
   return (
@@ -179,6 +207,7 @@ const Signup = () => {
           <FieldError>{errors.confirmPassword.message}</FieldError>
         )}
       </Field>
+      {errors.root && <FieldError>{errors.root.message}</FieldError>}
       <Button
         type="submit"
         className="w-full cursor-pointer p-4"
