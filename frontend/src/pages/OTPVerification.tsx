@@ -21,12 +21,15 @@ import { FieldError } from "@/components/ui/field"
 import { OTP, signup } from "@/services/auth.service"
 
 import { useSignup } from "@/zustand/useSignup"
+import { useUser } from "@/zustand/useUser"
 
 interface OTPData {
   otp: string
 }
 
 const OTPVerification = () => {
+  const setUser = useUser((state) => state.setUser)
+
   const [isResend, setIsResend] = useState<boolean>(false)
   const [isResending, setIsResending] = useState<boolean>(false)
   const {
@@ -102,6 +105,7 @@ const OTPVerification = () => {
       const response = await signup(userData)
 
       if (response.status === 201) {
+        setUser(response.data.user)
         localStorage.setItem("token", response.data.token)
         clearData() // to clear the data from the zustand
         reset({ otp: "" })

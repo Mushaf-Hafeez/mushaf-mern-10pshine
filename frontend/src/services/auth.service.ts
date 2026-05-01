@@ -25,3 +25,9 @@ export const signup = async (userData: UserDate) => {
   const response = await api.post("/auth/signup", userData)
   return response
 }
+
+// function to call backend checkAuth api
+export const checkAuth = async () => {
+  const response = await api.get("/auth/check-auth")
+  return response
+}

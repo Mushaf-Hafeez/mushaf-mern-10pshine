@@ -14,6 +14,7 @@ import { z } from "zod"
 import Spinner from "./Spinner"
 
 import { login } from "@/services/auth.service"
+import { useUser } from "@/zustand/useUser"
 
 const loginSchema = z.object({
   email: z
@@ -42,6 +43,8 @@ const loginSchema = z.object({
 type LoginData = z.infer<typeof loginSchema>
 
 const Login = () => {
+  const setUser = useUser((state) => state.setUser)
+
   const {
     register,
     setError,
@@ -73,6 +76,8 @@ const Login = () => {
       const response = await login(data)
 
       if (response.status === 200) {
+        // set the user in the zustand
+        setUser(response.data.user)
         // store the token in localStorage
         localStorage.setItem("token", response.data.token)
         navigate("/") // after creating notes page, redirect the user to notes page.
