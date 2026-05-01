@@ -5,13 +5,15 @@ import { Button } from "../ui/button"
 import { Field, FieldError, FieldLabel } from "../ui/field"
 import { Input } from "../ui/input"
 
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Eye, EyeClosed } from "lucide-react"
 import { useForm } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Spinner from "./Spinner"
+
+import { login } from "@/services/auth.service"
 
 const loginSchema = z.object({
   email: z
@@ -42,6 +44,7 @@ type LoginData = z.infer<typeof loginSchema>
 const Login = () => {
   const {
     register,
+    setError,
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
@@ -53,17 +56,38 @@ const Login = () => {
     resolver: zodResolver(loginSchema),
   })
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false)
+  const navigate = useNavigate()
 
   // function to show/hide the password
   const handleShowPassword = () => {
     setIsShowPassword((prev) => !prev)
   }
 
-  const onSubmit: SubmitHandler<LoginData> = (data) => {
+  const onSubmit: SubmitHandler<LoginData> = async (data) => {
+    // remove error first
+    setError("root", {
+      type: undefined,
+      message: undefined,
+    })
+
     // make the api call to backend
-    
-    console.log(data)
-    reset({ email: "", password: "" })
+    try {
+      const response = await login(data)
+
+      if (response.status === 200) {
+        // store the token in localStorage
+        localStorage.setItem("token", JSON.stringify(response.data.token))
+        navigate("/") // after creating notes page, redirect the user to notes page.
+      }
+
+      reset({ email: "", password: "" })
+    } catch (error) {
+      console.log("error is: ", error.response.data)
+      setError("root", {
+        type: "backend",
+        message: error.response.data.message,
+      })
+    }
   }
 
   return (
@@ -112,6 +136,7 @@ const Login = () => {
           <FieldError>{errors.password.message}</FieldError>
         )}
       </Field>
+      {errors.root && <FieldError>{errors.root.message}</FieldError>}
       <Button
         type="submit"
         className="w-full cursor-pointer p-4"
