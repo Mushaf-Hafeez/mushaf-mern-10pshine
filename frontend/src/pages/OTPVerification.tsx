@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import { ArrowLeft, RotateCcw } from "lucide-react"
+import { ArrowLeft, LoaderCircle, RotateCcw } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 // importing shadcn ui components
@@ -18,7 +18,7 @@ import { useForm, Controller } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
 import { FieldError } from "@/components/ui/field"
 
-import { signup } from "@/services/auth.service"
+import { OTP, signup } from "@/services/auth.service"
 
 import { useSignup } from "@/zustand/useSignup"
 
@@ -27,6 +27,8 @@ interface OTPData {
 }
 
 const OTPVerification = () => {
+  const [isResend, setIsResend] = useState<boolean>(false)
+  const [isResending, setIsResending] = useState<boolean>(false)
   const {
     setError,
     clearErrors,
@@ -50,10 +52,40 @@ const OTPVerification = () => {
   }
 
   //   handleResendOTP function
-  const handleResend = () => {
+  const handleResend = async () => {
+    clearErrors("root")
+    setIsResend(false)
+    setIsResending(false)
+    reset({
+      otp: "",
+    })
+
     // get the user's email from the zustand and than call the api to sendOTP
-    // validate user's email
-    alert("resend otp")
+    const email = signupData.email
+
+    if (!email) {
+      return setError("root", {
+        type: "manual",
+        message: "Email is required. Please go to singup page.",
+      })
+    }
+
+    try {
+      setIsResending(true)
+      const response = await OTP(email)
+
+      if (response.status === 200) {
+        setIsResend(true)
+      }
+    } catch (error: any) {
+      console.log("error is: ", error)
+      setError("root", {
+        type: "backend",
+        message: error.response.data.message || "Something went wrong.",
+      })
+    } finally {
+      setIsResending(false)
+    }
   }
 
   // onSubmit function
@@ -151,6 +183,11 @@ const OTPVerification = () => {
           {/* errors */}
           {errors.otp && <FieldError>{errors.otp.message}</FieldError>}
           {errors.root && <FieldError>{errors.root.message}</FieldError>}
+          {isResend && (
+            <FieldError className="text-green-500">
+              OTP has been sent to your email.
+            </FieldError>
+          )}
 
           <Button
             type="submit"
@@ -172,7 +209,14 @@ const OTPVerification = () => {
               onClick={handleResend}
               className="flex cursor-pointer items-center gap-2 text-sm text-neutral-400 transition-all duration-200 hover:text-white"
             >
-              <RotateCcw size={16} className="cursor-pointer" />
+              {isResending ? (
+                <LoaderCircle
+                  size={16}
+                  className={`${isResending && "animate-spin"}`}
+                />
+              ) : (
+                <RotateCcw size={16} className="cursor-pointer" />
+              )}
               Resend OTP
             </span>
           </div>
