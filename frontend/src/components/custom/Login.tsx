@@ -61,6 +61,7 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<LoginData> = (data) => {
     // make the api call to backend
+    
     console.log(data)
     reset({ email: "", password: "" })
   }
