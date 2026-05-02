@@ -31,3 +31,9 @@ export const checkAuth = async () => {
   const response = await api.get("/auth/check-auth")
   return response
 }
+
+// function to call backend checkAuth api
+export const forgotPassword = async (email: string) => {
+  const response = await api.put("/auth/forgot-password", { email })
+  return response
+}

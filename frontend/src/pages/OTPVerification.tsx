@@ -134,7 +134,7 @@ const OTPVerification = () => {
           <h2 className="text-center text-2xl font-semibold">
             OTP Verification
           </h2>
-          <p>Enter the 6-digit ocde sent to your email {signupData.email}</p>
+          <p>Enter the 6-digit code sent to your email {signupData.email}</p>
 
           {/* otp input */}
           <Controller
