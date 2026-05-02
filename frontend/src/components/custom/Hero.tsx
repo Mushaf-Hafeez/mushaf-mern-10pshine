@@ -29,7 +29,7 @@ const Hero = () => {
         {/* CTA */}
         <Button className="bg-secondary p-4 tracking-wider">
           <Link
-            to={"/signup"}
+            to={"/auth?mode=signup"}
             className="flex items-center gap-2 text-xs md:text-sm"
           >
             GET STARTED <ArrowRight />

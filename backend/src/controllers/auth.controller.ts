@@ -148,9 +148,13 @@ export const signup = async (
     // get the jwt token
     const token: string = createJWT(payload);
 
+    // also send user without password in the response
+    const { password, ...safeUser } = user.toObject();
+
     // return the response
     return res.status(201).json({
       success: true,
+      user: safeUser,
       token,
       message: "User created successfully.",
     });
@@ -187,7 +191,7 @@ export const login = async (
     const loginData: LoginData = result.data;
 
     // return if not user found with this email in the database
-    const user = await User.findOne({ email: loginData.email });
+    let user = await User.findOne({ email: loginData.email });
 
     if (!user) {
       return next(new AppError(404, "User not found. Please register first."));
@@ -212,9 +216,13 @@ export const login = async (
       // get the jwt token
       const token: string = createJWT(payload);
 
+      // also send the user in the response without password
+      const { password, ...safeUser } = user.toObject();
+
       // return the response
       return res.status(200).json({
         success: true,
+        user: safeUser,
         token,
         message: "User logged in successfully.",
       });

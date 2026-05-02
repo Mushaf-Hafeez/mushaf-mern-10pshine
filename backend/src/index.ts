@@ -9,6 +9,9 @@ import noteRoutes from "./routes/note.route";
 import logger from "./utils/logger";
 import httpLogger from "./utils/httpLogger";
 
+import cors from "cors";
+import type { CorsOptions } from "cors";
+
 // environment variables
 import { config } from "dotenv";
 config();
@@ -22,9 +25,15 @@ const app: Application = express();
 import connectDB from "./config/db.config";
 connectDB();
 
+const corsOptions: CorsOptions = {
+  origin: process.env.FRONTEND_URL,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+};
+
 // middleware
 app.use(express.json());
 app.use(httpLogger);
+app.use(cors(corsOptions));
 
 // api versioning
 app.use("/api/v1/auth", authRoutes);

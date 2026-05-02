@@ -198,3 +198,15 @@
 @utility gradient-primary {
   background: linear-gradient(135deg, #8b5cf6, #6366f1);
 }
+
+/* Fix autofill background + text color */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset; /* your bg color */
+  -webkit-text-fill-color: white; /* your text color */
+  caret-color: white;
+  transition: background-color 9999s ease-in-out 0s;
+}

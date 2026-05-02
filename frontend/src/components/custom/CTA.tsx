@@ -15,7 +15,7 @@ const CTA = () => {
           sanctuary in NoteFlow.
         </p>
         <Button className="bg-secondary p-4 tracking-wider">
-          <Link to={"/signup"} className="text-xs md:text-sm">
+          <Link to={"/auth?mode=signup"} className="text-xs md:text-sm">
             Start for Free
           </Link>
         </Button>

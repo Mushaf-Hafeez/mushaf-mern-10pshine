@@ -20,8 +20,8 @@ const Footer = () => {
               nocturnal architect's workspace for complex ideas.
             </p>
             <div className="flex items-center space-x-4 pt-2">
-              <Link className="cursor-pointer hover:text-primary hover:transition-all hover:duration-300" />
-              <Search className="cursor-pointer hover:text-primary hover:transition-all hover:duration-300" />
+              <Link className="cursor-pointer text-neutral-400 hover:text-primary hover:transition-all hover:duration-300" />
+              <Search className="cursor-pointer text-neutral-400 hover:text-primary hover:transition-all hover:duration-300" />
             </div>
           </div>
 
