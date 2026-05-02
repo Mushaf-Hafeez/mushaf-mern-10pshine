@@ -1,6 +1,7 @@
 import { useState } from "react"
 
 import { ArrowLeft } from "lucide-react"
+
 import { useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
@@ -26,7 +27,6 @@ const emailSchema = z.object({
 type EmailData = z.infer<typeof emailSchema>
 
 const ForgotPassword = () => {
-  const [isLinkSend, setIsLinkSend] = useState<boolean>(false)
   const {
     register,
     setError,
@@ -50,14 +50,16 @@ const ForgotPassword = () => {
   const onSubmit: SubmitHandler<EmailData> = async (data) => {
     // remove error first
     clearErrors("root")
-    setIsLinkSend(false)
 
     try {
       const response = await forgotPassword(data.email)
 
       if (response.status === 200) {
-        setIsLinkSend(true)
         reset({ email: "" })
+        setError("root", {
+          type: "success",
+          message: "Reset password link has been sent to your email.",
+        })
       }
     } catch (error: any) {
       console.log("error is: ", error)
@@ -97,11 +99,12 @@ const ForgotPassword = () => {
               <FieldError>{errors.email.message}</FieldError>
             )}
             {errors && errors.root && (
-              <FieldError>{errors.root.message}</FieldError>
-            )}
-            {isLinkSend && (
-              <FieldError className="text-green-500">
-                OTP has been sent to your email.
+              <FieldError
+                className={
+                  errors.root.type === "success" ? "text-green-500" : ""
+                }
+              >
+                {errors.root.message}
               </FieldError>
             )}
           </Field>

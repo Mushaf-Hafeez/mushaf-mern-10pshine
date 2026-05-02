@@ -113,7 +113,7 @@ const Login = () => {
         <div className="flex w-full justify-between">
           <FieldLabel htmlFor="password">PASSWORD</FieldLabel>
           <Link
-            to={"/"}
+            to={"/forgot-password"}
             className="text-xs text-primary/60 transition-all duration-200 hover:text-primary"
           >
             FORGOT PASSWORD?

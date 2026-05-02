@@ -10,6 +10,7 @@ import ErrorPage from "./pages/ErrorPage"
 import AuthPage from "./pages/AuthPage"
 import OTPVerification from "./pages/OTPVerification"
 import ForgotPassword from "./pages/ForgotPassword"
+import ResetPassword from "./pages/ResetPassword"
 
 import { checkAuth } from "./services/auth.service"
 import { useUser } from "./zustand/useUser"
@@ -43,6 +44,7 @@ const App = () => {
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/otp-verification" element={<OTPVerification />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </div>

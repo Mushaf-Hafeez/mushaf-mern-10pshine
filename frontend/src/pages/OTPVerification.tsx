@@ -57,7 +57,6 @@ const OTPVerification = () => {
   //   handleResendOTP function
   const handleResend = async () => {
     clearErrors("root")
-    setIsResend(false)
     setIsResending(false)
     reset({
       otp: "",
@@ -78,7 +77,10 @@ const OTPVerification = () => {
       const response = await OTP(email)
 
       if (response.status === 200) {
-        setIsResend(true)
+        setError("root", {
+          type: "success",
+          message: "OTP has been sent to your email.",
+        })
       }
     } catch (error: any) {
       console.log("error is: ", error)
@@ -115,7 +117,7 @@ const OTPVerification = () => {
       console.log("error is: ", error.response.data)
       setError("root", {
         type: "backend",
-        message: error.response.data.message || "Something went wrong",
+        message: "Please signup first.",
       })
     }
   }
@@ -134,7 +136,9 @@ const OTPVerification = () => {
           <h2 className="text-center text-2xl font-semibold">
             OTP Verification
           </h2>
-          <p>Enter the 6-digit code sent to your email {signupData.email}</p>
+          <p className="text-center">
+            Enter the 6-digit code sent to your email {signupData.email}
+          </p>
 
           {/* otp input */}
           <Controller
@@ -186,10 +190,11 @@ const OTPVerification = () => {
 
           {/* errors */}
           {errors.otp && <FieldError>{errors.otp.message}</FieldError>}
-          {errors.root && <FieldError>{errors.root.message}</FieldError>}
-          {isResend && (
-            <FieldError className="text-green-500">
-              OTP has been sent to your email.
+          {errors.root && (
+            <FieldError
+              className={errors.root.type === "success" ? "text-green-500" : ""}
+            >
+              {errors.root.message}
             </FieldError>
           )}
 
