@@ -98,7 +98,7 @@
 
   --radius: 1rem;
 
-  --sidebar: #ffffff;
+  --sidebar: oklch(20.5% 0 0);
   --sidebar-foreground: #0f172a;
   --sidebar-primary: #8b5cf6;
   --sidebar-primary-foreground: #ffffff;

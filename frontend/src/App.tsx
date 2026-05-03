@@ -11,9 +11,14 @@ import AuthPage from "./pages/AuthPage"
 import OTPVerification from "./pages/OTPVerification"
 import ForgotPassword from "./pages/ForgotPassword"
 import ResetPassword from "./pages/ResetPassword"
+import Notes from "./pages/Notes"
+import ProtectedRoute from "./components/custom/ProtectedRoute"
 
 import { checkAuth } from "./services/auth.service"
 import { useUser } from "./zustand/useUser"
+import Layout from "./pages/Layout"
+import Profile from "./pages/Profile"
+import Settings from "./pages/Settings"
 
 const App = () => {
   const { setUser, clearUser } = useUser((state) => state)
@@ -32,7 +37,9 @@ const App = () => {
         clearUser()
       }
     }
-    getUser()
+    if (localStorage.getItem("token")) {
+      getUser()
+    }
   }, [])
 
   return (
@@ -45,6 +52,19 @@ const App = () => {
         <Route path="/otp-verification" element={<OTPVerification />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route
+          path="/user"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Notes />} />
+          <Route path="notes" element={<Notes />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </div>
