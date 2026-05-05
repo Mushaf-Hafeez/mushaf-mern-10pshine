@@ -11,7 +11,7 @@ import AuthPage from "./pages/AuthPage"
 import OTPVerification from "./pages/OTPVerification"
 import ForgotPassword from "./pages/ForgotPassword"
 import ResetPassword from "./pages/ResetPassword"
-import Notes from "./pages/Notes"
+import Notes from "./pages/NotesPage"
 import ProtectedRoute from "./components/custom/ProtectedRoute"
 
 import { checkAuth } from "./services/auth.service"

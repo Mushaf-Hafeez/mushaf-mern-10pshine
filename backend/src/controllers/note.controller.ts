@@ -19,7 +19,9 @@ export const getNotes = async (
     const user = req.user!._id;
 
     // get all the notes from the database
-    const notes = await Note.find({ user }).populate("user", "-password");
+    const notes = await Note.find({ user })
+      .populate("user", "-password")
+      .sort({ createdAt: -1 });
 
     return res.status(200).json({
       success: true,
