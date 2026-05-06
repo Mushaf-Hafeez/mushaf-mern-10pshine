@@ -11,3 +11,9 @@ export const createNote = async (content: string) => {
   const response = await api.post("/notes", { content })
   return response
 }
+
+// function to delete the note in the backend
+export const deleteNote = async (noteId: string) => {
+  const response = await api.delete(`/notes/${noteId}`)
+  return response
+}

@@ -34,6 +34,11 @@ const Notes = () => {
   const [notes, setNotes] = useState<Note[] | null>()
   const [error, setError] = useState<string | null>(null)
 
+  const removeNote = (id: string) => {
+    const filteredNotes = notes?.filter((note) => note._id !== id)
+    setNotes(filteredNotes)
+  }
+
   useEffect(() => {
     const fetchNotes = async () => {
       setError(null)
@@ -96,8 +101,10 @@ const Notes = () => {
                 return (
                   <Note
                     key={note._id}
+                    id={note._id}
                     content={note.content}
                     createdAt={note.createdAt}
+                    removeNote={removeNote}
                   />
                 )
               })
