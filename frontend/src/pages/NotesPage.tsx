@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Grid2X2 } from "lucide-react"
+import { Grid2X2, Plus } from "lucide-react"
 
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
@@ -7,6 +7,7 @@ import Spinner from "@/components/custom/Spinner"
 import Note from "@/components/custom/Note"
 
 import { getNotes } from "@/services/note.service"
+import { Link } from "react-router-dom"
 
 interface User {
   _id: string
@@ -67,14 +68,22 @@ const Notes = () => {
 
           <h2 className="text-lg font-medium">My Notes</h2>
         </div>
-        <Button
-          variant={isGrid ? "default" : "outline"}
-          onClick={() => setIsGrid((prev) => !prev)}
-          className={`cursor-pointer transition-all duration-200 ${!isGrid ? "bg-neutral-800/30 text-neutral-400 hover:text-white" : "hover:bg-primary/80"} `}
-        >
-          <Grid2X2 />
-          Grid
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild>
+            <Link to={"/notes/create"}>
+              <Plus />
+              Create Note
+            </Link>
+          </Button>
+          <Button
+            variant={isGrid ? "default" : "outline"}
+            onClick={() => setIsGrid((prev) => !prev)}
+            className={`cursor-pointer transition-all duration-200 ${!isGrid ? "bg-neutral-800/30 text-neutral-400 hover:text-white" : "hover:bg-primary/80"} `}
+          >
+            <Grid2X2 />
+            Grid
+          </Button>
+        </div>
       </div>
       {isLoading ? (
         <Spinner />

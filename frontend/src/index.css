@@ -75,8 +75,10 @@
   --card: #ffffff;
   --card-foreground: #0f172a;
 
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  /* --popover: #ffffff; */
+  --popover: #222;
+  /* --popover-foreground: #0f172a; */
+  --popover-foreground: #ffffff;
 
   --primary: #8b5cf6;
   --primary-foreground: #ffffff;
@@ -199,14 +201,232 @@
   background: linear-gradient(135deg, #8b5cf6, #6366f1);
 }
 
-/* Fix autofill background + text color */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-textarea:-webkit-autofill,
-select:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px transparent inset; /* your bg color */
-  -webkit-text-fill-color: white; /* your text color */
-  caret-color: white;
-  transition: background-color 9999s ease-in-out 0s;
+/* ── CSS variable overrides ─────────────────────────────────── */
+.mdxeditor {
+  --accentBase: #3f3f46;
+  --accentBgSubtle: #27272a;
+  --accentText: #ffffff;
+  --accentLine: #3f3f46;
+  --baseBase: #09090b;
+  --baseBg: #18181b;
+  --baseBgSubtle: #18181b;
+  --baseText: #ffffff;
+  --baseBorder: #27272a;
+  --basePageBg: transparent;
+  color-scheme: dark;
+  color: #ffffff;
+}
+
+/* ── Toolbar pill ───────────────────────────────────────────── */
+.editor-toolbar {
+  background-color: #18181b !important;
+  border: 1px solid #27272a !important;
+  border-radius: 999px !important;
+  padding: 10px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  gap: 2px !important;
+  margin: 12px auto 0 auto !important;
+
+  /* shrinks to content on large screens, scrolls on small */
+  width: fit-content !important;
+  max-width: calc(100% - 32px) !important;
+
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.editor-toolbar::-webkit-scrollbar {
+  display: none !important;
+}
+
+.editor-toolbar button {
+  flex-shrink: 0 !important;
+}
+
+.editor-toolbar [data-orientation="vertical"],
+.editor-toolbar .mdxeditor-toolbar-separator {
+  flex-shrink: 0 !important;
+}
+
+/* ── All toolbar buttons ────────────────────────────────────── */
+.editor-toolbar button {
+  background: transparent !important;
+  border: none !important;
+  color: #a1a1aa !important;
+  border-radius: 6px !important;
+  padding: 5px 7px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: background 0.12s, color 0.12s !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 28px !important;
+  height: 28px !important;
+}
+
+.editor-toolbar button:hover {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+}
+
+.editor-toolbar button[data-state="on"],
+.editor-toolbar button[aria-pressed="true"],
+.editor-toolbar button[aria-checked="true"] {
+  background-color: #3f3f46 !important;
+  color: #ffffff !important;
+}
+
+/* ── Separator ──────────────────────────────────────────────── */
+.editor-toolbar [data-orientation="vertical"],
+.editor-toolbar .mdxeditor-toolbar-separator {
+  width: 1px !important;
+  height: 18px !important;
+  background-color: #3f3f46 !important;
+  margin: 0 6px !important;
+  border: none !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── SVG icons ──────────────────────────────────────────────── */
+.editor-toolbar button svg {
+  width: 15px !important;
+  height: 15px !important;
+  color: inherit !important;
+}
+
+/* ── BlockTypeSelect dropdown fix (dark background) ─────────── */
+.editor-toolbar [class*="blockTypeSelect"] button,
+.editor-toolbar [class*="selectTrigger"],
+.editor-toolbar [class*="SelectTrigger"] {
+  background: transparent !important;
+  color: #a1a1aa !important;
+  border: none !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  height: 28px !important;
+  padding: 0 8px !important;
+  cursor: pointer !important;
+  border-radius: 6px !important;
+}
+
+.editor-toolbar [class*="selectTrigger"]:hover,
+.editor-toolbar [class*="SelectTrigger"]:hover {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+}
+
+/* dropdown popup */
+[class*="selectContent"],
+[class*="SelectContent"],
+[data-radix-popper-content-wrapper] > div {
+  background-color: #18181b !important;
+  border: 1px solid #3f3f46 !important;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+[class*="selectItem"],
+[class*="SelectItem"] {
+  color: #a1a1aa !important;
+  font-size: 13px !important;
+  padding: 6px 12px !important;
+  cursor: pointer !important;
+  border-radius: 4px !important;
+}
+
+[class*="selectItem"]:hover,
+[class*="SelectItem"]:hover,
+[class*="selectItem"][data-highlighted],
+[class*="SelectItem"][data-highlighted] {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+}
+
+/* ── Editor content area ────────────────────────────────────── */
+.mdxeditor-root-contenteditable {
+  padding: 20px 24px !important;
+  min-height: 300px !important;
+  color: #ffffff !important;
+  font-size: 15px !important;
+  line-height: 1.7 !important;
+}
+
+.mdxeditor-root-contenteditable h1 { font-size: 2rem !important; font-weight: 700 !important; color: #fff !important; margin: 16px 0 8px !important; }
+.mdxeditor-root-contenteditable h2 { font-size: 1.5rem !important; font-weight: 700 !important; color: #fff !important; margin: 14px 0 6px !important; }
+.mdxeditor-root-contenteditable h3 { font-size: 1.25rem !important; font-weight: 600 !important; color: #fff !important; margin: 12px 0 4px !important; }
+
+.mdxeditor-root-contenteditable blockquote {
+  border-left: 3px solid #3f3f46 !important;
+  color: #a1a1aa !important;
+  padding-left: 14px !important;
+  margin: 8px 0 !important;
+}
+
+.mdxeditor-root-contenteditable code {
+  background-color: #27272a !important;
+  color: #e4e4e7 !important;
+  border-radius: 4px !important;
+  padding: 1px 5px !important;
+  font-size: 13px !important;
+}
+
+/* ── Link dialog dark override ──────────────────────────────── */
+[data-radix-popper-content-wrapper] {
+  --baseBg: #18181b !important;
+  --baseText: #ffffff !important;
+  --baseBorder: #3f3f46 !important;
+}
+
+[data-radix-popper-content-wrapper] input {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+  border: 1px solid #3f3f46 !important;
+  border-radius: 6px !important;
+  padding: 6px 10px !important;
+}
+/* ── Content text color fix ─────────────────────────────────── */
+
+/* all paragraph / general text */
+.mdxeditor-root-contenteditable,
+.mdxeditor-root-contenteditable p,
+.mdxeditor-root-contenteditable span,
+.mdxeditor-root-contenteditable div {
+  color: #ffffff !important;
+}
+
+/* list items */
+.mdxeditor-root-contenteditable ul,
+.mdxeditor-root-contenteditable ol,
+.mdxeditor-root-contenteditable li,
+.mdxeditor-root-contenteditable li > p {
+  color: #ffffff !important;
+}
+
+/* list markers/bullets (Firefox needs this separately) */
+.mdxeditor-root-contenteditable ul li::marker,
+.mdxeditor-root-contenteditable ol li::marker {
+  color: #a1a1aa !important;
+}
+
+/* checklist items */
+.mdxeditor-root-contenteditable input[type="checkbox"] {
+  accent-color: #a1a1aa !important;
+}
+
+/* placeholder */
+.mdxeditor-root-contenteditable p:first-child:empty::before {
+  content: attr(data-placeholder);
+  color: #52525b !important;
+}
+
+.markdown-revert * {
+  all: revert;
 }

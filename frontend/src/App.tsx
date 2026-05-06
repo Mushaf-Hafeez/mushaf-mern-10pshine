@@ -19,6 +19,7 @@ import { useUser } from "./zustand/useUser"
 import Layout from "./pages/Layout"
 import Profile from "./pages/Profile"
 import Settings from "./pages/Settings"
+import CreateNotePage from "./pages/CreateNotePage"
 
 const App = () => {
   const { setUser, clearUser } = useUser((state) => state)
@@ -52,6 +53,14 @@ const App = () => {
         <Route path="/otp-verification" element={<OTPVerification />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route
+          path="/notes/create"
+          element={
+            <ProtectedRoute>
+              <CreateNotePage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/user"
           element={
