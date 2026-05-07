@@ -94,7 +94,7 @@ const Notes = () => {
         <Spinner />
       ) : (
         <ul
-          className={`space-y-4 p-6 ${isGrid && "columns-2 gap-4 md:columns-3 lg:columns-4"}`}
+          className={`space-y-4 p-6 ${isGrid && "columns-1 gap-4 sm:columns-2 md:columns-3"}`}
         >
           {notes && notes.length > 0
             ? notes.map((note) => {

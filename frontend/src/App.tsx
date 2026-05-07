@@ -13,13 +13,14 @@ import ForgotPassword from "./pages/ForgotPassword"
 import ResetPassword from "./pages/ResetPassword"
 import Notes from "./pages/NotesPage"
 import ProtectedRoute from "./components/custom/ProtectedRoute"
-
-import { checkAuth } from "./services/auth.service"
-import { useUser } from "./zustand/useUser"
 import Layout from "./pages/Layout"
 import Profile from "./pages/Profile"
 import Settings from "./pages/Settings"
 import CreateNotePage from "./pages/CreateNotePage"
+import EditNotePage from "./pages/EditNotePage"
+
+import { checkAuth } from "./services/auth.service"
+import { useUser } from "./zustand/useUser"
 
 const App = () => {
   const { setUser, clearUser } = useUser((state) => state)
@@ -58,6 +59,14 @@ const App = () => {
           element={
             <ProtectedRoute>
               <CreateNotePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notes/edit/:id"
+          element={
+            <ProtectedRoute>
+              <EditNotePage />
             </ProtectedRoute>
           }
         />

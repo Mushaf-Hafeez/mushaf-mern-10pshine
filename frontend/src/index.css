@@ -75,9 +75,7 @@
   --card: #ffffff;
   --card-foreground: #0f172a;
 
-  /* --popover: #ffffff; */
   --popover: #222;
-  /* --popover-foreground: #0f172a; */
   --popover-foreground: #ffffff;
 
   --primary: #8b5cf6;
@@ -142,7 +140,7 @@
   --input: rgba(255, 255, 255, 0.08);
   --ring: #8b5cf6;
 
-  --sidebar: rgba(24, 24, 27, 0.6);
+  --sidebar: #171717;
   --sidebar-foreground: #ffffff;
   --sidebar-primary: #8b5cf6;
   --sidebar-primary-foreground: #ffffff;
