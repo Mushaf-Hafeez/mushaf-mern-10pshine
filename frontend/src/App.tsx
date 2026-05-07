@@ -11,6 +11,13 @@ import AuthPage from "./pages/AuthPage"
 import OTPVerification from "./pages/OTPVerification"
 import ForgotPassword from "./pages/ForgotPassword"
 import ResetPassword from "./pages/ResetPassword"
+import Notes from "./pages/NotesPage"
+import ProtectedRoute from "./components/custom/ProtectedRoute"
+import Layout from "./pages/Layout"
+import Profile from "./pages/Profile"
+import Settings from "./pages/Settings"
+import CreateNotePage from "./pages/CreateNotePage"
+import EditNotePage from "./pages/EditNotePage"
 
 import { checkAuth } from "./services/auth.service"
 import { useUser } from "./zustand/useUser"
@@ -32,7 +39,9 @@ const App = () => {
         clearUser()
       }
     }
-    getUser()
+    if (localStorage.getItem("token")) {
+      getUser()
+    }
   }, [])
 
   return (
@@ -45,6 +54,35 @@ const App = () => {
         <Route path="/otp-verification" element={<OTPVerification />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route
+          path="/notes/create"
+          element={
+            <ProtectedRoute>
+              <CreateNotePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notes/edit/:id"
+          element={
+            <ProtectedRoute>
+              <EditNotePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Notes />} />
+          <Route path="notes" element={<Notes />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </div>

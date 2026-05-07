@@ -1,4 +1,12 @@
-import { PencilLine, ShieldCheck, Search, Sparkles } from "lucide-react"
+import {
+  PencilLine,
+  ShieldCheck,
+  Search,
+  Sparkles,
+  FileText,
+  CircleUserRound,
+  Settings,
+} from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 export interface FeatureItem {
@@ -94,4 +102,16 @@ export const legalLinks: LinkItem[] = [
   { name: "Terms of Service", href: "#" },
   { name: "Privacy Policy", href: "#" },
   { name: "Cookie Settings", href: "#" },
+]
+
+export interface SidebarLink {
+  title: string
+  icon: LucideIcon
+  path: string
+}
+
+export const sidebarLinks: SidebarLink[] = [
+  { title: "Notes", icon: FileText, path: "/user/notes" },
+  { title: "Profile", icon: CircleUserRound, path: "/user/profile" },
+  { title: "Settings", icon: Settings, path: "/user/settings" },
 ]

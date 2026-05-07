@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 // importing shadcn components
 import { Button } from "../ui/button"
@@ -7,10 +7,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 const Navbar = () => {
   const { user, clearUser } = useUser((state) => state)
+  const navigate = useNavigate()
 
   const handleLogout = () => {
     clearUser()
     localStorage.removeItem("token")
+  }
+
+  const goToProfile = () => {
+    navigate("/user/profile")
   }
 
   return (
@@ -22,7 +27,7 @@ const Navbar = () => {
       {/* Auth buttons */}
       {user ? (
         <div className="items-cente flex gap-2 text-sm">
-          <Avatar>
+          <Avatar onClick={goToProfile} className="cursor-pointer">
             <AvatarImage src={user.profile_pic} />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
