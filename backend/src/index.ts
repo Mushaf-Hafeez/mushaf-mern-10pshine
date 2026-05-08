@@ -4,6 +4,7 @@ import type { Application, Request, Response, NextFunction } from "express";
 // importing routes
 import authRoutes from "./routes/auth.route";
 import noteRoutes from "./routes/note.route";
+import profileRoutes from "./routes/profile.route";
 
 // importing logger
 import logger from "./utils/logger";
@@ -38,6 +39,7 @@ app.use(cors(corsOptions));
 // api versioning
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/notes", noteRoutes);
+app.use("/api/v1/profile", profileRoutes);
 
 // defining customError interface
 interface CustomError extends Error {
