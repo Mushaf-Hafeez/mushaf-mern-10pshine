@@ -3,6 +3,29 @@ import type { Request, Response, NextFunction } from "express";
 import { updateProfileValidation } from "../validators/validations";
 import AppError from "../utils/AppError";
 
+// getProfile controller function
+export const getProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const user = await User.findById(req.user!._id).select("-password");
+
+    if (!user) {
+      return next(new AppError(404, "No user found."));
+    }
+
+    // return the success response
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
 // updateProfile controller function
 export const updateProfile = async (
   req: Request,
