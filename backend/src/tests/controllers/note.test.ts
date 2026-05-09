@@ -38,14 +38,24 @@ describe("getNotes controller", () => {
 
     const notesMock = [{ content: "test note" }];
 
+    const sortStub = sinon.stub().resolves(notesMock);
+
+    const populateStub = sinon.stub().returns({
+      sort: sortStub,
+    });
+
     const findStub = sinon.stub(Note, "find").returns({
-      populate: sinon.stub().resolves(notesMock),
+      populate: populateStub,
     } as any);
 
     await getNotes(req, res, next);
 
     assert.isTrue(findStub.calledOnce);
+    assert.isTrue(populateStub.calledOnce);
+    assert.isTrue(sortStub.calledOnce);
+
     assert.isTrue(res.status.calledWith(200));
+
     assert.isTrue(
       res.json.calledWithMatch({
         success: true,
