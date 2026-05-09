@@ -28,7 +28,7 @@ export const updateProfile = async (
     // update the user
     const user = await User.findByIdAndUpdate(req.user!._id, result.data, {
       new: true,
-    });
+    }).select("-password");
 
     // return success response
     return res.status(200).json({
