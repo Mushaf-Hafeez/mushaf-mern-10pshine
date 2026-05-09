@@ -8,6 +8,7 @@ import {
   loginValidation,
   noteIdValidation,
   resetPasswordValidation,
+  updateProfileValidation,
 } from "../../validators/validations";
 
 // ========================================================
@@ -271,6 +272,82 @@ describe("createNoteValidation", () => {
     const result = createNoteValidation.safeParse({
       content: "",
     });
+    assert.isFalse(result.success);
+  });
+});
+
+// ========================================================
+//                 updateProfileValidation Test
+// ========================================================
+describe("updateProfileValidation", () => {
+  it("should pass when only name is provided", () => {
+    const result = updateProfileValidation.safeParse({
+      name: "Updated User",
+    });
+
+    assert.isTrue(result.success);
+  });
+
+  it("should pass when only profile picture is provided", () => {
+    const result = updateProfileValidation.safeParse({
+      profile_pic: "https://example.com/profile.jpg",
+    });
+
+    assert.isTrue(result.success);
+  });
+
+  it("should pass when both name and profile picture are provided", () => {
+    const result = updateProfileValidation.safeParse({
+      name: "Updated User",
+      profile_pic: "https://example.com/profile.jpg",
+    });
+
+    assert.isTrue(result.success);
+  });
+
+  it("should fail when both fields are missing", () => {
+    const result = updateProfileValidation.safeParse({});
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail when name is less than 6 characters", () => {
+    const result = updateProfileValidation.safeParse({
+      name: "Mush",
+    });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail when name is greater than 25 characters", () => {
+    const result = updateProfileValidation.safeParse({
+      name: "ThisNameIsMoreThanTwentyFiveCharacters",
+    });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail when profile picture URL is invalid", () => {
+    const result = updateProfileValidation.safeParse({
+      profile_pic: "invalid-url",
+    });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail when name is empty string", () => {
+    const result = updateProfileValidation.safeParse({
+      name: "",
+    });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail when name contains only spaces", () => {
+    const result = updateProfileValidation.safeParse({
+      name: "      ",
+    });
+
     assert.isFalse(result.success);
   });
 });

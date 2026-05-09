@@ -195,21 +195,47 @@ describe("signup controller", () => {
     } as any);
 
     sinon.stub(User, "findOne").resolves(null);
+
     sinon.stub(OTP, "findOne").resolves({} as any);
 
-    sinon.stub(bcrypt, "genSalt").resolves("salt");
-    sinon.stub(bcrypt, "hash").resolves("hashed");
+    sinon.stub(bcrypt, "genSalt").resolves("salt" as any);
 
-    const createStub = sinon.stub(User, "create").resolves({} as any);
+    sinon.stub(bcrypt, "hash").resolves("hashed" as any);
+
+    const createStub = sinon.stub(User, "create").resolves({
+      _id: "user123",
+      name: "Test",
+      email: "test@gmail.com",
+      password: "hashed",
+      toObject() {
+        return {
+          _id: "user123",
+          name: "Test",
+          email: "test@gmail.com",
+          password: "hashed",
+        };
+      },
+    } as any);
+
     sinon.stub(OTP, "deleteMany").resolves({} as any);
+
     const signStub = sinon.stub(jwt, "sign").returns("fake-token" as any);
 
     await signup(req, res, next);
 
-    assert(createStub.calledOnce);
-    assert(signStub.calledOnce);
-    assert(res.status.calledWith(201));
-    assert(res.json.calledWithMatch({ token: "fake-token" }));
+    assert.isTrue(createStub.calledOnce);
+
+    assert.isTrue(signStub.calledOnce);
+
+    assert.isTrue(res.status.calledWith(201));
+
+    assert.isTrue(
+      res.json.calledWithMatch({
+        success: true,
+        token: "fake-token",
+        message: "User created successfully.",
+      }),
+    );
   });
 });
 
@@ -280,18 +306,44 @@ describe("login controller", () => {
 
     sinon.stub(loginValidation, "safeParse").returns({
       success: true,
-      data: {} as any,
-    });
+      data: {
+        email: "test@gmail.com",
+        password: "123",
+      },
+    } as any);
 
-    sinon.stub(User, "findOne").resolves({} as any);
-    sinon.stub(bcrypt, "compare").resolves(true);
+    sinon.stub(User, "findOne").resolves({
+      _id: "user123",
+      name: "Test",
+      email: "test@gmail.com",
+      password: "hashed-password",
+      toObject() {
+        return {
+          _id: "user123",
+          name: "Test",
+          email: "test@gmail.com",
+          password: "hashed-password",
+        };
+      },
+    } as any);
+
+    sinon.stub(bcrypt, "compare").resolves(true as any);
+
     const signStub = sinon.stub(jwt, "sign").returns("fake-token" as any);
 
     await login(req, res, next);
 
-    assert(signStub.calledOnce);
-    assert(res.status.calledWith(200));
-    assert(res.json.calledWithMatch({ token: "fake-token" }));
+    assert.isTrue(signStub.calledOnce);
+
+    assert.isTrue(res.status.calledWith(200));
+
+    assert.isTrue(
+      res.json.calledWithMatch({
+        success: true,
+        token: "fake-token",
+        message: "User logged in successfully.",
+      }),
+    );
   });
 });
 

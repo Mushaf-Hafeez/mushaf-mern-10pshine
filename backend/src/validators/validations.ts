@@ -149,3 +149,17 @@ export const createNoteValidation = z.object({
 });
 
 export const updateNoteValidation = createNoteValidation;
+
+export const updateProfileValidation = z
+  .object({
+    name: z
+      .string()
+      .trim()
+      .min(6, { message: "Name must contain at least 6 characters." })
+      .max(25, { message: "Name cannot contain more than 25 characters." })
+      .optional(),
+    profile_pic: z.string().url().optional(),
+  })
+  .refine((data) => data.name || data.profile_pic, {
+    message: "Provide a name or a profile picture to update.",
+  });
