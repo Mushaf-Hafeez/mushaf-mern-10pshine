@@ -14,8 +14,8 @@ import ResetPassword from "./pages/ResetPassword"
 import Notes from "./pages/NotesPage"
 import ProtectedRoute from "./components/custom/ProtectedRoute"
 import Layout from "./pages/Layout"
-import Profile from "./pages/Profile"
-import Settings from "./pages/Settings"
+import ProfilePage from "./pages/ProfilePage"
+import SettingsPage from "./pages/SettingsPage"
 import CreateNotePage from "./pages/CreateNotePage"
 import EditNotePage from "./pages/EditNotePage"
 
@@ -80,8 +80,8 @@ const App = () => {
         >
           <Route index element={<Notes />} />
           <Route path="notes" element={<Notes />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>
