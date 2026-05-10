@@ -9,7 +9,7 @@ import Note from "@/components/custom/Note"
 import { getNotes } from "@/services/note.service"
 import { Link } from "react-router-dom"
 
-interface User {
+export interface User {
   _id: string
   name: string
   email: string
