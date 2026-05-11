@@ -81,7 +81,7 @@ const Note = ({ id, content, createdAt, removeNote }: NoteProp) => {
             <AlertDialogContent className="bg-neutral-800">
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogDescription className="text-neutral-400">
                   This action cannot be undone. This will permanently delete
                   your note from our servers.
                 </AlertDialogDescription>
@@ -95,7 +95,7 @@ const Note = ({ id, content, createdAt, removeNote }: NoteProp) => {
                   variant={"destructive"}
                   className="cursor-pointer"
                 >
-                  Continue
+                  Delete
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

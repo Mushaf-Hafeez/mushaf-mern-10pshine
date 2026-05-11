@@ -593,26 +593,20 @@ describe("checkAuth controller", () => {
 //                 deleteAccount Controller
 // ========================================================
 describe("deleteAccount Controller", () => {
-  let req: any, res: any, next: any, session: any;
+  let req: any, res: any, next: any;
 
   beforeEach(() => {
     req = {
       body: { password: "Password123!" },
       user: { _id: new mongoose.Types.ObjectId().toString() },
     };
+
     res = {
       status: sinon.stub().returnsThis(),
       json: sinon.stub().returnsThis(),
     };
-    next = sinon.stub();
 
-    session = {
-      startTransaction: sinon.stub(),
-      commitTransaction: sinon.stub(),
-      abortTransaction: sinon.stub(),
-      endSession: sinon.stub(),
-    };
-    sinon.stub(mongoose, "startSession").resolves(session);
+    next = sinon.stub();
   });
 
   afterEach(() => {
@@ -620,60 +614,63 @@ describe("deleteAccount Controller", () => {
   });
 
   it("should delete account successfully", async () => {
-    const mockUser = { _id: req.user._id, password: "hashedPassword" };
+    const mockUser = {
+      _id: req.user._id,
+      password: "hashedPassword",
+    };
 
-    sinon.stub(User, "findById").returns({
-      session: sinon.stub().resolves(mockUser),
-    } as any);
+    sinon.stub(User, "findById").resolves(mockUser as any);
 
     sinon.stub(bcrypt, "compare").resolves(true);
-    sinon.stub(Note, "deleteMany").resolves();
-    sinon.stub(User, "findByIdAndDelete").resolves();
+
+    sinon.stub(Note, "deleteMany").resolves({} as any);
+
+    sinon.stub(User, "findByIdAndDelete").resolves({} as any);
 
     await deleteAccount(req, res, next);
 
-    assert.isTrue(
-      session.commitTransaction.calledOnce,
-      "Transaction should be committed",
-    );
+    assert.isTrue(Note.deleteMany.calledOnceWith({ user: req.user._id }));
+
+    assert.isTrue(User.findByIdAndDelete.calledOnceWith(req.user._id));
+
     assert.isTrue(res.status.calledWith(200));
   });
 
   it("should throw 404 if user is not found", async () => {
-    sinon.stub(User, "findById").returns({
-      session: sinon.stub().resolves(null),
-    } as any);
+    sinon.stub(User, "findById").resolves(null);
 
     await deleteAccount(req, res, next);
+
     const error = next.firstCall.args[0];
+
     assert.strictEqual(error.statusCode, 404);
     assert.strictEqual(error.message, "User not found.");
   });
 
   it("should throw 400 if password is incorrect", async () => {
-    const mockUser = { password: "hashedPassword" };
-    sinon.stub(User, "findById").returns({
-      session: sinon.stub().resolves(mockUser),
-    } as any);
+    const mockUser = {
+      password: "hashedPassword",
+    };
+
+    sinon.stub(User, "findById").resolves(mockUser as any);
 
     sinon.stub(bcrypt, "compare").resolves(false);
 
     await deleteAccount(req, res, next);
 
     const error = next.firstCall.args[0];
+
     assert.strictEqual(error.statusCode, 400);
     assert.strictEqual(error.message, "Incorrect password.");
   });
 
-  it("should abort transaction and call next on DB error", async () => {
-    sinon.stub(User, "findById").returns({
-      session: sinon.stub().throws(new Error("DB Failure")),
-    } as any);
+  it("should call next on DB error", async () => {
+    sinon.stub(User, "findById").throws(new Error("DB Failure"));
 
     await deleteAccount(req, res, next);
 
-    assert.isTrue(session.abortTransaction.calledOnce);
     const error = next.firstCall.args[0];
+
     assert.strictEqual(error.message, "DB Failure");
   });
 });

@@ -51,3 +51,13 @@ export const resetPassword = async (
   })
   return response
 }
+
+// function to call backend delete account api
+export const deleteAccount = async (password: string) => {
+  const response = await api.delete("/auth/delete-account", {
+    data: {
+      password,
+    },
+  })
+  return response
+}

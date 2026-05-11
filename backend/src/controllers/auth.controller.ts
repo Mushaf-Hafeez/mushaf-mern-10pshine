@@ -378,16 +378,13 @@ export const checkAuth = async (
   }
 };
 
-// deleteAccount controller function
+// deleteAccount controller
 export const deleteAccount = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const session = await mongoose.startSession();
   try {
-    session.startTransaction();
-
     // validation
     const result = deleteAccountValidation.safeParse(req.body);
 
@@ -401,7 +398,7 @@ export const deleteAccount = async (
     const password = result.data.password;
 
     // find the user from the database
-    const user = await User.findById(req.user!._id).session(session);
+    const user = await User.findById(req.user!._id);
 
     // return if no user found
     if (!user) {
@@ -409,17 +406,15 @@ export const deleteAccount = async (
     }
 
     // compare the password
-    if (!(await bcrypt.compare(password, user!.password))) {
+    if (!(await bcrypt.compare(password, user.password))) {
       throw new AppError(400, "Incorrect password.");
     }
 
     // delete all the user's notes
-    await Note.deleteMany({ user: req.user!._id }, { session });
+    await Note.deleteMany({ user: req.user!._id });
 
     // delete the user from the database
-    await User.findByIdAndDelete(req.user!._id, { session });
-
-    await session.commitTransaction();
+    await User.findByIdAndDelete(req.user!._id);
 
     // return the success response
     return res.status(200).json({
@@ -427,9 +422,6 @@ export const deleteAccount = async (
       message: "User has been deleted.",
     });
   } catch (error: any) {
-    await session.abortTransaction();
     next(error);
-  } finally {
-    session.endSession();
   }
 };
