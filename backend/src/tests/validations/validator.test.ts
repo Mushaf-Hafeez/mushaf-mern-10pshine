@@ -4,6 +4,7 @@ import { assert } from "chai";
 import {
   createNoteValidation,
   createUserValidation,
+  deleteAccountValidation,
   emailValidation,
   loginValidation,
   noteIdValidation,
@@ -349,5 +350,25 @@ describe("updateProfileValidation", () => {
     });
 
     assert.isFalse(result.success);
+  });
+});
+
+// ========================================================
+//                 deleteAccountValidation Test
+// ========================================================
+describe("deleteAccountValidation", () => {
+  it("should fail when the password is incorrect", () => {
+    const result = deleteAccountValidation.safeParse({
+      password: "Tempuser123",
+    });
+
+    assert.isFalse(result.success);
+  });
+  it("should pass the validation when the password is correct", () => {
+    const result = deleteAccountValidation.safeParse({
+      password: "Tempuser123#",
+    });
+
+    assert.isTrue(result.success);
   });
 });
