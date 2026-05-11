@@ -163,3 +163,19 @@ export const updateProfileValidation = z
   .refine((data) => data.name || data.profile_pic, {
     message: "Provide a name or a profile picture to update.",
   });
+
+export const deleteAccountValidation = z.object({
+  password: z
+    .string({
+      error: (iss) =>
+        iss.input === undefined ? "Password is required." : "Invalid password.",
+    })
+    .min(8, { error: "Password must be at least 8 characters" })
+    .max(100, { error: "Password is too long" })
+    .regex(/[a-z]/, { error: "Must contain at least one lowercase letter" })
+    .regex(/[A-Z]/, { error: "Must contain at least one uppercase letter" })
+    .regex(/[0-9]/, { error: "Must contain at least one number" })
+    .regex(/[^a-zA-Z0-9]/, {
+      error: "Must contain at least one special character",
+    }),
+});

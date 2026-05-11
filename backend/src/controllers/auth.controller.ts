@@ -5,6 +5,7 @@ import User from "../models/user.model";
 
 import {
   createUserValidation,
+  deleteAccountValidation,
   emailValidation,
   loginValidation,
   resetPasswordValidation,
@@ -19,6 +20,8 @@ import {
 } from "../utils/utils";
 
 import bcrypt from "bcryptjs";
+import Note from "../models/note.model";
+import mongoose from "mongoose";
 
 // sendOTP controller
 export const sendOTP = async (
@@ -372,5 +375,61 @@ export const checkAuth = async (
     });
   } catch (error: any) {
     next(error);
+  }
+};
+
+// deleteAccount controller function
+export const deleteAccount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+
+    // validation
+    const result = deleteAccountValidation.safeParse(req.body);
+
+    if (!result.success) {
+      throw new AppError(
+        400,
+        result.error.issues[0]?.message || "Validation error.",
+      );
+    }
+
+    const password = result.data.password;
+
+    // find the user from the database
+    const user = await User.findById(req.user!._id).session(session);
+
+    // return if no user found
+    if (!user) {
+      throw new AppError(404, "User not found.");
+    }
+
+    // compare the password
+    if (!(await bcrypt.compare(password, user!.password))) {
+      throw new AppError(400, "Incorrect password.");
+    }
+
+    // delete all the user's notes
+    await Note.deleteMany({ user: req.user!._id }, { session });
+
+    // delete the user from the database
+    await User.findByIdAndDelete(req.user!._id, { session });
+
+    await session.commitTransaction();
+
+    // return the success response
+    return res.status(200).json({
+      success: true,
+      message: "User has been deleted.",
+    });
+  } catch (error: any) {
+    await session.abortTransaction();
+    next(error);
+  } finally {
+    session.endSession();
   }
 };
