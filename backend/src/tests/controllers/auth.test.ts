@@ -1,8 +1,9 @@
-import { assert, expect } from "chai";
+import { assert } from "chai";
 import sinon from "sinon";
 
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 // importing validations
 import {
@@ -18,6 +19,7 @@ import {
   deleteAccount,
   forgotPassword,
   login,
+  logout,
   resetPassword,
   sendOTP,
   signup,
@@ -26,7 +28,6 @@ import {
 import User from "../../models/user.model";
 import OTP from "../../models/otp.model";
 import transporter from "../../config/nodemailer.config";
-import AppError from "../../utils/AppError";
 import Note from "../../models/note.model";
 import mongoose from "mongoose";
 
@@ -181,6 +182,7 @@ describe("signup controller", () => {
     const req: any = { body: {} };
 
     const res: any = {
+      cookie: sinon.stub(),
       status: sinon.stub().returnsThis(),
       json: sinon.stub(),
     };
@@ -231,12 +233,13 @@ describe("signup controller", () => {
 
     assert.isTrue(signStub.calledOnce);
 
+    assert.isTrue(res.cookie.calledWithMatch("token", "fake-token"));
+
     assert.isTrue(res.status.calledWith(201));
 
     assert.isTrue(
       res.json.calledWithMatch({
         success: true,
-        token: "fake-token",
         message: "User created successfully.",
       }),
     );
@@ -302,6 +305,7 @@ describe("login controller", () => {
     const req: any = { body: {} };
 
     const res: any = {
+      cookie: sinon.stub(),
       status: sinon.stub().returnsThis(),
       json: sinon.stub(),
     };
@@ -339,13 +343,42 @@ describe("login controller", () => {
 
     assert.isTrue(signStub.calledOnce);
 
+    assert.isTrue(res.cookie.calledWithMatch("token", "fake-token"));
+
     assert.isTrue(res.status.calledWith(200));
 
     assert.isTrue(
       res.json.calledWithMatch({
         success: true,
-        token: "fake-token",
         message: "User logged in successfully.",
+      }),
+    );
+  });
+});
+
+// ========================================================
+//                 logout controller
+// ========================================================
+describe("logout controller", () => {
+  it("should clear cookie and return 200", async () => {
+    const req: any = {};
+
+    const res: any = {
+      clearCookie: sinon.stub(),
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await logout(req, res);
+
+    assert.isTrue(res.clearCookie.calledOnceWith("token"));
+
+    assert.isTrue(res.status.calledWith(200));
+
+    assert.isTrue(
+      res.json.calledWithMatch({
+        success: true,
+        message: "Logged out successfully.",
       }),
     );
   });
@@ -580,6 +613,7 @@ describe("checkAuth controller", () => {
     await checkAuth(req, res, next);
 
     assert(res.status.calledWith(200));
+
     assert(
       res.json.calledWithMatch({
         success: true,

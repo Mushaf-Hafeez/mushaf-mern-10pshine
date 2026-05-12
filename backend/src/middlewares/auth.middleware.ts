@@ -32,7 +32,7 @@ export const isAuth = async (
 ) => {
   try {
     // get the token
-    const token = req.headers.authorization?.split(" ")[1];
+    const token = req.cookies.token;
 
     // validation
     if (!token) {

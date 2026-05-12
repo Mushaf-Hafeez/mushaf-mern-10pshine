@@ -13,6 +13,8 @@ import httpLogger from "./utils/httpLogger";
 import cors from "cors";
 import type { CorsOptions } from "cors";
 
+import cookieParser from "cookie-parser";
+
 // environment variables
 import { config } from "dotenv";
 config();
@@ -28,12 +30,14 @@ connectDB();
 
 const corsOptions: CorsOptions = {
   origin: process.env.FRONTEND_URL,
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 
 // middleware
 app.use(express.json());
 app.use(httpLogger);
+app.use(cookieParser());
 app.use(cors(corsOptions));
 
 // api versioning

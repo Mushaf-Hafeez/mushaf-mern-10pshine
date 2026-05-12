@@ -154,11 +154,18 @@ export const signup = async (
     // also send user without password in the response
     const { password, ...safeUser } = user.toObject();
 
+    // set cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     // return the response
     return res.status(201).json({
       success: true,
       user: safeUser,
-      token,
       message: "User created successfully.",
     });
   } catch (error: any) {
@@ -222,11 +229,18 @@ export const login = async (
       // also send the user in the response without password
       const { password, ...safeUser } = user.toObject();
 
+      // set cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
       // return the response
       return res.status(200).json({
         success: true,
         user: safeUser,
-        token,
         message: "User logged in successfully.",
       });
     }
@@ -424,4 +438,14 @@ export const deleteAccount = async (
   } catch (error: any) {
     next(error);
   }
+};
+
+// logout controller
+export const logout = async (req: Request, res: Response) => {
+  res.clearCookie("token");
+
+  return res.status(200).json({
+    success: true,
+    message: "Logged out successfully.",
+  });
 };
