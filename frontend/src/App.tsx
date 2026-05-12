@@ -35,13 +35,11 @@ const App = () => {
         }
       } catch (error: any) {
         console.log("error is: ", error)
-        localStorage.removeItem("token")
         clearUser()
       }
     }
-    if (localStorage.getItem("token")) {
-      getUser()
-    }
+
+    getUser()
   }, [])
 
   return (

@@ -80,7 +80,6 @@ const DeleteAccount = () => {
         reset({ password: "" })
         setOpen(false)
         clearUser()
-        localStorage.removeItem("token")
         navigate("/")
       }
     } catch (error: any) {

@@ -93,7 +93,6 @@ const ResetPassword = () => {
 
       if (response.status === 200) {
         clearUser()
-        localStorage.removeItem("token")
         reset({ password: "", confirmPassword: "" })
         navigate("/auth?mode=login")
       }
