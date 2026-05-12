@@ -1,3 +1,4 @@
+import DeleteAccount from "@/components/custom/DeleteAccount"
 import Spinner from "@/components/custom/Spinner"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -11,6 +12,7 @@ import { UploadCloud } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
+
 import { z } from "zod"
 
 const updateProfileSchema = z
@@ -117,7 +119,7 @@ const SettingsPage = () => {
   }, [image])
 
   return (
-    <section className="h-screen w-full bg-neutral-900 text-white">
+    <section className="min-h-screen w-full bg-neutral-900 text-white">
       {/* header */}
       <div className="flex w-full items-center justify-between gap-2 border-b border-neutral-800 px-6 py-4 backdrop-blur-sm">
         <div className="flex items-center gap-2">
@@ -134,7 +136,7 @@ const SettingsPage = () => {
       </div>
 
       {/* settings */}
-      <div className="p-6">
+      <div className="space-y-6 p-6">
         <div className="space-y-6">
           <h2 className="text-xl font-semibold">Account Settings</h2>
 
@@ -216,6 +218,18 @@ const SettingsPage = () => {
               Update
             </Button>
           </form>
+        </div>
+
+        {/* security */}
+        <div className="w-3xl space-y-6">
+          <h2 className="text-xl font-semibold">Account Settings</h2>
+          <div className="flex w-full items-center justify-between rounded-2xl bg-neutral-800 p-6">
+            <div>
+              <h3 className="font-semibold">Danger Zone</h3>
+              <p>Permanently delete your account.</p>
+            </div>
+            <DeleteAccount />
+          </div>
         </div>
       </div>
     </section>

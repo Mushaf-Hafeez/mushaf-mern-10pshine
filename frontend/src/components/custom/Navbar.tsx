@@ -6,13 +6,8 @@ import { useUser } from "@/zustand/useUser"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 const Navbar = () => {
-  const { user, clearUser } = useUser((state) => state)
+  const { user } = useUser((state) => state)
   const navigate = useNavigate()
-
-  const handleLogout = () => {
-    clearUser()
-    localStorage.removeItem("token")
-  }
 
   const goToProfile = () => {
     navigate("/user/profile")
@@ -26,17 +21,20 @@ const Navbar = () => {
 
       {/* Auth buttons */}
       {user ? (
-        <div className="items-cente flex gap-2 text-sm">
+        <div className="flex items-center gap-4 text-sm">
+          <Link
+            to={"/user/notes"}
+            className="text-xs font-light text-neutral-400 transition-colors duration-100 hover:text-primary md:text-sm"
+          >
+            Notes
+          </Link>
           <Avatar onClick={goToProfile} className="cursor-pointer">
             <AvatarImage src={user.profile_pic} />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <Button onClick={handleLogout} className="cursor-pointer">
-            Logout
-          </Button>
         </div>
       ) : (
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex items-center gap-4 text-sm">
           <Link
             to={"/auth?mode=login"}
             className="text-xs font-light text-neutral-400 transition-colors duration-100 hover:text-primary md:text-sm"
