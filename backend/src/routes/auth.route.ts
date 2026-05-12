@@ -10,6 +10,7 @@ import {
   resetPassword,
   checkAuth,
   deleteAccount,
+  logout,
 } from "../controllers/auth.controller";
 
 // importing middlewares
@@ -23,5 +24,6 @@ authRoutes.put("/forgot-password", forgotPassword);
 authRoutes.put("/reset-password", resetPassword);
 authRoutes.get("/check-auth", isAuth, checkAuth);
 authRoutes.delete("/delete-account", isAuth, deleteAccount);
+authRoutes.post("/logout", isAuth, logout);
 
 export default authRoutes;
