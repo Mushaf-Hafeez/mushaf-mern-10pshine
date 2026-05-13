@@ -1,6 +1,8 @@
 import dayjs from "dayjs"
-import { CheckCircle, Edit, Edit2, Trash2 } from "lucide-react"
+import { CheckCircle, Edit2, Trash2 } from "lucide-react"
 import relativeTime from "dayjs/plugin/relativeTime"
+
+import remarkGfm from "remark-gfm"
 
 import {
   AlertDialog,
@@ -52,7 +54,9 @@ const Note = ({ id, content, createdAt, removeNote }: NoteProp) => {
       onClick={() => console.log("note clicked")}
     >
       <div className="markdown-revert">
-        <ReactMarkdown rehypePlugins={[rehypeRaw]}>{content}</ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+          {content}
+        </ReactMarkdown>
       </div>
       <div className="flex items-center justify-between text-neutral-400">
         <div className="flex items-center gap-2">
