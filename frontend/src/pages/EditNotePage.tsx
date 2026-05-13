@@ -66,7 +66,7 @@ const EditNotePage = () => {
   }, [id])
 
   return (
-    <section className="min-h-screen w-full bg-neutral-900 pt-30 pb-10 text-white">
+    <section className="h-screen w-full bg-neutral-900 pt-30 pb-10 text-white">
       {/* create note header */}
       <header className="fixed top-4 left-1/2 z-50 flex w-sm -translate-x-1/2 items-center justify-between rounded-full bg-neutral-800/30 px-6 py-4 outline outline-neutral-800 backdrop-blur-md sm:w-xl md:w-3xl lg:w-5xl">
         <Button
