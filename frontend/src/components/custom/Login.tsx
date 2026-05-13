@@ -78,8 +78,6 @@ const Login = () => {
       if (response.status === 200) {
         // set the user in the zustand
         setUser(response.data.user)
-        // store the token in localStorage
-        localStorage.setItem("token", response.data.token)
         navigate("/") // after creating notes page, redirect the user to notes page.
       }
 

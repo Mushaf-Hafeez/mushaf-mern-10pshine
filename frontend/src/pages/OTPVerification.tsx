@@ -30,7 +30,6 @@ interface OTPData {
 const OTPVerification = () => {
   const setUser = useUser((state) => state.setUser)
 
-  const [isResend, setIsResend] = useState<boolean>(false)
   const [isResending, setIsResending] = useState<boolean>(false)
   const {
     setError,
@@ -108,7 +107,6 @@ const OTPVerification = () => {
 
       if (response.status === 201) {
         setUser(response.data.user)
-        localStorage.setItem("token", response.data.token)
         clearData() // to clear the data from the zustand
         reset({ otp: "" })
         navigate("/") // redirect the user to notes page when it will be created

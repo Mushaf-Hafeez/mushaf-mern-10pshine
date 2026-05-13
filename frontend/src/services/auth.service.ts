@@ -61,3 +61,9 @@ export const deleteAccount = async (password: string) => {
   })
   return response
 }
+
+// function to call backend logout api
+export const logout = async () => {
+  const response = await api.post("/auth/logout")
+  return response
+}

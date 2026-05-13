@@ -25,10 +25,12 @@ import {
 import type { User } from "./NotesPage"
 
 import { Calendar, LogOut, Mail, Pencil } from "lucide-react"
+import { logout } from "@/services/auth.service"
 
 const ProfilePag = () => {
   const [open, setOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false)
   const [user, setUser] = useState<User | null>()
   const [error, setError] = useState<string>("")
 
@@ -36,10 +38,20 @@ const ProfilePag = () => {
   const navigate = useNavigate()
 
   // logout function
-  const handleLogout = () => {
-    localStorage.removeItem("token")
-    clearUser()
-    navigate("/")
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      const response = await logout()
+
+      if (response.status === 200) {
+        clearUser()
+        navigate("/")
+      }
+    } catch (error: any) {
+      console.log("error is: ", error)
+    } finally {
+      setIsLoggingOut(false)
+    }
   }
 
   useEffect(() => {
@@ -150,8 +162,10 @@ const ProfilePag = () => {
                       <AlertDialogAction
                         onClick={handleLogout}
                         variant={"destructive"}
-                        className="cursor-pointer"
+                        className="flex cursor-pointer items-center gap-2"
+                        disabled={isLoggingOut}
                       >
+                        {isLoggingOut && <Spinner />}
                         Logout
                       </AlertDialogAction>
                     </AlertDialogFooter>
