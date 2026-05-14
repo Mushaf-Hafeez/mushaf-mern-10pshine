@@ -18,14 +18,29 @@ export const getNotes = async (
     // get the user id from req.user
     const user = req.user!._id;
 
+    // get the params
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // get how many notes user have in the database
+    const totalNotes = await Note.countDocuments({ user });
+
     // get all the notes from the database
     const notes = await Note.find({ user })
       .populate("user", "-password")
-      .sort({ updatedAt: -1 });
+      .sort({ updatedAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // check if more notes exist
+    const hasMore = skip + notes.length < totalNotes;
 
     return res.status(200).json({
       success: true,
       notes,
+      hasMore,
+      currentPage: page,
     });
   } catch (error: any) {
     next(error);
