@@ -24,9 +24,13 @@ afterEach(() => {
 //                 getNotes controller
 // ========================================================
 describe("getNotes controller", () => {
-  it("should return notes for user", async () => {
+  it("should return paginated notes for user", async () => {
     const req: any = {
       user: { _id: "user123" },
+      query: {
+        page: "1",
+        limit: "10",
+      },
     };
 
     const res: any = {
@@ -38,7 +42,19 @@ describe("getNotes controller", () => {
 
     const notesMock = [{ content: "test note" }];
 
-    const sortStub = sinon.stub().resolves(notesMock);
+    // countDocuments stub
+    const countStub = sinon.stub(Note, "countDocuments").resolves(15);
+
+    // query chain stubs
+    const limitStub = sinon.stub().resolves(notesMock);
+
+    const skipStub = sinon.stub().returns({
+      limit: limitStub,
+    });
+
+    const sortStub = sinon.stub().returns({
+      skip: skipStub,
+    });
 
     const populateStub = sinon.stub().returns({
       sort: sortStub,
@@ -50,9 +66,12 @@ describe("getNotes controller", () => {
 
     await getNotes(req, res, next);
 
+    assert.isTrue(countStub.calledOnce);
     assert.isTrue(findStub.calledOnce);
     assert.isTrue(populateStub.calledOnce);
     assert.isTrue(sortStub.calledOnce);
+    assert.isTrue(skipStub.calledOnce);
+    assert.isTrue(limitStub.calledOnce);
 
     assert.isTrue(res.status.calledWith(200));
 
@@ -60,16 +79,72 @@ describe("getNotes controller", () => {
       res.json.calledWithMatch({
         success: true,
         notes: notesMock,
+        hasMore: true,
+        currentPage: 1,
+      }),
+    );
+  });
+
+  it("should return hasMore false when no more notes exist", async () => {
+    const req: any = {
+      user: { _id: "user123" },
+      query: {
+        page: "2",
+        limit: "10",
+      },
+    };
+
+    const res: any = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    const next = sinon.spy();
+
+    const notesMock = [{ content: "last note" }];
+
+    sinon.stub(Note, "countDocuments").resolves(11);
+
+    const limitStub = sinon.stub().resolves(notesMock);
+
+    const skipStub = sinon.stub().returns({
+      limit: limitStub,
+    });
+
+    const sortStub = sinon.stub().returns({
+      skip: skipStub,
+    });
+
+    const populateStub = sinon.stub().returns({
+      sort: sortStub,
+    });
+
+    sinon.stub(Note, "find").returns({
+      populate: populateStub,
+    } as any);
+
+    await getNotes(req, res, next);
+
+    assert.isTrue(
+      res.json.calledWithMatch({
+        success: true,
+        notes: notesMock,
+        hasMore: false,
+        currentPage: 2,
       }),
     );
   });
 
   it("should call next on error", async () => {
-    const req: any = { user: { _id: "user123" } };
+    const req: any = {
+      user: { _id: "user123" },
+      query: {},
+    };
+
     const res: any = {};
     const next = sinon.spy();
 
-    sinon.stub(Note, "find").throws(new Error("DB error"));
+    sinon.stub(Note, "countDocuments").throws(new Error("DB error"));
 
     await getNotes(req, res, next);
 
