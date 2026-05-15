@@ -1,8 +1,8 @@
 import { api } from "./axios"
 
 // function to get the notes from the backend
-export const getNotes = async () => {
-  const response = await api.get("/notes")
+export const getNotes = async (page: number, limit: number) => {
+  const response = await api.get(`/notes?page=${page}&limit=${limit}`)
   return response
 }
 
