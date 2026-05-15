@@ -39,7 +39,7 @@ const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <div className="flex w-full items-center gap-4 rounded-lg bg-neutral-800 p-4">
+        <div className="flex w-full items-center gap-4 rounded-lg bg-neutral-800/30 p-4 outline outline-neutral-800">
           <Avatar>
             <AvatarImage className="bg-neutral-900" src={user?.profile_pic} />
             <AvatarFallback>{user?.name.slice(0, 2)}</AvatarFallback>

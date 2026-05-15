@@ -142,7 +142,7 @@ const SettingsPage = () => {
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="max-w-md space-y-4 rounded-2xl bg-neutral-800 p-6"
+            className="max-w-md space-y-4 rounded-2xl bg-neutral-800/30 p-6 outline outline-neutral-800"
           >
             {/* profile image */}
             <Field>
@@ -223,7 +223,7 @@ const SettingsPage = () => {
         {/* security */}
         <div className="w-3xl space-y-6">
           <h2 className="text-xl font-semibold">Account Settings</h2>
-          <div className="flex w-full items-center justify-between rounded-2xl bg-neutral-800 p-6">
+          <div className="flex w-full items-center justify-between rounded-2xl bg-neutral-800/30 p-6 outline outline-neutral-800">
             <div>
               <h3 className="font-semibold">Danger Zone</h3>
               <p>Permanently delete your account.</p>
