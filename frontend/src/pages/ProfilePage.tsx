@@ -79,9 +79,9 @@ const ProfilePag = () => {
   }, [])
 
   return (
-    <section className="h-screen w-full bg-neutral-900 text-white">
+    <section className="min-h-screen w-full bg-neutral-900 text-white">
       {/* header */}
-      <div className="flex w-full items-center justify-between gap-2 border-b border-neutral-800 px-6 py-4 backdrop-blur-sm">
+      <div className="flex w-full items-center justify-between gap-2 border-b border-neutral-800 px-4 py-3 backdrop-blur-sm sm:px-6 sm:py-4">
         <div className="flex items-center gap-2">
           <Button
             size={"icon-lg"}
@@ -91,41 +91,41 @@ const ProfilePag = () => {
             <SidebarTrigger />
           </Button>
 
-          <h2 className="text-lg font-medium">Profile</h2>
+          <h2 className="text-base font-medium sm:text-lg">Profile</h2>
         </div>
       </div>
 
       {isLoading ? (
         <Spinner />
       ) : (
-        <div className="flex h-[calc(100vh-73px)] items-center justify-center">
+        <div className="flex min-h-[calc(100vh-73px)] items-center justify-center px-4 py-6 sm:px-6">
           {error ? (
             <p className="text-red-500">{error}</p>
           ) : (
-            <div className="flex w-full max-w-md flex-col gap-6 rounded-2xl bg-neutral-800/30 p-8 outline outline-neutral-800">
+            <div className="flex w-full max-w-md flex-col gap-4 rounded-2xl bg-neutral-800/30 p-4 outline outline-neutral-800 sm:gap-6 sm:p-8">
               {/* profile */}
-              <div className="flex flex-col items-center gap-4">
-                <Avatar className="h-24 w-24">
+              <div className="flex flex-col items-center gap-3 sm:gap-4">
+                <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
                   <AvatarImage src={user!.profile_pic} />
                   <AvatarFallback>
                     {user?.name?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
 
-                <h2 className="text-3xl font-semibold">
+                <h2 className="text-center text-xl font-semibold sm:text-3xl">
                   {user?.name || "Unknown User"}
                 </h2>
               </div>
 
               {/* info */}
-              <div className="flex flex-col gap-5 text-neutral-400">
-                <div className="flex items-center gap-4 rounded-full bg-neutral-800 px-6 py-3">
-                  <Mail size={20} />
-                  <p className="text-md">{user!.email}</p>
+              <div className="flex flex-col gap-3 text-neutral-400 sm:gap-5">
+                <div className="flex items-center gap-3 rounded-full bg-neutral-800 px-4 py-2 sm:gap-4 sm:px-6 sm:py-3">
+                  <Mail size={18} className="flex-shrink-0 sm:size-5" />
+                  <p className="truncate text-sm sm:text-base">{user!.email}</p>
                 </div>
-                <div className="flex items-center gap-4 rounded-full bg-neutral-800 px-6 py-3">
-                  <Calendar size={20} />
-                  <p className="text-md">
+                <div className="flex items-center gap-3 rounded-full bg-neutral-800 px-4 py-2 sm:gap-4 sm:px-6 sm:py-3">
+                  <Calendar size={18} className="flex-shrink-0 sm:size-5" />
+                  <p className="text-sm sm:text-base">
                     {dayjs(
                       new Date(user!.createdAt).toLocaleDateString()
                     ).format("MMMM DD, YYYY")}
@@ -134,19 +134,19 @@ const ProfilePag = () => {
               </div>
 
               {/* CTAs */}
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <Link
                   to={"/user/settings"}
-                  className="flex-center flex-1 cursor-pointer gap-2 rounded-full bg-neutral-800 py-3 text-center text-neutral-400 transition-all duration-200 hover:text-white"
+                  className="flex-center flex-1 cursor-pointer gap-2 rounded-full bg-neutral-800 py-2 text-center text-xs text-neutral-400 transition-all duration-200 hover:text-white sm:py-3 sm:text-sm"
                 >
-                  <Pencil size={20} />
+                  <Pencil size={18} className="sm:size-5" />
                   Edit Profile
                 </Link>
 
                 <AlertDialog open={open} onOpenChange={setOpen}>
                   <AlertDialogTrigger asChild>
-                    <button className="flex-center flex-1 cursor-pointer gap-2 rounded-full bg-red-400/15 py-3 text-center text-red-300 transition-all duration-200 hover:text-red-400">
-                      <LogOut size={20} />
+                    <button className="flex-center flex-1 cursor-pointer gap-2 rounded-full bg-red-400/15 py-2 text-center text-xs text-red-300 transition-all duration-200 hover:text-red-400 sm:py-3 sm:text-sm">
+                      <LogOut size={18} className="sm:size-5" />
                       Logout
                     </button>
                   </AlertDialogTrigger>
