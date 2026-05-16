@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { logger } from "@/lib/logger"
 
 import { Button } from "@/components/ui/button"
 import Editor from "@/components/custom/Editor"
@@ -31,11 +32,15 @@ const CreateNotePage = () => {
       const response = await createNote(content)
 
       if (response.status === 201) {
+        logger.info(
+          { noteId: response.data.note._id },
+          "Note created successfully"
+        )
         setContent("")
         navigate("/user/notes")
       }
     } catch (error: any) {
-      console.log("error is: ", error)
+      logger.error({ error: error.message }, "Failed to create note")
       setError(error.response.data.message)
     } finally {
       setIsSaving(false)

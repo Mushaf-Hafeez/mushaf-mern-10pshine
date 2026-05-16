@@ -1,4 +1,5 @@
 import { Link, useSearchParams } from "react-router-dom"
+import { logger } from "@/lib/logger"
 
 // importing components
 import Login from "@/components/custom/Login"
@@ -7,7 +8,13 @@ import Signup from "@/components/custom/Signup"
 const AuthPage = () => {
   const [searchParams] = useSearchParams()
 
-  const isLogin: boolean = searchParams.get("mode")?.toLowerCase() === "login"
+  const modeParam = searchParams.get("mode")?.toLowerCase()
+  const isLogin: boolean = modeParam === "login"
+
+  // Warn if invalid mode is provided
+  if (modeParam && modeParam !== "login" && modeParam !== "signup") {
+    logger.warn({ mode: modeParam }, "Invalid auth mode parameter provided")
+  }
 
   return (
     <section className="relative h-screen w-full overflow-hidden bg-neutral-900 text-white">

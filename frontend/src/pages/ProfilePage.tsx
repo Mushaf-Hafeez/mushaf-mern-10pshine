@@ -2,6 +2,7 @@ import dayjs from "dayjs"
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useUser } from "@/zustand/useUser"
+import { logger } from "@/lib/logger"
 
 import { getProfile } from "@/services/profile.service"
 
@@ -44,11 +45,12 @@ const ProfilePag = () => {
       const response = await logout()
 
       if (response.status === 200) {
+        logger.info({ userId: user?._id }, "User logged out successfully")
         clearUser()
         navigate("/")
       }
     } catch (error: any) {
-      console.log("error is: ", error)
+      logger.error({ error: error.message }, "Logout failed")
     } finally {
       setIsLoggingOut(false)
     }
@@ -66,7 +68,7 @@ const ProfilePag = () => {
           setUser(response.data.user)
         }
       } catch (error: any) {
-        console.log("error is: ", error)
+        logger.error({ error: error.message }, "Failed to fetch profile")
         setError(error.response?.data?.message || "Something went wrong")
       } finally {
         setIsLoading(false)

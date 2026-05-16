@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Button } from "../ui/button"
 import { Field, FieldError, FieldLabel } from "../ui/field"
 import { Input } from "../ui/input"
+import { logger } from "@/lib/logger"
 
 import { Link, useNavigate } from "react-router-dom"
 import { Eye, EyeClosed } from "lucide-react"
@@ -76,6 +77,10 @@ const Login = () => {
       const response = await login(data)
 
       if (response.status === 200) {
+        logger.info(
+          { userId: response.data.user._id },
+          "User logged in successfully"
+        )
         // set the user in the zustand
         setUser(response.data.user)
         navigate("/") // after creating notes page, redirect the user to notes page.
@@ -83,7 +88,7 @@ const Login = () => {
 
       reset({ email: "", password: "" })
     } catch (error: any) {
-      console.log("error is: ", error.response.data)
+      logger.error({ error: error.message, email: data.email }, "Login failed")
       setError("root", {
         type: "backend",
         message: error.response.data.message || "Something went wrong.",

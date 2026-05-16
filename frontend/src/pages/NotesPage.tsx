@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Grid2X2, Plus } from "lucide-react"
 import InfiniteScroll from "react-infinite-scroll-component"
 import { Link } from "react-router-dom"
+import { logger } from "@/lib/logger"
 
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
@@ -62,7 +63,7 @@ const Notes = () => {
         setPage((prev) => prev + 1)
       }
     } catch (error: any) {
-      console.log("error is: ", error)
+      logger.error({ error: error.message, page }, "Failed to fetch notes")
 
       setError(error?.response?.data?.message || "Something went wrong.")
     } finally {

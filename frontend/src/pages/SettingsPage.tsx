@@ -1,5 +1,6 @@
 import DeleteAccount from "@/components/custom/DeleteAccount"
 import Spinner from "@/components/custom/Spinner"
+import { logger } from "@/lib/logger"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
@@ -93,11 +94,15 @@ const SettingsPage = () => {
       const response = await updateProfile(formData)
 
       if (response.status === 200) {
+        logger.info(
+          { userId: response.data.user._id },
+          "Profile updated successfully"
+        )
         setUser(response.data.user)
         navigate("/user/profile")
       }
     } catch (error: any) {
-      console.log("error is: ", error)
+      logger.error({ error: error.message }, "Failed to update profile")
 
       setError("root", {
         type: "backend",

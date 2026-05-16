@@ -3,6 +3,7 @@ import { useState } from "react"
 import { Button } from "../ui/button"
 import { Field, FieldError, FieldLabel } from "../ui/field"
 import { Input } from "../ui/input"
+import { logger } from "@/lib/logger"
 
 import { Eye, EyeClosed } from "lucide-react"
 import { useForm } from "react-hook-form"
@@ -111,6 +112,7 @@ const Signup = () => {
       const response = await OTP(data.email)
 
       if (response.status === 200) {
+        logger.info({ email: data.email }, "OTP sent successfully for signup")
         // store the data in the state
         setData(data)
         // redirect the user to OTP verification page.
@@ -119,7 +121,10 @@ const Signup = () => {
 
       reset({ name: "", email: "", password: "", confirmPassword: "" })
     } catch (error: any) {
-      console.log("error is: ", error.response.data)
+      logger.error(
+        { error: error.message, email: data.email },
+        "OTP sending failed"
+      )
       setError("root", {
         type: "backend",
         message: error.response.data.message || "Seomething went wrong.",
