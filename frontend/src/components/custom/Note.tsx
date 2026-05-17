@@ -1,6 +1,7 @@
 import dayjs from "dayjs"
 import { CheckCircle, Edit2, Trash2 } from "lucide-react"
 import relativeTime from "dayjs/plugin/relativeTime"
+import { logger } from "@/lib/logger"
 
 import remarkGfm from "remark-gfm"
 
@@ -40,19 +41,23 @@ const Note = ({ id, content, createdAt, removeNote }: NoteProp) => {
       const response = await deleteNote(noteId)
 
       if (response.status === 200) {
+        logger.info({ noteId }, "Note deleted successfully")
         removeNote(noteId)
         setOpen(false)
       }
     } catch (error) {
-      console.log("error is: ", error)
+      logger.error(
+        {
+          error: error instanceof Error ? error.message : String(error),
+          noteId,
+        },
+        "Failed to delete note"
+      )
     }
   }
 
   return (
-    <li
-      className="group mb-4 flex h-fit cursor-pointer break-inside-avoid flex-col justify-between gap-4 rounded-2xl bg-neutral-800/30 p-6 outline outline-neutral-800 transition-all duration-200 hover:outline-primary md:px-8"
-      onClick={() => console.log("note clicked")}
-    >
+    <li className="group mb-4 flex h-fit cursor-pointer break-inside-avoid flex-col justify-between gap-4 rounded-2xl bg-neutral-800/30 p-6 outline outline-neutral-800 transition-all duration-200 hover:outline-primary md:px-8">
       <div className="markdown-revert">
         <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
           {content}
@@ -78,7 +83,6 @@ const Note = ({ id, content, createdAt, removeNote }: NoteProp) => {
                 className="transition-all duration-200 hover:text-white"
                 onClick={(e) => {
                   e.stopPropagation()
-                  console.log("note deleted")
                 }}
               />
             </AlertDialogTrigger>

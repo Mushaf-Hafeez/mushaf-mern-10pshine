@@ -1,5 +1,6 @@
 import DeleteAccount from "@/components/custom/DeleteAccount"
 import Spinner from "@/components/custom/Spinner"
+import { logger } from "@/lib/logger"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
@@ -93,11 +94,15 @@ const SettingsPage = () => {
       const response = await updateProfile(formData)
 
       if (response.status === 200) {
+        logger.info(
+          { userId: response.data.user._id },
+          "Profile updated successfully"
+        )
         setUser(response.data.user)
         navigate("/user/profile")
       }
     } catch (error: any) {
-      console.log("error is: ", error)
+      logger.error({ error: error.message }, "Failed to update profile")
 
       setError("root", {
         type: "backend",
@@ -121,7 +126,7 @@ const SettingsPage = () => {
   return (
     <section className="min-h-screen w-full bg-neutral-900 text-white">
       {/* header */}
-      <div className="flex w-full items-center justify-between gap-2 border-b border-neutral-800 px-6 py-4 backdrop-blur-sm">
+      <div className="flex w-full items-center justify-between gap-2 border-b border-neutral-800 px-4 py-3 backdrop-blur-sm sm:px-6 sm:py-4">
         <div className="flex items-center gap-2">
           <Button
             size={"icon-lg"}
@@ -131,40 +136,42 @@ const SettingsPage = () => {
             <SidebarTrigger />
           </Button>
 
-          <h2 className="text-lg font-medium">Settings</h2>
+          <h2 className="text-base font-medium sm:text-lg">Settings</h2>
         </div>
       </div>
 
       {/* settings */}
-      <div className="space-y-6 p-6">
-        <div className="space-y-6">
-          <h2 className="text-xl font-semibold">Account Settings</h2>
+      <div className="space-y-4 px-4 py-4 sm:space-y-6 sm:px-6 sm:py-6">
+        <div className="space-y-4 sm:space-y-6">
+          <h2 className="text-lg font-semibold sm:text-xl">Account Settings</h2>
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="max-w-md space-y-4 rounded-2xl bg-neutral-800/30 p-6 outline outline-neutral-800"
+            className="w-full space-y-3 rounded-2xl bg-neutral-800/30 p-4 outline outline-neutral-800 sm:max-w-md sm:space-y-4 sm:p-6"
           >
             {/* profile image */}
             <Field>
               <div className="flex-center">
                 {preview ? (
-                  <Avatar className="size-24">
+                  <Avatar className="size-20 sm:size-24">
                     <AvatarImage src={preview} />
                     <AvatarFallback>
                       {user?.name?.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 ) : (
-                  <div className="flex-center size-24 rounded-full bg-neutral-700/30">
-                    <UploadCloud size={30} className="text-primary" />
+                  <div className="flex-center size-20 rounded-full bg-neutral-700/30 sm:size-24">
+                    <UploadCloud size={24} className="text-primary sm:size-8" />
                   </div>
                 )}
               </div>
 
               <div>
-                <h3 className="mt-2 text-center">Profile picture</h3>
+                <h3 className="mt-2 text-center text-sm sm:text-base">
+                  Profile picture
+                </h3>
 
-                <p className="text-center text-sm text-neutral-400">
+                <p className="text-center text-xs text-neutral-400 sm:text-sm">
                   Upload profile picture
                 </p>
               </div>
@@ -172,7 +179,7 @@ const SettingsPage = () => {
               <div className="flex-center">
                 <FieldLabel
                   htmlFor="image"
-                  className="my-2 w-fit cursor-pointer rounded-full bg-neutral-700/30 px-3 py-2 text-xs transition-all duration-200 hover:bg-neutral-700"
+                  className="my-2 w-fit cursor-pointer rounded-full bg-neutral-700/30 px-2 py-1 text-xs transition-all duration-200 hover:bg-neutral-700 sm:px-3 sm:py-2"
                 >
                   Change Picture
                 </FieldLabel>
@@ -221,12 +228,16 @@ const SettingsPage = () => {
         </div>
 
         {/* security */}
-        <div className="w-3xl space-y-6">
-          <h2 className="text-xl font-semibold">Account Settings</h2>
-          <div className="flex w-full items-center justify-between rounded-2xl bg-neutral-800/30 p-6 outline outline-neutral-800">
+        <div className="space-y-4 sm:space-y-6">
+          <h2 className="text-lg font-semibold sm:text-xl">Danger Zone</h2>
+          <div className="flex flex-col gap-3 rounded-2xl bg-neutral-800/30 p-4 outline outline-neutral-800 sm:gap-4 sm:p-6 md:flex-row md:items-center md:justify-between">
             <div>
-              <h3 className="font-semibold">Danger Zone</h3>
-              <p>Permanently delete your account.</p>
+              <h3 className="text-sm font-semibold sm:text-base">
+                Delete Account
+              </h3>
+              <p className="text-xs text-neutral-400 sm:text-sm">
+                Permanently delete your account.
+              </p>
             </div>
             <DeleteAccount />
           </div>

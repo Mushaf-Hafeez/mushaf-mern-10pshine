@@ -1,10 +1,11 @@
 import { ArrowLeft } from "lucide-react"
 import { useNavigate, useParams } from "react-router-dom"
+import { logger } from "@/lib/logger"
 
 import { Button } from "@/components/ui/button"
 import Editor from "@/components/custom/Editor"
 import { useEffect, useState } from "react"
-import { createNote, getNote, updateNote } from "@/services/note.service"
+import { getNote, updateNote } from "@/services/note.service"
 import { FieldError } from "@/components/ui/field"
 import Spinner from "@/components/custom/Spinner"
 
@@ -19,6 +20,11 @@ const EditNotePage = () => {
 
   const handleGoBack = () => {
     navigate(-1)
+  }
+
+  // Warn if note ID is missing
+  if (!id) {
+    logger.warn({}, "Edit note page opened without note ID")
   }
 
   const handleSaveChanges = async () => {
@@ -36,10 +42,14 @@ const EditNotePage = () => {
       const response = await updateNote(id as string, content)
 
       if (response.status === 200) {
+        logger.info({ noteId: id }, "Note updated successfully")
         navigate("/user/notes")
       }
     } catch (error: any) {
-      console.log("error is: ", error)
+      logger.error(
+        { error: error.message, noteId: id },
+        "Failed to update note"
+      )
       setError(error.response.data.message)
     } finally {
       setIsUpdating(false)
@@ -56,7 +66,10 @@ const EditNotePage = () => {
           setContent(response.data.note.content)
         }
       } catch (error: any) {
-        console.log("error is: ", error)
+        logger.error(
+          { error: error.message, noteId: id },
+          "Failed to fetch note"
+        )
         setError(error.response.data.message)
       } finally {
         setIsLoading(false)

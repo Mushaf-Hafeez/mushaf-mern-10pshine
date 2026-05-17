@@ -1,6 +1,7 @@
 import { useState } from "react"
 
 import { ArrowLeft } from "lucide-react"
+import { logger } from "@/lib/logger"
 
 import { useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
@@ -55,6 +56,10 @@ const ForgotPassword = () => {
       const response = await forgotPassword(data.email)
 
       if (response.status === 200) {
+        logger.info(
+          { email: data.email },
+          "Password reset link sent successfully"
+        )
         reset({ email: "" })
         setError("root", {
           type: "success",
@@ -62,7 +67,10 @@ const ForgotPassword = () => {
         })
       }
     } catch (error: any) {
-      console.log("error is: ", error)
+      logger.error(
+        { error: error.message, email: data.email },
+        "Failed to send reset password link"
+      )
       setError("root", {
         type: "backend",
         message: error.response.data.message || "Something went wrong.",

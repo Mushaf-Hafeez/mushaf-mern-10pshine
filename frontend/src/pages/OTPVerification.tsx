@@ -2,6 +2,7 @@ import { useState } from "react"
 
 import { ArrowLeft, LoaderCircle, RotateCcw } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { logger } from "@/lib/logger"
 
 // importing shadcn ui components
 import {
@@ -65,6 +66,7 @@ const OTPVerification = () => {
     const email = signupData.email
 
     if (!email) {
+      logger.warn({}, "OTP resend attempted without email in store")
       return setError("root", {
         type: "manual",
         message: "Email is required. Please go to singup page.",
@@ -82,7 +84,7 @@ const OTPVerification = () => {
         })
       }
     } catch (error: any) {
-      console.log("error is: ", error)
+      logger.error({ error: error.message, email }, "Failed to resend OTP")
       setError("root", {
         type: "backend",
         message: error.response.data.message || "Something went wrong.",
@@ -106,13 +108,17 @@ const OTPVerification = () => {
       const response = await signup(userData)
 
       if (response.status === 201) {
+        logger.info(
+          { userId: response.data.user._id, email: response.data.user.email },
+          "User registered successfully"
+        )
         setUser(response.data.user)
         clearData() // to clear the data from the zustand
         reset({ otp: "" })
         navigate("/") // redirect the user to notes page when it will be created
       }
     } catch (error: any) {
-      console.log("error is: ", error.response.data)
+      logger.error({ error: error.message }, "OTP verification failed")
       setError("root", {
         type: "backend",
         message: "Please signup first.",

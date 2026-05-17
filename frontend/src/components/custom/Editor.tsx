@@ -27,11 +27,6 @@ type EditorProps = {
   onChange: (value: string) => void
 }
 
-/**
- * Normalizes markdown:
- * 1. Converts task lists into plain bullet lists
- * 2. Prevents list merging issues between ul and ol
- */
 const normalizeMarkdown = (markdown: string): string => {
   if (!markdown) return markdown
 
@@ -46,11 +41,6 @@ const normalizeMarkdown = (markdown: string): string => {
 
     let currentListType: "ul" | "ol" | null = null
 
-    /**
-     * Convert task list items into normal bullet lists
-     * - [ ] item → - item
-     * - [x] item → - item
-     */
     if (/^\s*[*+-]\s+\[[ xX]\]\s+/.test(line)) {
       const cleanedLine = line.replace(/^\s*[*+-]\s+\[[ xX]\]\s+/, "- ")
 

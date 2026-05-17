@@ -3,6 +3,7 @@ import { useState } from "react"
 import z from "zod"
 
 import { useNavigate, useParams } from "react-router-dom"
+import { logger } from "@/lib/logger"
 
 import { useForm } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
@@ -71,6 +72,11 @@ const ResetPassword = () => {
   const navigate = useNavigate()
   const { token } = useParams()
 
+  // Warn if reset token is missing
+  if (!token) {
+    logger.warn({}, "Reset password token is missing")
+  }
+
   // function to show/hide the password
   const handleShowPassword = () => {
     setIsShowPassword((prev) => !prev)
@@ -92,12 +98,13 @@ const ResetPassword = () => {
       )
 
       if (response.status === 200) {
+        logger.info({}, "Password reset successfully")
         clearUser()
         reset({ password: "", confirmPassword: "" })
         navigate("/auth?mode=login")
       }
     } catch (error: any) {
-      console.log("error is: ", error)
+      logger.error({ error: error.message }, "Password reset failed")
       setError("root", {
         type: "backend",
         message: error.response.data.message || "Something went wrong",

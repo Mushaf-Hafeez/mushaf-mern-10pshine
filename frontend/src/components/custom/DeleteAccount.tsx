@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 
+import { logger } from "@/lib/logger"
+
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -11,7 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Field, FieldError } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import Spinner from "@/components/custom/Spinner"
 
@@ -77,13 +78,17 @@ const DeleteAccount = () => {
       const response = await deleteAccount(data.password)
 
       if (response.status === 200) {
+        logger.info(
+          { userId: undefined }, // User ID should be tracked from user context
+          "Account deleted successfully"
+        )
         reset({ password: "" })
         setOpen(false)
         clearUser()
         navigate("/")
       }
     } catch (error: any) {
-      console.log("error is: ", error)
+      logger.error({ error: error.message }, "Failed to delete account")
       setError("root", {
         type: "backend",
         message: error.response.data.message || "Something went wrong.",

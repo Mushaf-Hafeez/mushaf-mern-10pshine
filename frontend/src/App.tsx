@@ -6,6 +6,7 @@ import { ReactLenis } from "lenis/react"
 
 import Spinner from "./components/custom/Spinner"
 import ProtectedRoute from "./components/custom/ProtectedRoute"
+import { logger } from "./lib/logger"
 
 import { checkAuth } from "./services/auth.service"
 import { useUser } from "./zustand/useUser"
@@ -36,7 +37,7 @@ const App = () => {
           setUser(response.data.user)
         }
       } catch (error: any) {
-        console.log("error is: ", error)
+        logger.error({ error: error.message }, "Failed to check auth")
         clearUser()
       }
     }
