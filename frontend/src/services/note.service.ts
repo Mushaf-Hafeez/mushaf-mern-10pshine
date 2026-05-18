@@ -6,6 +6,14 @@ export const getNotes = async (page: number, limit: number) => {
   return response
 }
 
+// function to get the searchedNotes from the backend
+export const searchedNotes = async (q: string, page: number, limit: number) => {
+  const response = await api.get(
+    `/notes/search?q=${q}&page=${page}&limit=${limit}`
+  )
+  return response
+}
+
 // function to get a note from the backend
 export const getNote = async (id: string) => {
   const response = await api.get(`/notes/${id}`)
