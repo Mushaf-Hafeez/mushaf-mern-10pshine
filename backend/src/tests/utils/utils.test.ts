@@ -43,6 +43,7 @@ describe("sendOTPMail", () => {
 
   it("should return false when mail sending fails", async () => {
     sinon.stub(transporter, "sendMail").rejects(new Error("SMTP error"));
+    sinon.stub(console, "log");
 
     const result = await sendOTPMail("123456", "test@gmail.com");
 
@@ -75,6 +76,7 @@ describe("sendResetPasswordMail", () => {
 
   it("should return false when mail sending fails", async () => {
     sinon.stub(transporter, "sendMail").rejects(new Error("SMTP error"));
+    sinon.stub(console, "log");
 
     const result = await sendResetPasswordMail("123456", "test@gmail.com");
 
