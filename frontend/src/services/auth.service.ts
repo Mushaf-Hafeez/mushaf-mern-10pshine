@@ -7,22 +7,26 @@ export const login = async (data: { email: string; password: string }) => {
 }
 
 // function to call backend sendOTP api
-export const OTP = async (email: string) => {
-  const response = await api.post("/auth/otp", { email })
-  return response
-}
-
-// function to call backend signup api
-interface UserDate {
+interface OTPData {
   name: string
   email: string
   password: string
   confirmPassword: string
+}
+
+export const OTP = async (data: OTPData) => {
+  const response = await api.post("/auth/otp", data)
+  return response
+}
+
+// function to call backend signup api
+interface SignupData {
+  email: string
   otp: string
 }
 
-export const signup = async (userData: UserDate) => {
-  const response = await api.post("/auth/signup", userData)
+export const signup = async (data: SignupData) => {
+  const response = await api.post("/auth/signup", data)
   return response
 }
 

@@ -15,8 +15,6 @@ import Spinner from "./Spinner"
 import { OTP } from "@/services/auth.service"
 import { useNavigate } from "react-router-dom"
 
-import { useSignup } from "@/zustand/useSignup"
-
 const signupSchema = z
   .object({
     name: z
@@ -92,8 +90,6 @@ const Signup = () => {
     useState<boolean>(false)
   const navigate = useNavigate()
 
-  const setData = useSignup((state) => state.setData)
-
   // function to show/hide the password
   const handleShowPassword = () => {
     setIsShowPassword((prev) => !prev)
@@ -109,13 +105,13 @@ const Signup = () => {
     clearErrors("root")
 
     try {
-      const response = await OTP(data.email)
+      const response = await OTP(data)
 
       if (response.status === 200) {
         logger.info({ email: data.email }, "OTP sent successfully for signup")
-        // store the data in the state
-        setData(data)
-        // redirect the user to OTP verification page.
+        // store email in localStorage for OTP verification page
+        localStorage.setItem("otp-email", data.email)
+        // redirect the user to OTP verification page
         navigate("/otp-verification")
       }
 

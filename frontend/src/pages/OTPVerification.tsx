@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import { ArrowLeft, LoaderCircle, RotateCcw } from "lucide-react"
 import { useNavigate } from "react-router-dom"
@@ -21,7 +21,6 @@ import { FieldError } from "@/components/ui/field"
 
 import { OTP, signup } from "@/services/auth.service"
 
-import { useSignup } from "@/zustand/useSignup"
 import { useUser } from "@/zustand/useUser"
 
 interface OTPData {
@@ -30,7 +29,9 @@ interface OTPData {
 
 const OTPVerification = () => {
   const setUser = useUser((state) => state.setUser)
+  const navigate = useNavigate()
 
+  const [email, setEmail] = useState<string>("")
   const [isResending, setIsResending] = useState<boolean>(false)
   const {
     setError,
@@ -44,10 +45,19 @@ const OTPVerification = () => {
       otp: "",
     },
   })
-  const navigate = useNavigate()
 
-  const signupData = useSignup((state) => state.data)
-  const clearData = useSignup((state) => state.clearData)
+  // Initialize email from localStorage
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("otp-email")
+    if (!storedEmail) {
+      logger.warn({}, "OTP page accessed without email in localStorage")
+      navigate("/auth?mode=signup", {
+        state: { message: "Please start signup again" },
+      })
+      return
+    }
+    setEmail(storedEmail)
+  }, [navigate])
 
   // function to redirect the user to previous page
   const hanldeGoBack = () => {
@@ -62,20 +72,22 @@ const OTPVerification = () => {
       otp: "",
     })
 
-    // get the user's email from the zustand and than call the api to sendOTP
-    const email = signupData.email
-
     if (!email) {
-      logger.warn({}, "OTP resend attempted without email in store")
+      logger.warn({}, "OTP resend attempted without email")
       return setError("root", {
         type: "manual",
-        message: "Email is required. Please go to singup page.",
+        message: "Email is required. Please go to signup page.",
       })
     }
 
     try {
       setIsResending(true)
-      const response = await OTP(email)
+      const response = await OTP({
+        name: "",
+        email,
+        password: "",
+        confirmPassword: "",
+      })
 
       if (response.status === 200) {
         setError("root", {
@@ -99,13 +111,19 @@ const OTPVerification = () => {
     // remove error first
     clearErrors("root")
 
-    const userData = {
-      ...signupData,
-      otp: data.otp,
+    if (!email) {
+      logger.error({}, "OTP submission attempted without email")
+      return setError("root", {
+        type: "manual",
+        message: "Email is required. Please start signup again.",
+      })
     }
 
     try {
-      const response = await signup(userData)
+      const response = await signup({
+        email,
+        otp: data.otp,
+      })
 
       if (response.status === 201) {
         logger.info(
@@ -113,7 +131,8 @@ const OTPVerification = () => {
           "User registered successfully"
         )
         setUser(response.data.user)
-        clearData() // to clear the data from the zustand
+        // clear email from localStorage after successful signup
+        localStorage.removeItem("otp-email")
         reset({ otp: "" })
         navigate("/") // redirect the user to notes page when it will be created
       }
@@ -141,7 +160,7 @@ const OTPVerification = () => {
             OTP Verification
           </h2>
           <p className="text-center">
-            Enter the 6-digit code sent to your email {signupData.email}
+            Enter the 6-digit code sent to your email {email}
           </p>
 
           {/* otp input */}
