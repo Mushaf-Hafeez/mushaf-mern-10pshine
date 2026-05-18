@@ -7,8 +7,15 @@ export const login = async (data: { email: string; password: string }) => {
 }
 
 // function to call backend sendOTP api
-export const OTP = async (email: string) => {
-  const response = await api.post("/auth/otp", { email })
+interface OTPData {
+  name: string
+  email: string
+  password: string
+  confirmPassword: string
+}
+
+export const OTP = async (data: OTPData) => {
+  const response = await api.post("/auth/otp", data)
   return response
 }
 
