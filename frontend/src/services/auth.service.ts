@@ -20,16 +20,13 @@ export const OTP = async (data: OTPData) => {
 }
 
 // function to call backend signup api
-interface UserDate {
-  name: string
+interface SignupData {
   email: string
-  password: string
-  confirmPassword: string
   otp: string
 }
 
-export const signup = async (userData: UserDate) => {
-  const response = await api.post("/auth/signup", userData)
+export const signup = async (data: SignupData) => {
+  const response = await api.post("/auth/signup", data)
   return response
 }
 

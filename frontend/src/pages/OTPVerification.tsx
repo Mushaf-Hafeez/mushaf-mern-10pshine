@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 
 import { ArrowLeft, LoaderCircle, RotateCcw } from "lucide-react"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { logger } from "@/lib/logger"
 
 // importing shadcn ui components
@@ -30,7 +30,6 @@ interface OTPData {
 const OTPVerification = () => {
   const setUser = useUser((state) => state.setUser)
   const navigate = useNavigate()
-  const location = useLocation()
 
   const [email, setEmail] = useState<string>("")
   const [isResending, setIsResending] = useState<boolean>(false)
@@ -47,18 +46,18 @@ const OTPVerification = () => {
     },
   })
 
-  // Initialize email from navigation state
+  // Initialize email from localStorage
   useEffect(() => {
-    const navigationEmail = (location.state as any)?.email
-    if (!navigationEmail) {
-      logger.warn({}, "OTP page accessed without email in state")
-      navigate("/signup", {
+    const storedEmail = localStorage.getItem("otp-email")
+    if (!storedEmail) {
+      logger.warn({}, "OTP page accessed without email in localStorage")
+      navigate("/auth?mode=signup", {
         state: { message: "Please start signup again" },
       })
       return
     }
-    setEmail(navigationEmail)
-  }, [location.state, navigate])
+    setEmail(storedEmail)
+  }, [navigate])
 
   // function to redirect the user to previous page
   const hanldeGoBack = () => {
@@ -124,9 +123,6 @@ const OTPVerification = () => {
       const response = await signup({
         email,
         otp: data.otp,
-        name: "",
-        password: "",
-        confirmPassword: "",
       })
 
       if (response.status === 201) {
@@ -135,6 +131,8 @@ const OTPVerification = () => {
           "User registered successfully"
         )
         setUser(response.data.user)
+        // clear email from localStorage after successful signup
+        localStorage.removeItem("otp-email")
         reset({ otp: "" })
         navigate("/") // redirect the user to notes page when it will be created
       }

@@ -109,8 +109,10 @@ const Signup = () => {
 
       if (response.status === 200) {
         logger.info({ email: data.email }, "OTP sent successfully for signup")
-        // redirect the user to OTP verification page with email in state
-        navigate("/otp-verification", { state: { email: data.email } })
+        // store email in localStorage for OTP verification page
+        localStorage.setItem("otp-email", data.email)
+        // redirect the user to OTP verification page
+        navigate("/otp-verification")
       }
 
       reset({ name: "", email: "", password: "", confirmPassword: "" })
