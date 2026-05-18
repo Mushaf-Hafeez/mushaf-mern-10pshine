@@ -5,6 +5,8 @@ export interface IOTP extends Document {
   otp: string;
   expires_in: Date;
   email: string;
+  name: string;
+  password: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,6 +23,15 @@ const otpSchema = new Schema<IOTP>(
       required: true,
     },
     email: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    password: {
       type: String,
       required: true,
     },

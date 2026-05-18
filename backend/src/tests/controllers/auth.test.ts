@@ -11,6 +11,8 @@ import {
   emailValidation,
   loginValidation,
   resetPasswordValidation,
+  sendOTPValidation,
+  signupWithOTPValidation,
 } from "../../validators/validations";
 
 // importing controllers
@@ -24,6 +26,9 @@ import {
   sendOTP,
   signup,
 } from "../../controllers/auth.controller";
+
+// importing utils
+import * as utils from "../../utils/utils";
 
 import User from "../../models/user.model";
 import OTP from "../../models/otp.model";
@@ -40,11 +45,18 @@ afterEach(() => {
 // ========================================================
 describe("sendOTP controller", () => {
   it("should call next when validation fails", async () => {
-    const req: any = { body: { email: "test@gmail" } };
+    const req: any = {
+      body: {
+        name: "Test",
+        email: "test@gmail",
+        password: "Test123@",
+        confirmPassword: "Test123@",
+      },
+    };
     const res: any = {};
     const next = sinon.spy();
 
-    sinon.stub(emailValidation, "safeParse").returns({
+    sinon.stub(sendOTPValidation, "safeParse").returns({
       success: false,
       error: { issues: [{ message: "Validation error." }] },
     } as any);
@@ -55,13 +67,25 @@ describe("sendOTP controller", () => {
   });
 
   it("should call next when user already exists", async () => {
-    const req: any = { body: { email: "test@gmail.com" } };
+    const req: any = {
+      body: {
+        name: "Test User",
+        email: "test@gmail.com",
+        password: "Test123@",
+        confirmPassword: "Test123@",
+      },
+    };
     const res: any = {};
     const next = sinon.spy();
 
-    sinon.stub(emailValidation, "safeParse").returns({
+    sinon.stub(sendOTPValidation, "safeParse").returns({
       success: true,
-      data: { email: "test@gmail.com" },
+      data: {
+        name: "Test User",
+        email: "test@gmail.com",
+        password: "Test123@",
+        confirmPassword: "Test123@",
+      },
     } as any);
 
     const findOneStub = sinon.stub(User, "findOne").resolves({} as any);
@@ -72,8 +96,15 @@ describe("sendOTP controller", () => {
     assert.isTrue(next.calledOnce);
   });
 
-  it("should send OTP and return 200", async () => {
-    const req: any = { body: { email: "test@gmail.com" } };
+  it("should hash password and store temporary signup data with OTP", async () => {
+    const req: any = {
+      body: {
+        name: "Test User",
+        email: "test@gmail.com",
+        password: "Test123@",
+        confirmPassword: "Test123@",
+      },
+    };
 
     const res: any = {
       status: sinon.stub().returnsThis(),
@@ -82,40 +113,72 @@ describe("sendOTP controller", () => {
 
     const next = sinon.spy();
 
-    sinon.stub(emailValidation, "safeParse").returns({
+    sinon.stub(sendOTPValidation, "safeParse").returns({
       success: true,
-      data: { email: "test@gmail.com" },
+      data: {
+        name: "Test User",
+        email: "test@gmail.com",
+        password: "Test123@",
+        confirmPassword: "Test123@",
+      },
     } as any);
 
     const findOneStub = sinon.stub(User, "findOne").resolves(null);
     const deleteManyStub = sinon.stub(OTP, "deleteMany").resolves({} as any);
     const createStub = sinon.stub(OTP, "create").resolves({} as any);
-    const mailStub = sinon.stub(transporter, "sendMail").resolves(true);
+    const genSaltStub = sinon.stub(bcrypt, "genSalt").resolves("salt" as any);
+    const hashStub = sinon
+      .stub(bcrypt, "hash")
+      .resolves("hashedPassword" as any);
+    const sendOTPMailStub = sinon.stub(utils, "sendOTPMail").resolves(true);
 
     await sendOTP(req, res, next);
 
     assert(findOneStub.calledOnce);
+    assert(genSaltStub.calledOnce);
+    assert(hashStub.calledOnce);
     assert(deleteManyStub.calledOnce);
     assert(createStub.calledOnce);
-    assert(mailStub.calledOnce);
+    assert(sendOTPMailStub.calledOnce);
+
+    // Check that OTP.create was called with the hashed password
+    const createCallArgs = createStub.firstCall.args[0];
+    assert.strictEqual(createCallArgs.password, "hashedPassword");
+    assert.strictEqual(createCallArgs.name, "Test User");
+    assert.strictEqual(createCallArgs.email, "test@gmail.com");
+
     assert(res.status.calledWith(200));
     assert(res.json.calledWithMatch({ success: true }));
   });
 
   it("should call next when mail fails", async () => {
-    const req: any = { body: { email: "test@gmail.com" } };
+    const req: any = {
+      body: {
+        name: "Test User",
+        email: "test@gmail.com",
+        password: "Test123@",
+        confirmPassword: "Test123@",
+      },
+    };
     const res: any = {};
     const next = sinon.spy();
 
-    sinon.stub(emailValidation, "safeParse").returns({
+    sinon.stub(sendOTPValidation, "safeParse").returns({
       success: true,
-      data: { email: "test@gmail.com" },
+      data: {
+        name: "Test User",
+        email: "test@gmail.com",
+        password: "Test123@",
+        confirmPassword: "Test123@",
+      },
     } as any);
 
     sinon.stub(User, "findOne").resolves(null);
+    sinon.stub(bcrypt, "genSalt").resolves("salt" as any);
+    sinon.stub(bcrypt, "hash").resolves("hashedPassword" as any);
     sinon.stub(OTP, "deleteMany").resolves({} as any);
     sinon.stub(OTP, "create").resolves({} as any);
-    sinon.stub(transporter, "sendMail").rejects(new Error("Mail error"));
+    sinon.stub(utils, "sendOTPMail").resolves(false);
 
     await sendOTP(req, res, next);
 
@@ -128,11 +191,11 @@ describe("sendOTP controller", () => {
 // ========================================================
 describe("signup controller", () => {
   it("should call next when validation fails", async () => {
-    const req: any = { body: {} };
+    const req: any = { body: { email: "test@gmail.com" } };
     const res: any = {};
     const next = sinon.spy();
 
-    sinon.stub(createUserValidation, "safeParse").returns({
+    sinon.stub(signupWithOTPValidation, "safeParse").returns({
       success: false,
       error: { issues: [{ message: "Validation error." }] },
     } as any);
@@ -143,14 +206,14 @@ describe("signup controller", () => {
   });
 
   it("should call next when user already exists", async () => {
-    const req: any = { body: {} };
+    const req: any = { body: { email: "test@gmail.com", otp: "123456" } };
     const res: any = {};
     const next = sinon.spy();
 
-    sinon.stub(createUserValidation, "safeParse").returns({
+    sinon.stub(signupWithOTPValidation, "safeParse").returns({
       success: true,
-      data: {} as any,
-    });
+      data: { email: "test@gmail.com", otp: "123456" },
+    } as any);
 
     const findOneStub = sinon.stub(User, "findOne").resolves({} as any);
 
@@ -161,14 +224,14 @@ describe("signup controller", () => {
   });
 
   it("should call next when OTP is invalid", async () => {
-    const req: any = { body: {} };
+    const req: any = { body: { email: "test@gmail.com", otp: "123456" } };
     const res: any = {};
     const next = sinon.spy();
 
-    sinon.stub(createUserValidation, "safeParse").returns({
+    sinon.stub(signupWithOTPValidation, "safeParse").returns({
       success: true,
-      data: {} as any,
-    });
+      data: { email: "test@gmail.com", otp: "123456" },
+    } as any);
 
     sinon.stub(User, "findOne").resolves(null);
     sinon.stub(OTP, "findOne").resolves(null);
@@ -178,8 +241,38 @@ describe("signup controller", () => {
     assert.isTrue(next.calledOnce);
   });
 
-  it("should create user and return 201", async () => {
-    const req: any = { body: {} };
+  it("should call next when OTP is expired", async () => {
+    const req: any = { body: { email: "test@gmail.com", otp: "123456" } };
+    const res: any = {};
+    const next = sinon.spy();
+
+    sinon.stub(signupWithOTPValidation, "safeParse").returns({
+      success: true,
+      data: { email: "test@gmail.com", otp: "123456" },
+    } as any);
+
+    sinon.stub(User, "findOne").resolves(null);
+
+    const expiredOTPRecord = {
+      _id: "otp123",
+      email: "test@gmail.com",
+      otp: "123456",
+      name: "Test User",
+      password: "hashedPassword",
+      expires_in: new Date(Date.now() - 60000), // 1 minute ago
+    };
+
+    sinon.stub(OTP, "findOne").resolves(expiredOTPRecord as any);
+    sinon.stub(OTP, "deleteOne").resolves({} as any);
+
+    await signup(req, res, next);
+
+    assert.isTrue(next.calledOnce);
+    assert.isTrue(OTP.deleteOne.calledOnce);
+  });
+
+  it("should create user with stored temporary data and return 201", async () => {
+    const req: any = { body: { email: "test@gmail.com", otp: "123456" } };
 
     const res: any = {
       cookie: sinon.stub(),
@@ -189,60 +282,115 @@ describe("signup controller", () => {
 
     const next = sinon.spy();
 
-    sinon.stub(createUserValidation, "safeParse").returns({
+    sinon.stub(signupWithOTPValidation, "safeParse").returns({
       success: true,
-      data: {
-        name: "Test",
-        email: "test@gmail.com",
-        password: "123",
-        confirmPassword: "123",
-        otp: "123456",
-      },
+      data: { email: "test@gmail.com", otp: "123456" },
     } as any);
 
     sinon.stub(User, "findOne").resolves(null);
 
-    sinon.stub(OTP, "findOne").resolves({} as any);
-
-    sinon.stub(bcrypt, "genSalt").resolves("salt" as any);
-
-    sinon.stub(bcrypt, "hash").resolves("hashed" as any);
-
-    const createStub = sinon.stub(User, "create").resolves({
-      _id: "user123",
-      name: "Test",
+    const otpRecord = {
+      _id: "otp123",
       email: "test@gmail.com",
-      password: "hashed",
+      otp: "123456",
+      name: "Test User",
+      password: "hashedPassword",
+      expires_in: new Date(Date.now() + 60000), // 1 minute from now
+    };
+
+    sinon.stub(OTP, "findOne").resolves(otpRecord as any);
+
+    const createdUser = {
+      _id: "user123",
+      name: "Test User",
+      email: "test@gmail.com",
+      password: "hashedPassword",
       toObject() {
         return {
           _id: "user123",
-          name: "Test",
+          name: "Test User",
           email: "test@gmail.com",
-          password: "hashed",
+          password: "hashedPassword",
         };
       },
-    } as any);
+    };
 
-    sinon.stub(OTP, "deleteMany").resolves({} as any);
+    sinon.stub(User, "create").resolves(createdUser as any);
+    sinon.stub(OTP, "deleteOne").resolves({} as any);
 
     const signStub = sinon.stub(jwt, "sign").returns("fake-token" as any);
 
     await signup(req, res, next);
 
-    assert.isTrue(createStub.calledOnce);
+    // Verify User.create was called with stored data
+    const createCallArgs = User.create.firstCall.args[0];
+    assert.strictEqual(createCallArgs.name, "Test User");
+    assert.strictEqual(createCallArgs.email, "test@gmail.com");
+    assert.strictEqual(createCallArgs.password, "hashedPassword");
 
     assert.isTrue(signStub.calledOnce);
-
     assert.isTrue(res.cookie.calledWithMatch("token", "fake-token"));
-
     assert.isTrue(res.status.calledWith(201));
-
     assert.isTrue(
       res.json.calledWithMatch({
         success: true,
         message: "User created successfully.",
       }),
     );
+  });
+
+  it("should delete OTP record after successful signup", async () => {
+    const req: any = { body: { email: "test@gmail.com", otp: "123456" } };
+
+    const res: any = {
+      cookie: sinon.stub(),
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    const next = sinon.spy();
+
+    sinon.stub(signupWithOTPValidation, "safeParse").returns({
+      success: true,
+      data: { email: "test@gmail.com", otp: "123456" },
+    } as any);
+
+    sinon.stub(User, "findOne").resolves(null);
+
+    const otpRecord = {
+      _id: "otp123",
+      email: "test@gmail.com",
+      otp: "123456",
+      name: "Test User",
+      password: "hashedPassword",
+      expires_in: new Date(Date.now() + 60000),
+    };
+
+    sinon.stub(OTP, "findOne").resolves(otpRecord as any);
+
+    const createdUser = {
+      _id: "user123",
+      name: "Test User",
+      email: "test@gmail.com",
+      password: "hashedPassword",
+      toObject() {
+        return {
+          _id: "user123",
+          name: "Test User",
+          email: "test@gmail.com",
+          password: "hashedPassword",
+        };
+      },
+    };
+
+    sinon.stub(User, "create").resolves(createdUser as any);
+    const deleteOneStub = sinon.stub(OTP, "deleteOne").resolves({} as any);
+
+    sinon.stub(jwt, "sign").returns("fake-token" as any);
+
+    await signup(req, res, next);
+
+    assert.isTrue(deleteOneStub.calledOnceWith({ _id: "otp123" }));
   });
 });
 

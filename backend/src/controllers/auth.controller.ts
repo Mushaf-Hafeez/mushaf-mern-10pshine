@@ -9,6 +9,8 @@ import {
   emailValidation,
   loginValidation,
   resetPasswordValidation,
+  sendOTPValidation,
+  signupWithOTPValidation,
 } from "../validators/validations";
 import AppError from "../utils/AppError";
 import {
@@ -16,7 +18,6 @@ import {
   generateOTP,
   sendOTPMail,
   sendResetPasswordMail,
-  verifyOTP,
 } from "../utils/utils";
 
 import bcrypt from "bcryptjs";
@@ -31,7 +32,7 @@ export const sendOTP = async (
 ) => {
   try {
     // validation
-    const result = emailValidation.safeParse(req.body);
+    const result = sendOTPValidation.safeParse(req.body);
 
     if (!result.success) {
       return next(
@@ -42,38 +43,49 @@ export const sendOTP = async (
       );
     }
 
-    const email = result.data.email;
+    interface SignupData {
+      name: string;
+      email: string;
+      password: string;
+      confirmPassword: string;
+    }
 
-    // check if the user already exists with this mail in the database
-    const user = await User.findOne({ email });
+    let signupData: SignupData = result.data;
+
+    // check if the user already exists with this email in the database
+    const user = await User.findOne({ email: signupData.email });
 
     // return if user found
     if (user) {
       return next(new AppError(400, "User already exists."));
     }
 
-    // generate otp and store it in the database
+    // hash the password before storing
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(signupData.password, salt);
+
+    // generate otp
     const otp = generateOTP();
 
-    // delete all the otp with the email first
-    await OTP.deleteMany({ email });
+    // delete all previous otp records for this email
+    await OTP.deleteMany({ email: signupData.email });
 
-    // store the otp with the email in the database and then send the mail to the user.
+    // store temporary signup data with otp in the database
     await OTP.create({
+      name: signupData.name,
+      email: signupData.email,
+      password: hashedPassword,
       otp,
       expires_in: new Date(Date.now() + 5 * 60 * 1000),
-      email,
     });
 
     // send the otp via mail to the user
-    await sendOTPMail(otp, email);
+    await sendOTPMail(otp, signupData.email);
 
     return res.status(200).json({
       success: true,
       message: "OTP sent successfully.",
     });
-
-    // send success response
   } catch (error: any) {
     next(error);
   }
@@ -87,7 +99,7 @@ export const signup = async (
 ) => {
   try {
     // validate user's data
-    const result = createUserValidation.safeParse(req.body);
+    const result = signupWithOTPValidation.safeParse(req.body);
 
     if (!result.success) {
       return next(
@@ -98,40 +110,42 @@ export const signup = async (
       );
     }
 
-    interface UserData {
-      name: string;
+    interface SignupVerifyData {
       email: string;
-      password: string;
-      confirmPassword: string;
       otp: string;
     }
 
-    let userData: UserData = result.data;
+    let signupData: SignupVerifyData = result.data;
 
     // check if the user already exists in the database
-    let user = await User.findOne({ email: userData.email });
+    let user = await User.findOne({ email: signupData.email });
 
     if (user) {
       return next(new AppError(400, "User already exists."));
     }
 
-    // verify the otp
-    const isValidOTP = await verifyOTP(userData.otp, userData.email);
+    // verify the otp and fetch temporary signup data
+    const otpRecord = await OTP.findOne({
+      email: signupData.email,
+      otp: signupData.otp,
+    });
 
     // handle invalid/expired otp
-    if (!isValidOTP) {
+    if (!otpRecord) {
       return next(new AppError(400, "Invalid/expired OTP."));
     }
 
-    // hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(userData.password, salt);
+    // check if otp has expired
+    if (new Date() > otpRecord.expires_in) {
+      await OTP.deleteOne({ _id: otpRecord._id });
+      return next(new AppError(400, "Invalid/expired OTP."));
+    }
 
-    // store it in the database
+    // create user using stored temporary data
     user = await User.create({
-      name: userData.name,
-      email: userData.email,
-      password: hashedPassword,
+      name: otpRecord.name,
+      email: otpRecord.email,
+      password: otpRecord.password,
       profile_pic: `https://api.dicebear.com/9.x/avataaars/svg?seed=${crypto.randomUUID()}`,
     });
 
@@ -139,8 +153,8 @@ export const signup = async (
       return next(new AppError(500, "Error while creating the user."));
     }
 
-    // delete all the otps
-    await OTP.deleteMany({ email: user.email });
+    // delete the otp record after successful signup
+    await OTP.deleteOne({ _id: otpRecord._id });
 
     const payload = {
       id: String(user._id),
