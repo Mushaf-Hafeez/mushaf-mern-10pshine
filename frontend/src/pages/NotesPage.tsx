@@ -147,9 +147,10 @@ const Notes = () => {
             value={query}
             onChange={handleQueryChange}
             placeholder="Search notes..."
+            className="bg-neutral-800/30! text-sm text-white placeholder:text-neutral-400 focus:ring-0"
           />
 
-          <Button asChild>
+          <Button asChild className="hidden md:flex">
             <Link to={"/notes/create"}>
               <Plus />
               Create Note
@@ -157,9 +158,19 @@ const Notes = () => {
           </Button>
 
           <Button
+            asChild
+            className="flex items-center justify-center md:hidden"
+            size={"icon"}
+          >
+            <Link to={"/notes/create"}>
+              <Plus />
+            </Link>
+          </Button>
+
+          <Button
             variant={isGrid ? "default" : "outline"}
             onClick={() => setIsGrid((prev) => !prev)}
-            className={`cursor-pointer transition-all duration-200 ${
+            className={`hidden cursor-pointer transition-all duration-200 md:flex ${
               !isGrid
                 ? "bg-neutral-800/30 text-neutral-400 hover:text-white"
                 : "hover:bg-primary/80"
