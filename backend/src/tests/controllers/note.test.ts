@@ -10,6 +10,7 @@ import {
 
 import {
   getNotes,
+  searchedNotes,
   getNote,
   createNote,
   updateNote,
@@ -147,6 +148,120 @@ describe("getNotes controller", () => {
     sinon.stub(Note, "countDocuments").throws(new Error("DB error"));
 
     await getNotes(req, res, next);
+
+    assert.isTrue(next.calledOnce);
+  });
+});
+
+// ========================================================
+//                 searchedNotes controller
+// ========================================================
+describe("searchedNotes controller", () => {
+  it("should return paginated searched notes for user", async () => {
+    const req: any = {
+      user: { _id: "user123" },
+      query: {
+        q: "test",
+        page: "1",
+        limit: "10",
+      },
+    };
+
+    const res: any = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    const next = sinon.spy();
+
+    const notesMock = [{ content: "test note" }];
+
+    const countStub = sinon.stub(Note, "countDocuments").resolves(15);
+
+    const limitStub = sinon.stub().resolves(notesMock);
+    const skipStub = sinon.stub().returns({ limit: limitStub });
+    const sortStub = sinon.stub().returns({ skip: skipStub });
+    const populateStub = sinon.stub().returns({ sort: sortStub });
+    const findStub = sinon.stub(Note, "find").returns({
+      populate: populateStub,
+    } as any);
+
+    await searchedNotes(req, res, next);
+
+    assert.isTrue(countStub.calledOnce);
+    assert.isTrue(findStub.calledOnce);
+    assert.isTrue(populateStub.calledOnce);
+    assert.isTrue(sortStub.calledOnce);
+    assert.isTrue(skipStub.calledOnce);
+    assert.isTrue(limitStub.calledOnce);
+
+    assert.isTrue(res.status.calledWith(200));
+    assert.isTrue(
+      res.json.calledWithMatch({
+        success: true,
+        notes: notesMock,
+        hasMore: true,
+        currentPage: 1,
+      }),
+    );
+  });
+
+  it("should return 400 when search query is missing", async () => {
+    const req: any = {
+      user: { _id: "user123" },
+      query: {
+        page: "1",
+        limit: "10",
+      },
+    };
+
+    const res: any = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    const next = sinon.spy();
+
+    await searchedNotes(req, res, next);
+
+    assert.isTrue(res.status.calledWith(400));
+    assert.isTrue(res.json.calledWithMatch({ message: "Query is required" }));
+    assert.isFalse(next.called);
+  });
+
+  it("should return 400 when search query is empty", async () => {
+    const req: any = {
+      user: { _id: "user123" },
+      query: {
+        q: "   ",
+        page: "1",
+        limit: "10",
+      },
+    };
+
+    const res: any = {};
+    const next = sinon.spy();
+
+    await searchedNotes(req, res, next);
+
+    assert.isTrue(next.calledOnce);
+    const error = next.getCall(0).args[0];
+    assert.equal(error.statusCode, 400);
+    assert.equal(error.message, "Search query cannot be empty.");
+  });
+
+  it("should call next on error", async () => {
+    const req: any = {
+      user: { _id: "user123" },
+      query: { q: "test" },
+    };
+
+    const res: any = {};
+    const next = sinon.spy();
+
+    sinon.stub(Note, "countDocuments").throws(new Error("DB error"));
+
+    await searchedNotes(req, res, next);
 
     assert.isTrue(next.calledOnce);
   });
