@@ -1,5 +1,4 @@
 import mongoose, { Schema, Types, Document } from "mongoose";
-import { title } from "process";
 
 // defining interface
 export interface INote extends Document {
@@ -27,9 +26,6 @@ const noteSchema = new Schema<INote>(
   },
   { timestamps: true },
 );
-
-// createIndex on title and content for text search
-noteSchema.index({ title: "text", content: "text" });
 
 // defining model
 const Note = mongoose.model<INote>("Note", noteSchema);

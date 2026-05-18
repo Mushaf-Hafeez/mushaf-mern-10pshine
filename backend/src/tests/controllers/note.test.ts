@@ -176,24 +176,12 @@ describe("searchedNotes controller", () => {
 
     const notesMock = [{ content: "test note" }];
 
-    // countDocuments stub
     const countStub = sinon.stub(Note, "countDocuments").resolves(15);
 
-    // query chain stubs
     const limitStub = sinon.stub().resolves(notesMock);
-
-    const skipStub = sinon.stub().returns({
-      limit: limitStub,
-    });
-
-    const sortStub = sinon.stub().returns({
-      skip: skipStub,
-    });
-
-    const populateStub = sinon.stub().returns({
-      sort: sortStub,
-    });
-
+    const skipStub = sinon.stub().returns({ limit: limitStub });
+    const sortStub = sinon.stub().returns({ skip: skipStub });
+    const populateStub = sinon.stub().returns({ sort: sortStub });
     const findStub = sinon.stub(Note, "find").returns({
       populate: populateStub,
     } as any);
@@ -208,7 +196,6 @@ describe("searchedNotes controller", () => {
     assert.isTrue(limitStub.calledOnce);
 
     assert.isTrue(res.status.calledWith(200));
-
     assert.isTrue(
       res.json.calledWithMatch({
         success: true,
@@ -228,15 +215,18 @@ describe("searchedNotes controller", () => {
       },
     };
 
-    const res: any = {};
+    const res: any = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
     const next = sinon.spy();
 
     await searchedNotes(req, res, next);
 
-    assert.isTrue(next.calledOnce);
-    const error = next.getCall(0).args[0];
-    assert.equal(error.statusCode, 400);
-    assert.equal(error.message, "Search query is required.");
+    assert.isTrue(res.status.calledWith(400));
+    assert.isTrue(res.json.calledWithMatch({ message: "Query is required" }));
+    assert.isFalse(next.called);
   });
 
   it("should return 400 when search query is empty", async () => {
