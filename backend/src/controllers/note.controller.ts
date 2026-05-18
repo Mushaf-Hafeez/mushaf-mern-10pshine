@@ -47,6 +47,58 @@ export const getNotes = async (
   }
 };
 
+// searchedNotes controller
+export const searchedNotes = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    // get the user id from req.user
+    const user = req.user!._id;
+
+    const query = req.query.q;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // validation
+    if (!query) {
+      return next(new AppError(400, "Search query is required."));
+    }
+
+    if (typeof query === "string" && query.trim() === "") {
+      return next(new AppError(400, "Search query cannot be empty."));
+    }
+
+    // get the searchedNotes from the database
+    const notes = await Note.find({ user, $text: { $search: query } })
+      .populate("user", "-password")
+      .sort({ updatedAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // get how many searched notes exist in the database
+    const totalSearchedNotes = await Note.countDocuments({
+      user,
+      $text: { $search: query },
+    });
+
+    // check if more searched notes exist
+    const hasMore = skip + notes.length < totalSearchedNotes;
+
+    // return success response
+    return res.status(200).json({
+      success: true,
+      notes,
+      hasMore,
+      currentPage: page,
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
 // getNote controller
 export const getNote = async (
   req: Request,
