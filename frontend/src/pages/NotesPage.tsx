@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState, type ChangeEvent } from "react"
 import { Grid2X2, Plus } from "lucide-react"
 import InfiniteScroll from "react-infinite-scroll-component"
 import { Link } from "react-router-dom"
@@ -6,11 +6,12 @@ import { logger } from "@/lib/logger"
 
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 import Spinner from "@/components/custom/Spinner"
 import Note from "@/components/custom/Note"
 
-import { getNotes } from "@/services/note.service"
+import { getNotes, searchedNotes } from "@/services/note.service"
 
 export interface User {
   _id: string
@@ -32,6 +33,9 @@ interface NoteType {
 }
 
 const Notes = () => {
+  const [query, setQuery] = useState<string>("")
+  const [debouncedQuery, setDebouncedQuery] = useState<string>("")
+
   const [page, setPage] = useState<number>(1)
   const [hasMore, setHasMore] = useState<boolean>(true)
   const [isGrid, setIsGrid] = useState<boolean>(false)
@@ -42,39 +46,77 @@ const Notes = () => {
   const [notes, setNotes] = useState<NoteType[]>([])
   const [error, setError] = useState<string | null>(null)
 
+  const isFirstLoad = useRef<boolean>(true)
+
+  const handleQueryChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value)
+  }
+
   const removeNote = (id: string) => {
     setNotes((prev) => prev.filter((note) => note._id !== id))
   }
 
-  const fetchNotes = async () => {
-    if (isLoading || !hasMore) return
+  // debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query)
+    }, 500)
 
+    return () => clearTimeout(timer)
+  }, [query])
+
+  const fetchPage = async (currentQuery: string, currentPage: number) => {
     setIsLoading(true)
     setError(null)
 
     try {
-      const response = await getNotes(page, 10)
+      const response =
+        currentQuery.trim() === ""
+          ? await getNotes(currentPage, 10)
+          : await searchedNotes(currentQuery, currentPage, 10)
 
       if (response.status === 200) {
-        setNotes((prev) => [...prev, ...response.data.notes])
+        setNotes((prev) =>
+          currentPage === 1
+            ? response.data.notes
+            : [...prev, ...response.data.notes]
+        )
 
         setHasMore(response.data.hasMore)
-
-        setPage((prev) => prev + 1)
+        setPage(currentPage + 1)
       }
     } catch (error: any) {
-      logger.error({ error: error.message, page }, "Failed to fetch notes")
+      logger.error(
+        { error: error.message, page: currentPage },
+        "Failed to fetch notes"
+      )
 
       setError(error?.response?.data?.message || "Something went wrong.")
     } finally {
       setIsLoading(false)
-      setInitialLoading(false)
     }
   }
 
+  const fetchMore = () => {
+    if (isLoading || !hasMore) return
+
+    fetchPage(debouncedQuery, page)
+  }
+
   useEffect(() => {
-    fetchNotes()
-  }, [])
+    setNotes([])
+    setPage(1)
+    setHasMore(true)
+
+    if (isFirstLoad.current) {
+      fetchPage(debouncedQuery, 1).finally(() => {
+        setInitialLoading(false)
+        isFirstLoad.current = false
+      })
+    } else {
+      fetchPage(debouncedQuery, 1)
+    }
+  }, [debouncedQuery])
 
   if (initialLoading) {
     return (
@@ -100,7 +142,15 @@ const Notes = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button asChild>
+          <Input
+            type="text"
+            value={query}
+            onChange={handleQueryChange}
+            placeholder="Search notes..."
+            className="bg-neutral-800/30! text-sm text-white placeholder:text-neutral-400 focus:ring-0"
+          />
+
+          <Button asChild className="hidden md:flex">
             <Link to={"/notes/create"}>
               <Plus />
               Create Note
@@ -108,9 +158,19 @@ const Notes = () => {
           </Button>
 
           <Button
+            asChild
+            className="flex items-center justify-center md:hidden"
+            size={"icon"}
+          >
+            <Link to={"/notes/create"}>
+              <Plus />
+            </Link>
+          </Button>
+
+          <Button
             variant={isGrid ? "default" : "outline"}
             onClick={() => setIsGrid((prev) => !prev)}
-            className={`cursor-pointer transition-all duration-200 ${
+            className={`hidden cursor-pointer transition-all duration-200 md:flex ${
               !isGrid
                 ? "bg-neutral-800/30 text-neutral-400 hover:text-white"
                 : "hover:bg-primary/80"
@@ -130,12 +190,16 @@ const Notes = () => {
 
       {!error && notes.length === 0 ? (
         <div className="p-6">
-          <p>No notes yet.</p>
+          <p>
+            {debouncedQuery
+              ? `No notes found for "${debouncedQuery}".`
+              : "No notes yet."}
+          </p>
         </div>
       ) : (
         <InfiniteScroll
           dataLength={notes.length}
-          next={fetchNotes}
+          next={fetchMore}
           hasMore={hasMore}
           loader={
             <div className="flex justify-center py-4">
