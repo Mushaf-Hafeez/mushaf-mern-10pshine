@@ -21,8 +21,8 @@ export const getNote = async (id: string) => {
 }
 
 // function to create the note in the backend
-export const createNote = async (content: string) => {
-  const response = await api.post("/notes", { content })
+export const createNote = async (title: string, content: string) => {
+  const response = await api.post("/notes", { title, content })
   return response
 }
 

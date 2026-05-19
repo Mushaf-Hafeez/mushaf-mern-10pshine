@@ -27,12 +27,13 @@ dayjs.extend(relativeTime)
 
 interface NoteProp {
   id: string
+  title: string
   content: string
   createdAt: Date
   removeNote: (id: string) => void
 }
 
-const Note = ({ id, content, createdAt, removeNote }: NoteProp) => {
+const Note = ({ id, title, content, createdAt, removeNote }: NoteProp) => {
   const [open, setOpen] = useState<boolean>(false)
   const fromNow = dayjs().to(dayjs(new Date(createdAt).toLocaleDateString()))
 
@@ -58,6 +59,7 @@ const Note = ({ id, content, createdAt, removeNote }: NoteProp) => {
 
   return (
     <li className="group mb-4 flex h-fit cursor-pointer break-inside-avoid flex-col justify-between gap-4 rounded-2xl bg-neutral-800/30 p-6 outline outline-neutral-800 transition-all duration-200 hover:outline-primary md:px-8">
+      <h2 className="text-2xl font-semibold text-white">{title}</h2>
       <div className="markdown-revert">
         <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
           {content}

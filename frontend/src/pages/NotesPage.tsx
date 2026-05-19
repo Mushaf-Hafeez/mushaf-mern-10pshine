@@ -25,6 +25,7 @@ export interface User {
 
 interface NoteType {
   _id: string
+  title: string
   content: string
   user: User
   createdAt: Date
@@ -221,6 +222,7 @@ const Notes = () => {
               <Note
                 key={note._id}
                 id={note._id}
+                title={note.title}
                 content={note.content}
                 createdAt={note.createdAt}
                 removeNote={removeNote}
