@@ -22,6 +22,7 @@ const Notes = lazy(() => import("./pages/NotesPage"))
 const Layout = lazy(() => import("./pages/Layout"))
 const ProfilePage = lazy(() => import("./pages/ProfilePage"))
 const SettingsPage = lazy(() => import("./pages/SettingsPage"))
+const NotePage = lazy(() => import("./pages/NotePage"))
 const CreateNotePage = lazy(() => import("./pages/CreateNotePage"))
 const EditNotePage = lazy(() => import("./pages/EditNotePage"))
 
@@ -66,6 +67,15 @@ const App = () => {
           <Route path="/forgot-password" element={<ForgotPassword />} />
 
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+          <Route
+            path="/notes/:id"
+            element={
+              <ProtectedRoute>
+                <NotePage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/notes/create"

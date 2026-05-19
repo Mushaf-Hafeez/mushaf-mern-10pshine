@@ -215,7 +215,9 @@ const Notes = () => {
         >
           <ul
             className={`p-6 ${
-              isGrid ? "columns-1 gap-4 sm:columns-2 md:columns-3" : "space-y-4"
+              isGrid
+                ? "grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
+                : "space-y-4"
             }`}
           >
             {notes.map((note) => (
