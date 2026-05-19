@@ -106,10 +106,10 @@ const Note = ({
   return (
     <li
       onClick={() => goToNotePage(id)}
-      className="group flex h-87.5 w-full min-w-0 cursor-pointer break-inside-avoid flex-col justify-between gap-4 overflow-hidden rounded-2xl bg-neutral-800/30 p-6 outline outline-neutral-800 transition-all duration-200 hover:outline-primary md:px-8"
+      className="group flex h-87.5 w-full min-w-0 cursor-pointer break-inside-avoid flex-col justify-between gap-4 overflow-hidden rounded-2xl bg-secondary/30 p-6 outline outline-border transition-all duration-200 hover:outline-primary md:px-8"
     >
       <div className="flex w-full items-start justify-between gap-2">
-        <h2 className="line-clamp-2 min-w-0 flex-1 text-2xl font-semibold wrap-break-word text-white">
+        <h2 className="line-clamp-2 min-w-0 flex-1 text-2xl font-semibold wrap-break-word text-foreground">
           {title}
         </h2>
 
@@ -118,7 +118,7 @@ const Note = ({
             <Button
               size={"icon"}
               onClick={(e) => e.stopPropagation()}
-              className="shrink-0 cursor-pointer bg-neutral-800 text-neutral-400 transition-all duration-200 hover:text-white"
+              className="shrink-0 cursor-pointer bg-card text-muted-foreground transition-all duration-200 hover:text-foreground"
             >
               <EllipsisVertical size={20} />
             </Button>
@@ -126,12 +126,12 @@ const Note = ({
 
           <DropdownMenuContent
             align="end"
-            className="w-30 border-neutral-700 bg-neutral-800! text-white"
+            className="w-30 border-border bg-card! text-foreground"
           >
             <DropdownMenuGroup className="space-y-2 p-1">
               <DropdownMenuItem
                 asChild
-                className="cursor-pointer rounded text-white! hover:bg-neutral-700 focus:bg-neutral-700"
+                className="cursor-pointer rounded text-foreground! hover:bg-secondary focus:bg-secondary"
               >
                 <Link
                   to={`/notes/edit/${id}`}
@@ -147,25 +147,25 @@ const Note = ({
                 <AlertDialogTrigger asChild>
                   <button
                     onClick={(e) => e.stopPropagation()}
-                    className="flex w-full cursor-pointer items-center gap-2 rounded p-2 text-sm text-red-400 transition-all duration-200 hover:bg-neutral-700"
+                    className="flex w-full cursor-pointer items-center gap-2 rounded p-2 text-sm text-red-400 transition-all duration-200 hover:bg-secondary"
                   >
                     <Trash2 size={18} />
                     Delete
                   </button>
                 </AlertDialogTrigger>
 
-                <AlertDialogContent className="border-neutral-700 bg-neutral-800 text-white">
+                <AlertDialogContent className="border-border bg-card text-foreground">
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete Note?</AlertDialogTitle>
 
-                    <AlertDialogDescription className="text-neutral-400">
+                    <AlertDialogDescription className="text-muted-foreground">
                       This action cannot be undone. This will permanently delete
                       your note.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
 
-                  <AlertDialogFooter className="border-0 bg-neutral-800">
-                    <AlertDialogCancel className="cursor-pointer border-neutral-700 bg-neutral-800 text-white hover:bg-neutral-700">
+                  <AlertDialogFooter className="border-0 bg-card">
+                    <AlertDialogCancel className="cursor-pointer border-border bg-card text-foreground hover:bg-secondary">
                       Cancel
                     </AlertDialogCancel>
 
@@ -245,7 +245,7 @@ const Note = ({
 
             code(props) {
               return (
-                <code className="rounded bg-neutral-900 px-1 py-0.5 text-sm break-words whitespace-pre-wrap">
+                <code className="rounded bg-card px-1 py-0.5 text-sm break-words whitespace-pre-wrap">
                   {props.children}
                 </code>
               )
@@ -253,7 +253,7 @@ const Note = ({
 
             pre(props) {
               return (
-                <pre className="line-clamp-4 max-w-full overflow-hidden rounded-lg bg-neutral-900 p-4">
+                <pre className="line-clamp-4 max-w-full overflow-hidden rounded-lg bg-card p-4">
                   {props.children}
                 </pre>
               )
@@ -261,7 +261,7 @@ const Note = ({
 
             table(props) {
               return (
-                <div className="overflow-hidden rounded-lg border border-neutral-700">
+                <div className="overflow-hidden rounded-lg border border-border">
                   <table className="w-full overflow-hidden text-sm">
                     {props.children}
                   </table>
@@ -278,7 +278,7 @@ const Note = ({
         </ReactMarkdown>
       </div>
 
-      <div className="flex items-center justify-between text-xs text-neutral-400">
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
         <div className="flex items-center gap-2">
           <CheckCircle size={14} />
           <p>{fromNow}</p>

@@ -14,8 +14,8 @@ const Navbar = () => {
   }
 
   return (
-    <header className="fixed top-4 left-1/2 z-50 flex w-xs -translate-x-1/2 items-center justify-between rounded-full bg-foreground/40 px-6 py-4 outline outline-neutral-800 backdrop-blur-md md:w-3xl lg:w-5xl">
-      <h2 className="cursor-pointer text-lg font-bold md:text-2xl">
+    <header className="fixed top-4 left-1/2 z-50 flex w-xs -translate-x-1/2 items-center justify-between rounded-full bg-background/60 px-6 py-4 outline outline-border backdrop-blur-md md:w-3xl lg:w-5xl">
+      <h2 className="cursor-pointer text-lg font-bold text-primary md:text-2xl">
         <Link to={"/"}>NoteFlow</Link>
       </h2>
 

@@ -52,7 +52,7 @@ const App = () => {
 
       <Suspense
         fallback={
-          <div className="flex min-h-screen items-center justify-center bg-neutral-900">
+          <div className="flex min-h-screen items-center justify-center bg-background">
             <Spinner />
           </div>
         }

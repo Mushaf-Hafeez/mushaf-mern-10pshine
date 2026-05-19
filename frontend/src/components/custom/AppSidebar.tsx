@@ -14,7 +14,7 @@ const AppSidebar = () => {
   const user = useUser((state) => state.user)
 
   return (
-    <Sidebar className="border-none text-white shadow shadow-neutral-800">
+    <Sidebar className="border-none text-foreground shadow shadow-border">
       <SidebarHeader>
         <h2 className="cursor-pointer p-4 text-lg font-bold text-primary md:text-2xl">
           <Link to={"/"}>NoteFlow</Link>
@@ -28,7 +28,11 @@ const AppSidebar = () => {
                 key={index}
                 to={path}
                 className={({ isActive }) =>
-                  `flex items-center gap-2 rounded-full px-4 py-2 text-neutral-400 transition-all duration-200 hover:bg-neutral-800 hover:text-white ${isActive && "bg-primary text-white hover:bg-primary"}`
+                  `flex items-center gap-2 rounded-full px-4 py-2 transition-all duration-200 hover:bg-secondary hover:text-foreground ${
+                    isActive
+                      ? "bg-primary text-primary-foreground hover:bg-primary"
+                      : "text-muted-foreground"
+                  }`
                 }
               >
                 <Icon size={22} />
@@ -39,9 +43,9 @@ const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <div className="flex w-full items-center gap-4 rounded-lg bg-neutral-800/30 p-4 outline outline-neutral-800">
+        <div className="flex w-full items-center gap-4 rounded-lg bg-secondary/30 p-4 outline outline-border">
           <Avatar>
-            <AvatarImage className="bg-neutral-900" src={user?.profile_pic} />
+            <AvatarImage className="bg-card" src={user?.profile_pic} />
             <AvatarFallback>{user?.name.slice(0, 2)}</AvatarFallback>
           </Avatar>
           <div className="w-full">

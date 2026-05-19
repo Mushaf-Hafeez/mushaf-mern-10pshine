@@ -6,45 +6,142 @@
 @import "shadcn/tailwind.css";
 @import 'lenis/dist/lenis.css'
 
-/* Enable dark mode */
-@custom-variant dark (&:is(.dark *));
+/* @custom-variant dark (&:is(.dark *)); */
+@custom-variant dark (&:where(.dark, .dark *)); 
 
-/* ========================= */
-/* 🎨 THEME TOKENS */
-/* ========================= */
+:root {
+  --background: oklch(1.0000 0 0);
+  --foreground: oklch(0.1408 0.0044 285.8229);
+  --card: oklch(1.0000 0 0);
+  --card-foreground: oklch(0.1408 0.0044 285.8229);
+  --popover: oklch(1.0000 0 0);
+  --popover-foreground: oklch(0.1408 0.0044 285.8229);
+  --primary: oklch(0.7049 0.1867 47.6044);
+  --primary-foreground: oklch(1.0000 0 0);
+  --secondary: oklch(0.9674 0.0013 286.3752);
+  --secondary-foreground: oklch(0.2103 0.0059 285.8852);
+  --muted: oklch(0.9674 0.0013 286.3752);
+  --muted-foreground: oklch(0.5517 0.0138 285.9385);
+  --accent: oklch(0.9796 0.0158 73.6841);
+  --accent-foreground: oklch(0.4698 0.1430 37.3035);
+  --destructive: oklch(0.6368 0.2078 25.3313);
+  --destructive-foreground: oklch(0.9851 0 0);
+  --border: oklch(0.9197 0.0040 286.3202);
+  --input: oklch(0.9197 0.0040 286.3202);
+  --ring: oklch(0.7049 0.1867 47.6044);
+  --chart-1: oklch(0.7049 0.1867 47.6044);
+  --chart-2: oklch(0.7576 0.1590 55.9344);
+  --chart-3: oklch(0.8366 0.1165 66.2896);
+  --chart-4: oklch(0.9015 0.0729 70.6972);
+  --chart-5: oklch(0.9542 0.0372 75.1644);
+  --sidebar: oklch(0.9851 0 0);
+  --sidebar-foreground: oklch(0.2103 0.0059 285.8852);
+  --sidebar-primary: oklch(0.7049 0.1867 47.6044);
+  --sidebar-primary-foreground: oklch(1.0000 0 0);
+  --sidebar-accent: oklch(0.9674 0.0013 286.3752);
+  --sidebar-accent-foreground: oklch(0.2103 0.0059 285.8852);
+  --sidebar-border: oklch(0.9197 0.0040 286.3202);
+  --sidebar-ring: oklch(0.7049 0.1867 47.6044);
+  --font-sans: Inter, sans-serif;
+  --font-serif: Manrope, sans-serif;
+  --font-mono: JetBrains Mono, monospace;
+  --radius: 0.75rem;
+  --shadow-x: 0px;
+  --shadow-y: 4px;
+  --shadow-blur: 10px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.05;
+  --shadow-color: 0 0 0;
+  --shadow-2xs: 0px 4px 10px 0px hsl(0 0 0 / 0.03);
+  --shadow-xs: 0px 4px 10px 0px hsl(0 0 0 / 0.03);
+  --shadow-sm: 0px 4px 10px 0px hsl(0 0 0 / 0.05), 0px 1px 2px -1px hsl(0 0 0 / 0.05);
+  --shadow: 0px 4px 10px 0px hsl(0 0 0 / 0.05), 0px 1px 2px -1px hsl(0 0 0 / 0.05);
+  --shadow-md: 0px 4px 10px 0px hsl(0 0 0 / 0.05), 0px 2px 4px -1px hsl(0 0 0 / 0.05);
+  --shadow-lg: 0px 4px 10px 0px hsl(0 0 0 / 0.05), 0px 4px 6px -1px hsl(0 0 0 / 0.05);
+  --shadow-xl: 0px 4px 10px 0px hsl(0 0 0 / 0.05), 0px 8px 10px -1px hsl(0 0 0 / 0.05);
+  --shadow-2xl: 0px 4px 10px 0px hsl(0 0 0 / 0.13);
+  --tracking-normal: -0.01em;
+  --spacing: 0.25rem;
+}
+
+.dark {
+  --background: oklch(0.1408 0.0044 285.8229);
+  --foreground: oklch(0.9851 0 0);
+  --card: oklch(0.1831 0.0040 285.9940);
+  --card-foreground: oklch(0.9851 0 0);
+  --popover: oklch(0.1408 0.0044 285.8229);
+  --popover-foreground: oklch(0.9851 0 0);
+  --primary: oklch(0.7049 0.1867 47.6044);
+  --primary-foreground: oklch(1.0000 0 0);
+  --secondary: oklch(0.2739 0.0055 286.0326);
+  --secondary-foreground: oklch(0.9851 0 0);
+  --muted: oklch(0.2739 0.0055 286.0326);
+  --muted-foreground: oklch(0.7118 0.0129 286.0665);
+  --accent: oklch(0.2739 0.0055 286.0326);
+  --accent-foreground: oklch(0.9851 0 0);
+  --destructive: oklch(0.3958 0.1331 25.7230);
+  --destructive-foreground: oklch(0.9851 0 0);
+  --border: oklch(0.2739 0.0055 286.0326);
+  --input: oklch(0.2739 0.0055 286.0326);
+  --ring: oklch(0.7049 0.1867 47.6044);
+  --chart-1: oklch(0.7049 0.1867 47.6044);
+  --chart-2: oklch(0.6461 0.1943 41.1158);
+  --chart-3: oklch(0.5534 0.1739 38.4022);
+  --chart-4: oklch(0.4698 0.1430 37.3035);
+  --chart-5: oklch(0.4084 0.1165 38.1715);
+  --sidebar: oklch(0.1831 0.0040 285.9940);
+  --sidebar-foreground: oklch(0.7118 0.0129 286.0665);
+  --sidebar-primary: oklch(0.7049 0.1867 47.6044);
+  --sidebar-primary-foreground: oklch(1.0000 0 0);
+  --sidebar-accent: oklch(0.2739 0.0055 286.0326);
+  --sidebar-accent-foreground: oklch(0.9851 0 0);
+  --sidebar-border: oklch(0.2739 0.0055 286.0326);
+  --sidebar-ring: oklch(0.7049 0.1867 47.6044);
+  --font-sans: Inter, sans-serif;
+  --font-serif: Manrope, sans-serif;
+  --font-mono: JetBrains Mono, monospace;
+  --radius: 0.75rem;
+  --shadow-x: 0px;
+  --shadow-y: 8px;
+  --shadow-blur: 15px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.4;
+  --shadow-color: 0 0 0;
+  --shadow-2xs: 0px 8px 15px 0px hsl(0 0 0 / 0.20);
+  --shadow-xs: 0px 8px 15px 0px hsl(0 0 0 / 0.20);
+  --shadow-sm: 0px 8px 15px 0px hsl(0 0 0 / 0.40), 0px 1px 2px -1px hsl(0 0 0 / 0.40);
+  --shadow: 0px 8px 15px 0px hsl(0 0 0 / 0.40), 0px 1px 2px -1px hsl(0 0 0 / 0.40);
+  --shadow-md: 0px 8px 15px 0px hsl(0 0 0 / 0.40), 0px 2px 4px -1px hsl(0 0 0 / 0.40);
+  --shadow-lg: 0px 8px 15px 0px hsl(0 0 0 / 0.40), 0px 4px 6px -1px hsl(0 0 0 / 0.40);
+  --shadow-xl: 0px 8px 15px 0px hsl(0 0 0 / 0.40), 0px 8px 10px -1px hsl(0 0 0 / 0.40);
+  --shadow-2xl: 0px 8px 15px 0px hsl(0 0 0 / 1.00);
+}
 
 @theme inline {
-  --font-heading: var(--font-inter);
-  --font-manrope: "Manrope", sans-serif;
-  --font-inter: 'Inter', sans-serif;
-
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
-
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-
   --color-destructive: var(--destructive);
-
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -54,127 +151,40 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Radius scale */
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-serif: var(--font-serif);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --shadow-2xs: var(--shadow-2xs);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+
+  --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
+  --tracking-tight: calc(var(--tracking-normal) - 0.025em);
+  --tracking-normal: var(--tracking-normal);
+  --tracking-wide: calc(var(--tracking-normal) + 0.025em);
+  --tracking-wider: calc(var(--tracking-normal) + 0.05em);
+  --tracking-widest: calc(var(--tracking-normal) + 0.1em);
 }
-
-/* ========================= */
-/* ☀️ LIGHT MODE */
-/* ========================= */
-
-:root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-
-  --popover: #222;
-  --popover-foreground: #ffffff;
-
-  --primary: #8b5cf6;
-  --primary-foreground: #ffffff;
-
-  --secondary: #6366f1;
-  --secondary-foreground: #ffffff;
-
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-
-  --accent: #ede9fe;
-  --accent-foreground: #5b21b6;
-
-  --destructive: #fb7185;
-
-  --border: rgba(0, 0, 0, 0.08);
-  --input: rgba(0, 0, 0, 0.08);
-  --ring: #8b5cf6;
-
-  --radius: 1rem;
-
-  --sidebar: oklch(20.5% 0 0);
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #8b5cf6;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f1f5f9;
-  --sidebar-accent-foreground: #0f172a;
-  --sidebar-border: rgba(0, 0, 0, 0.08);
-  --sidebar-ring: #8b5cf6;
-}
-
-/* ========================= */
-/* 🌙 DARK MODE */
-/* ========================= */
-
-.dark {
-  --background: #09090b;
-  --foreground: #ffffff;
-
-  --card: #111113;
-  --card-foreground: #ffffff;
-
-  --popover: #18181b;
-  --popover-foreground: #ffffff;
-
-  --primary: #8b5cf6;
-  --primary-foreground: #ffffff;
-
-  --secondary: #6366f1;
-  --secondary-foreground: #ffffff;
-
-  --accent: #a855f7;
-  --accent-foreground: #ffffff;
-
-  --muted: #18181b;
-  --muted-foreground: #a1a1aa;
-
-  --destructive: #fb7185;
-
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.08);
-  --ring: #8b5cf6;
-
-  --sidebar: #171717;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #8b5cf6;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #18181b;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.08);
-  --sidebar-ring: #8b5cf6;
-}
-
-/* ========================= */
-/* 🧱 BASE STYLES */
-/* ========================= */
 
 @layer base {
   * {
-    @apply outline-ring/50;
+    @apply border-border outline-ring/50;
   }
-
   body {
     @apply bg-background text-foreground;
+    letter-spacing: var(--tracking-normal);
   }
-
-  html {
-    @apply font-inter;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-manrope;
-  }
-
-  p {
-    @apply leading-4 md:leading-6 font-light text-neutral-400 text-xs md:text-sm;
-  }
-
 }
 
 /* ========================= */
@@ -190,7 +200,7 @@
 }
 
 @utility text-gradient{
-  background-image: linear-gradient(to right, var(--primary) 60%, var(--secondary));
+  background-image: linear-gradient(to right, var(--primary) 60%);
   -webkit-background-clip: text;
   color: transparent;
 }
@@ -211,19 +221,21 @@
 
 /* ── MDXEditor root container (scrollable) ─────────────────────── */
 .mdxeditor {
-  --accentBase: #3f3f46;
-  --accentBgSubtle: #27272a;
-  --accentText: #ffffff;
-  --accentLine: #3f3f46;
-  --baseBase: #09090b;
-  --baseBg: #18181b;
-  --baseBgSubtle: #18181b;
-  --baseText: #ffffff;
-  --baseBorder: #27272a;
+  --accentBase: hsl(var(--foreground));
+  --accentBgSubtle: hsl(var(--muted));
+  --accentText: hsl(var(--foreground));
+  --accentLine: hsl(var(--border));
+
+  --baseBase: hsl(var(--background));
+  --baseBg: hsl(var(--card));
+  --baseBgSubtle: hsl(var(--card));
+  --baseText: hsl(var(--foreground));
+  --baseBorder: hsl(var(--border));
   --basePageBg: transparent;
+
   color-scheme: dark;
-  color: #ffffff;
-  
+  color: hsl(var(--foreground));
+
   display: flex !important;
   flex-direction: column !important;
   flex: 1 !important;
@@ -236,7 +248,8 @@
   overflow-y: auto !important;
   overflow-x: hidden !important;
   padding: 20px 24px !important;
-  color: #ffffff !important;
+
+  color: hsl(var(--foreground)) !important;
   font-size: 15px !important;
   line-height: 1.7 !important;
 }
@@ -251,12 +264,12 @@
 }
 
 .mdxeditor-root-contenteditable::-webkit-scrollbar-thumb {
-  background: rgba(161, 161, 170, 0.4) !important;
+  background: hsl(var(--muted-foreground) / 0.4) !important;
   border-radius: 4px !important;
 }
 
 .mdxeditor-root-contenteditable::-webkit-scrollbar-thumb:hover {
-  background: rgba(161, 161, 170, 0.6) !important;
+  background: hsl(var(--muted-foreground) / 0.6) !important;
 }
 
 /* ── Toolbar pill (sticky at top) ───────────────────────────── */
@@ -264,46 +277,51 @@
   position: sticky !important;
   top: 0 !important;
   z-index: 50 !important;
-  
-  background-color: rgba(24, 24, 27, 0.95) !important;
+
+  background-color: hsl(var(--card) / 0.95) !important;
   backdrop-filter: blur(10px) !important;
   -webkit-backdrop-filter: blur(10px) !important;
-  border: 1px solid rgba(39, 39, 42, 0.8) !important;
+
+  border: 1px solid hsl(var(--border)) !important;
   border-radius: 9999px !important;
   padding: 12px 16px !important;
+
   display: flex !important;
   align-items: center !important;
   flex-wrap: nowrap !important;
   gap: 2px !important;
+
   margin: 12px auto 0 auto !important;
 
-  /* fits content, scrolls on mobile with hidden scrollbar */
   width: fit-content !important;
   max-width: calc(100% - 32px) !important;
-  
+
   overflow-x: auto !important;
   overflow-y: hidden !important;
   -webkit-overflow-scrolling: touch !important;
+
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
-  
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+
+  box-shadow: 0 2px 8px hsl(var(--foreground) / 0.15) !important;
 }
 
 .editor-toolbar-sticky::-webkit-scrollbar {
   display: none !important;
 }
 
-/* ── Legacy toolbar compatibility ────────────────────────────– */
+/* ── Legacy toolbar compatibility ──────────────────────────── */
 .editor-toolbar {
-  background-color: rgba(24, 24, 27, 0.95) !important;
-  border: 1px solid rgba(39, 39, 42, 0.8) !important;
+  background-color: hsl(var(--card) / 0.95) !important;
+  border: 1px solid hsl(var(--border)) !important;
   border-radius: 12px !important;
+
   padding: 12px 16px !important;
   display: flex !important;
   align-items: center !important;
   flex-wrap: nowrap !important;
   gap: 2px !important;
+
   margin: 12px auto 0 auto !important;
 
   width: fit-content !important;
@@ -312,45 +330,43 @@
   overflow-x: auto !important;
   overflow-y: hidden !important;
   -webkit-overflow-scrolling: touch !important;
+
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
 }
 
+/* Buttons */
 .editor-toolbar button,
 .editor-toolbar-sticky button {
   flex-shrink: 0 !important;
-}
 
-.editor-toolbar [data-orientation="vertical"],
-.editor-toolbar-sticky [data-orientation="vertical"],
-.editor-toolbar .mdxeditor-toolbar-separator,
-.editor-toolbar-sticky .mdxeditor-toolbar-separator {
-  flex-shrink: 0 !important;
-}
-
-/* ── All toolbar buttons ────────────────────────────────────── */
-.editor-toolbar button,
-.editor-toolbar-sticky button {
   background: transparent !important;
   border: none !important;
-  color: #a1a1aa !important;
+
+  color: hsl(var(--muted-foreground)) !important;
+
   border-radius: 6px !important;
   padding: 5px 7px !important;
+
   font-size: 13px !important;
   font-weight: 600 !important;
+
   cursor: pointer !important;
+
   transition: background 0.12s, color 0.12s !important;
+
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+
   min-width: 28px !important;
   height: 28px !important;
 }
 
 .editor-toolbar button:hover,
 .editor-toolbar-sticky button:hover {
-  background-color: #27272a !important;
-  color: #ffffff !important;
+  background-color: hsl(var(--secondary)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .editor-toolbar button[data-state="on"],
@@ -359,24 +375,24 @@
 .editor-toolbar-sticky button[aria-pressed="true"],
 .editor-toolbar button[aria-checked="true"],
 .editor-toolbar-sticky button[aria-checked="true"] {
-  background-color: #3f3f46 !important;
-  color: #ffffff !important;
+  background-color: hsl(var(--muted)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
-/* ── Separator ──────────────────────────────────────────────── */
+/* Separator */
 .editor-toolbar [data-orientation="vertical"],
 .editor-toolbar-sticky [data-orientation="vertical"],
 .editor-toolbar .mdxeditor-toolbar-separator,
 .editor-toolbar-sticky .mdxeditor-toolbar-separator {
   width: 1px !important;
   height: 18px !important;
-  background-color: #3f3f46 !important;
+  background-color: hsl(var(--border)) !important;
   margin: 0 6px !important;
   border: none !important;
   flex-shrink: 0 !important;
 }
 
-/* ── SVG icons ──────────────────────────────────────────────── */
+/* Icons */
 .editor-toolbar button svg,
 .editor-toolbar-sticky button svg {
   width: 15px !important;
@@ -384,7 +400,7 @@
   color: inherit !important;
 }
 
-/* ── BlockTypeSelect dropdown fix (dark background) ─────────── */
+/* BlockTypeSelect dropdown */
 .editor-toolbar [class*="blockTypeSelect"] button,
 .editor-toolbar-sticky [class*="blockTypeSelect"] button,
 .editor-toolbar [class*="selectTrigger"],
@@ -392,7 +408,7 @@
 .editor-toolbar [class*="SelectTrigger"],
 .editor-toolbar-sticky [class*="SelectTrigger"] {
   background: transparent !important;
-  color: #a1a1aa !important;
+  color: hsl(var(--muted-foreground)) !important;
   border: none !important;
   font-size: 13px !important;
   font-weight: 600 !important;
@@ -406,24 +422,24 @@
 .editor-toolbar-sticky [class*="selectTrigger"]:hover,
 .editor-toolbar [class*="SelectTrigger"]:hover,
 .editor-toolbar-sticky [class*="SelectTrigger"]:hover {
-  background-color: #27272a !important;
-  color: #ffffff !important;
+  background-color: hsl(var(--secondary)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 /* dropdown popup */
 [class*="selectContent"],
 [class*="SelectContent"],
 [data-radix-popper-content-wrapper] > div {
-  background-color: #18181b !important;
-  border: 1px solid #3f3f46 !important;
+  background-color: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important;
   border-radius: 8px !important;
-  color: #ffffff !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+  color: hsl(var(--foreground)) !important;
+  box-shadow: 0 8px 24px hsl(var(--foreground) / 0.2) !important;
 }
 
 [class*="selectItem"],
 [class*="SelectItem"] {
-  color: #a1a1aa !important;
+  color: hsl(var(--muted-foreground)) !important;
   font-size: 13px !important;
   padding: 6px 12px !important;
   cursor: pointer !important;
@@ -434,193 +450,108 @@
 [class*="SelectItem"]:hover,
 [class*="selectItem"][data-highlighted],
 [class*="SelectItem"][data-highlighted] {
-  background-color: #27272a !important;
-  color: #ffffff !important;
+  background-color: hsl(var(--secondary)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
-/* ── Editor content area (internal scrolling) ────────────────── */
+/* ── Content area typography ─────────────────────────────── */
 .mdxeditor-root-contenteditable {
   flex: 1 !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
+
   padding: 20px 24px !important;
-  color: #ffffff !important;
+
+  color: hsl(var(--foreground)) !important;
   font-size: 15px !important;
   line-height: 1.7 !important;
 }
 
-/* Scrollbar styling for webkit browsers */
-.mdxeditor-root-contenteditable::-webkit-scrollbar {
-  width: 8px !important;
-}
+/* Headings */
+.mdxeditor-root-contenteditable h1 { font-size: 2rem !important; font-weight: 700 !important; margin: 16px 0 8px !important; }
+.mdxeditor-root-contenteditable h2 { font-size: 1.5rem !important; font-weight: 700 !important; margin: 14px 0 6px !important; }
+.mdxeditor-root-contenteditable h3 { font-size: 1.25rem !important; font-weight: 600 !important; margin: 12px 0 4px !important; }
 
-.mdxeditor-root-contenteditable::-webkit-scrollbar-track {
-  background: transparent !important;
-}
-
-.mdxeditor-root-contenteditable::-webkit-scrollbar-thumb {
-  background: rgba(161, 161, 170, 0.4) !important;
-  border-radius: 4px !important;
-}
-
-.mdxeditor-root-contenteditable::-webkit-scrollbar-thumb:hover {
-  background: rgba(161, 161, 170, 0.6) !important;
-}
-
-.mdxeditor-root-contenteditable h1 { font-size: 2rem !important; font-weight: 700 !important; color: #fff !important; margin: 16px 0 8px !important; }
-.mdxeditor-root-contenteditable h2 { font-size: 1.5rem !important; font-weight: 700 !important; color: #fff !important; margin: 14px 0 6px !important; }
-.mdxeditor-root-contenteditable h3 { font-size: 1.25rem !important; font-weight: 600 !important; color: #fff !important; margin: 12px 0 4px !important; }
-
+/* Blockquote */
 .mdxeditor-root-contenteditable blockquote {
-  border-left: 3px solid #3f3f46 !important;
-  color: #a1a1aa !important;
+  border-left: 3px solid hsl(var(--border)) !important;
+  color: hsl(var(--muted-foreground)) !important;
   padding-left: 14px !important;
   margin: 8px 0 !important;
 }
 
+/* Code */
 .mdxeditor-root-contenteditable code {
-  background-color: #27272a !important;
-  color: #e4e4e7 !important;
+  background-color: hsl(var(--muted)) !important;
+  color: hsl(var(--foreground)) !important;
   border-radius: 4px !important;
   padding: 1px 5px !important;
   font-size: 13px !important;
 }
 
-/* ── Link dialog dark override ──────────────────────────────── */
-[data-radix-popper-content-wrapper] {
-  --baseBg: #18181b !important;
-  --baseText: #ffffff !important;
-  --baseBorder: #3f3f46 !important;
-}
-
-[data-radix-popper-content-wrapper] input {
-  background-color: #27272a !important;
-  color: #ffffff !important;
-  border: 1px solid #3f3f46 !important;
-  border-radius: 6px !important;
-  padding: 6px 10px !important;
-}
-/* ── Content text color fix ─────────────────────────────────── */
-
-/* all paragraph / general text */
+/* Text */
 .mdxeditor-root-contenteditable,
 .mdxeditor-root-contenteditable p,
 .mdxeditor-root-contenteditable span,
 .mdxeditor-root-contenteditable div {
-  color: #ffffff !important;
+  color: hsl(var(--foreground)) !important;
 }
 
-/* ── LIST STYLES (FIXES ISSUE #1) ──────────────────────────── */
-
-/* Unordered lists - restore disc bullets */
+/* Lists */
 .mdxeditor-root-contenteditable ul {
   list-style: disc !important;
-  list-style-position: outside !important;
   padding-left: 24px !important;
-  margin: 8px 0 !important;
-  color: #ffffff !important;
 }
 
-.mdxeditor-root-contenteditable ul li {
-  color: #ffffff !important;
-  margin-bottom: 4px !important;
-  display: list-item !important;
-}
-
-.mdxeditor-root-contenteditable ul li::marker {
-  color: #a1a1aa !important;
-}
-
-/* Nested unordered lists */
-.mdxeditor-root-contenteditable ul ul {
-  list-style: circle !important;
-  margin-top: 4px !important;
-  margin-bottom: 4px !important;
-}
-
-.mdxeditor-root-contenteditable ul ul ul {
-  list-style: square !important;
-}
-
-/* Ordered lists - restore decimal numbering */
 .mdxeditor-root-contenteditable ol {
   list-style: decimal !important;
-  list-style-position: outside !important;
   padding-left: 24px !important;
-  margin: 8px 0 !important;
-  color: #ffffff !important;
 }
 
-.mdxeditor-root-contenteditable ol li {
-  color: #ffffff !important;
-  margin-bottom: 4px !important;
-  display: list-item !important;
+/* Link dialog */
+[data-radix-popper-content-wrapper] {
+  --baseBg: hsl(var(--card)) !important;
+  --baseText: hsl(var(--foreground)) !important;
+  --baseBorder: hsl(var(--border)) !important;
 }
 
-.mdxeditor-root-contenteditable ol li::marker {
-  color: #a1a1aa !important;
+[data-radix-popper-content-wrapper] input {
+  background-color: hsl(var(--muted)) !important;
+  color: hsl(var(--foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 6px !important;
+  padding: 6px 10px !important;
 }
 
-/* Nested ordered lists */
-.mdxeditor-root-contenteditable ol ol {
-  list-style: lower-alpha !important;
-  margin-top: 4px !important;
-  margin-bottom: 4px !important;
-}
-
-.mdxeditor-root-contenteditable ol ol ol {
-  list-style: lower-roman !important;
-}
-
-/* Task lists (checkbox lists) */
-.mdxeditor-root-contenteditable ul.contains-task-list {
-  list-style: none !important;
-  padding-left: 0 !important;
-}
-
-.mdxeditor-root-contenteditable li.task-list-item {
-  display: flex !important;
-  align-items: flex-start !important;
-  gap: 8px !important;
-  margin-bottom: 6px !important;
-  color: #ffffff !important;
-}
-
-.mdxeditor-root-contenteditable li.task-list-item input[type="checkbox"] {
-  margin-top: 4px !important;
-  margin-right: 0 !important;
-  cursor: pointer !important;
-  accent-color: #8b5cf6 !important;
-  width: 18px !important;
-  height: 18px !important;
-  flex-shrink: 0 !important;
-}
-
-.mdxeditor-root-contenteditable li.task-list-item p {
-  margin: 0 !important;
-  display: inline !important;
-}
-
-/* Ensure list items always display as list items */
-.mdxeditor-root-contenteditable li,
-.mdxeditor-root-contenteditable li > p {
-  color: #ffffff !important;
-}
-
-/* Ensure proper spacing between different list types */
-.mdxeditor-root-contenteditable ul + ol,
-.mdxeditor-root-contenteditable ol + ul,
-.mdxeditor-root-contenteditable ul + ul.contains-task-list,
-.mdxeditor-root-contenteditable ol + ul.contains-task-list {
-  margin-top: 12px !important;
-}
-
-/* placeholder */
+/* Placeholder */
 .mdxeditor-root-contenteditable p:first-child:empty::before {
   content: attr(data-placeholder);
-  color: #52525b !important;
+  color: hsl(var(--muted-foreground)) !important;
 }
 
+/* reset */
 .markdown-revert * {
   all: revert;
+}
+
+/* FORCE THEME TEXT COLOR */
+.mdx-theme-fix,
+.mdx-theme-fix * {
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Editor content area */
+.mdxeditor-root-contenteditable {
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Placeholder fix */
+.mdxeditor-root-contenteditable p:empty::before {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* Fix gray toolbar text */
+.editor-toolbar-sticky,
+.editor-toolbar-sticky * {
+  color: hsl(var(--foreground)) !important;
 }

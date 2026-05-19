@@ -57,7 +57,6 @@ const Notes = () => {
     setNotes((prev) => prev.filter((note) => note._id !== id))
   }
 
-  // debounce
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(query)
@@ -121,25 +120,25 @@ const Notes = () => {
 
   if (initialLoading) {
     return (
-      <section className="flex min-h-screen w-full items-center justify-center bg-neutral-900">
+      <section className="flex min-h-screen w-full items-center justify-center bg-card">
         <Spinner />
       </section>
     )
   }
 
   return (
-    <section className="min-h-screen w-full bg-neutral-900 text-white">
-      <div className="sticky top-0 z-10 flex w-full items-center justify-between gap-2 border-b border-neutral-800 bg-neutral-900 px-6 py-4">
+    <section className="min-h-screen w-full bg-card text-foreground">
+      <div className="sticky top-0 z-10 flex w-full items-center justify-between gap-2 border-b border-border bg-card px-6 py-4">
         <div className="flex items-center gap-2">
           <Button
             size={"icon-lg"}
-            className="cursor-pointer bg-transparent transition-all duration-200 hover:bg-neutral-800"
+            className="cursor-pointer bg-transparent text-foreground transition-all duration-200 hover:bg-secondary"
             asChild
           >
             <SidebarTrigger />
           </Button>
 
-          <h2 className="text-lg font-medium">My Notes</h2>
+          <h2 className="text-lg font-medium text-foreground">My Notes</h2>
         </div>
 
         <div className="flex items-center gap-2">
@@ -148,7 +147,7 @@ const Notes = () => {
             value={query}
             onChange={handleQueryChange}
             placeholder="Search notes..."
-            className="bg-neutral-800/30! text-sm text-white placeholder:text-neutral-400 focus:ring-0"
+            className="bg-secondary/30! text-sm text-foreground placeholder:text-muted-foreground focus:ring-0"
           />
 
           <Button asChild className="hidden md:flex">
@@ -173,7 +172,7 @@ const Notes = () => {
             onClick={() => setIsGrid((prev) => !prev)}
             className={`hidden cursor-pointer transition-all duration-200 md:flex ${
               !isGrid
-                ? "bg-neutral-800/30 text-neutral-400 hover:text-white"
+                ? "bg-secondary/30 text-muted-foreground hover:text-foreground"
                 : "hover:bg-primary/80"
             }`}
           >
@@ -185,13 +184,13 @@ const Notes = () => {
 
       {error && (
         <div className="p-6">
-          <p className="text-red-500">{error}</p>
+          <p className="text-destructive">{error}</p>
         </div>
       )}
 
       {!error && notes.length === 0 ? (
         <div className="p-6">
-          <p>
+          <p className="text-muted-foreground">
             {debouncedQuery
               ? `No notes found for "${debouncedQuery}".`
               : "No notes yet."}
@@ -208,7 +207,7 @@ const Notes = () => {
             </div>
           }
           endMessage={
-            <p className="pb-2 text-center text-neutral-400">
+            <p className="pb-2 text-center text-muted-foreground">
               All items loaded.
             </p>
           }

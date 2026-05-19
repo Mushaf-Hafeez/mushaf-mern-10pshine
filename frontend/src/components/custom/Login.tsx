@@ -106,7 +106,7 @@ const Login = () => {
           id="email"
           type="email"
           placeholder={"Enter your email"}
-          className="border border-neutral-700 p-4"
+          className="border border-border p-4"
         />
         {errors && errors.email && (
           <FieldError>{errors.email.message}</FieldError>
@@ -129,7 +129,7 @@ const Login = () => {
             id="password"
             type={isShowPassword ? "text" : "password"}
             placeholder="Enter your password"
-            className="border border-neutral-700 p-4"
+            className="border border-border p-4"
           />
           <span
             className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer"

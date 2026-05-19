@@ -112,7 +112,7 @@ const DeleteAccount = () => {
           Delete account
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="bg-neutral-800">
+      <AlertDialogContent className="bg-card">
         <form onSubmit={handleSubmit(onSubmit)}>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete account</AlertDialogTitle>
@@ -127,7 +127,7 @@ const DeleteAccount = () => {
                     {...register("password")}
                     type={isShowPassword ? "text" : "password"}
                     placeholder="Enter your password..."
-                    className="my-2 w-full text-white"
+                    className="my-2 w-full text-foreground"
                   />
                   <span
                     className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer"
@@ -149,8 +149,8 @@ const DeleteAccount = () => {
               </Field>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="border-0 bg-neutral-800">
-            <AlertDialogCancel className="cursor-pointer ring-0 hover:text-white">
+          <AlertDialogFooter className="border-0 bg-card">
+            <AlertDialogCancel className="cursor-pointer ring-0 hover:text-foreground">
               Cancel
             </AlertDialogCancel>
             <Button

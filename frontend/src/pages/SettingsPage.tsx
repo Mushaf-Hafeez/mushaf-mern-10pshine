@@ -15,6 +15,7 @@ import { useForm, type SubmitHandler } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 
 import { z } from "zod"
+import ModeToggle from "@/components/custom/ModeToggle"
 
 const updateProfileSchema = z
   .object({
@@ -124,32 +125,33 @@ const SettingsPage = () => {
   }, [image])
 
   return (
-    <section className="min-h-screen w-full bg-neutral-900 text-white">
-      {/* header */}
-      <div className="flex w-full items-center justify-between gap-2 border-b border-neutral-800 px-4 py-3 backdrop-blur-sm sm:px-6 sm:py-4">
+    <section className="min-h-screen w-full bg-card text-foreground">
+      <div className="flex w-full items-center justify-between gap-2 border-b border-border bg-card px-4 py-3 backdrop-blur-sm sm:px-6 sm:py-4">
         <div className="flex items-center gap-2">
           <Button
             size={"icon-lg"}
-            className="cursor-pointer bg-transparent transition-all duration-200 hover:bg-neutral-800"
+            className="cursor-pointer bg-transparent text-foreground transition-all duration-200 hover:bg-secondary"
             asChild
           >
             <SidebarTrigger />
           </Button>
 
-          <h2 className="text-base font-medium sm:text-lg">Settings</h2>
+          <h2 className="text-base font-medium text-foreground sm:text-lg">
+            Settings
+          </h2>
         </div>
       </div>
 
-      {/* settings */}
       <div className="space-y-4 px-4 py-4 sm:space-y-6 sm:px-6 sm:py-6">
         <div className="space-y-4 sm:space-y-6">
-          <h2 className="text-lg font-semibold sm:text-xl">Account Settings</h2>
+          <h2 className="text-lg font-semibold text-foreground sm:text-xl">
+            Account Settings
+          </h2>
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="w-full space-y-3 rounded-2xl bg-neutral-800/30 p-4 outline outline-neutral-800 sm:max-w-md sm:space-y-4 sm:p-6"
+            className="w-full space-y-3 rounded-2xl bg-secondary/30 p-4 outline outline-border sm:max-w-md sm:space-y-4 sm:p-6"
           >
-            {/* profile image */}
             <Field>
               <div className="flex-center">
                 {preview ? (
@@ -160,18 +162,18 @@ const SettingsPage = () => {
                     </AvatarFallback>
                   </Avatar>
                 ) : (
-                  <div className="flex-center size-20 rounded-full bg-neutral-700/30 sm:size-24">
+                  <div className="flex-center size-20 rounded-full bg-secondary sm:size-24">
                     <UploadCloud size={24} className="text-primary sm:size-8" />
                   </div>
                 )}
               </div>
 
               <div>
-                <h3 className="mt-2 text-center text-sm sm:text-base">
+                <h3 className="mt-2 text-center text-sm text-foreground sm:text-base">
                   Profile picture
                 </h3>
 
-                <p className="text-center text-xs text-neutral-400 sm:text-sm">
+                <p className="text-center text-xs text-muted-foreground sm:text-sm">
                   Upload profile picture
                 </p>
               </div>
@@ -179,7 +181,7 @@ const SettingsPage = () => {
               <div className="flex-center">
                 <FieldLabel
                   htmlFor="image"
-                  className="my-2 w-fit cursor-pointer rounded-full bg-neutral-700/30 px-2 py-1 text-xs transition-all duration-200 hover:bg-neutral-700 sm:px-3 sm:py-2"
+                  className="my-2 w-fit cursor-pointer rounded-full bg-secondary px-2 py-1 text-xs text-muted-foreground transition-all duration-200 hover:text-foreground sm:px-3 sm:py-2"
                 >
                   Change Picture
                 </FieldLabel>
@@ -198,7 +200,6 @@ const SettingsPage = () => {
               )}
             </Field>
 
-            {/* name */}
             <Field>
               <FieldLabel htmlFor="name">Name</FieldLabel>
 
@@ -207,13 +208,12 @@ const SettingsPage = () => {
                 id="name"
                 type="text"
                 placeholder="Enter your name"
-                className="bg-neutral-700/30! px-3 py-2"
+                className="bg-secondary/30! px-3 py-2 text-foreground placeholder:text-muted-foreground"
               />
 
               {errors.name && <FieldError>{errors.name.message}</FieldError>}
             </Field>
 
-            {/* root error */}
             {errors.root && <FieldError>{errors.root.message}</FieldError>}
 
             <Button
@@ -227,18 +227,42 @@ const SettingsPage = () => {
           </form>
         </div>
 
-        {/* security */}
         <div className="space-y-4 sm:space-y-6">
-          <h2 className="text-lg font-semibold sm:text-xl">Danger Zone</h2>
-          <div className="flex flex-col gap-3 rounded-2xl bg-neutral-800/30 p-4 outline outline-neutral-800 sm:gap-4 sm:p-6 md:flex-row md:items-center md:justify-between">
+          <h2 className="text-lg font-semibold text-foreground sm:text-xl">
+            Theme Preference
+          </h2>
+
+          <div className="flex flex-col gap-3 rounded-2xl bg-secondary/30 p-4 outline outline-border sm:gap-4 sm:p-6 md:flex-row md:items-center md:justify-between">
             <div>
-              <h3 className="text-sm font-semibold sm:text-base">
+              <h3 className="text-sm font-semibold text-foreground sm:text-base">
+                Change Theme
+              </h3>
+
+              <p className="text-xs text-muted-foreground sm:text-sm">
+                Change mode to Light/Dark.
+              </p>
+            </div>
+
+            <ModeToggle />
+          </div>
+        </div>
+
+        <div className="space-y-4 sm:space-y-6">
+          <h2 className="text-lg font-semibold text-foreground sm:text-xl">
+            Danger Zone
+          </h2>
+
+          <div className="flex flex-col gap-3 rounded-2xl bg-secondary/30 p-4 outline outline-border sm:gap-4 sm:p-6 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-foreground sm:text-base">
                 Delete Account
               </h3>
-              <p className="text-xs text-neutral-400 sm:text-sm">
+
+              <p className="text-xs text-muted-foreground sm:text-sm">
                 Permanently delete your account.
               </p>
             </div>
+
             <DeleteAccount />
           </div>
         </div>
