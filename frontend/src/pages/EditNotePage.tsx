@@ -4,19 +4,25 @@ import { logger } from "@/lib/logger"
 
 import { Button } from "@/components/ui/button"
 import Editor from "@/components/custom/Editor"
-import { useEffect, useState } from "react"
+import { useEffect, useState, type ChangeEvent } from "react"
 import { getNote, updateNote } from "@/services/note.service"
 import { FieldError } from "@/components/ui/field"
 import Spinner from "@/components/custom/Spinner"
+import { Input } from "@/components/ui/input"
 
 const EditNotePage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isUpdating, setIsUpdating] = useState<boolean>(false)
+  const [title, setTitle] = useState<string>("")
   const [content, setContent] = useState<string>("")
   const [error, setError] = useState<string>("")
   const navigate = useNavigate()
   const params = useParams()
   const id = params.id
+
+  const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value)
+  }
 
   const handleGoBack = () => {
     navigate(-1)
@@ -39,7 +45,7 @@ const EditNotePage = () => {
 
     try {
       // change the function here
-      const response = await updateNote(id as string, content)
+      const response = await updateNote(id as string, title, content)
 
       if (response.status === 200) {
         logger.info({ noteId: id }, "Note updated successfully")
@@ -63,6 +69,7 @@ const EditNotePage = () => {
         const response = await getNote(id as string)
 
         if (response.status === 200) {
+          setTitle(response.data.note.title)
           setContent(response.data.note.content)
         }
       } catch (error: any) {
@@ -81,7 +88,7 @@ const EditNotePage = () => {
   return (
     <section className="h-screen w-full bg-neutral-900 pt-30 pb-10 text-white">
       {/* create note header */}
-      <header className="fixed top-4 left-1/2 z-50 flex w-sm -translate-x-1/2 items-center justify-between rounded-full bg-neutral-800/30 px-6 py-4 outline outline-neutral-800 backdrop-blur-md sm:w-xl md:w-3xl lg:w-5xl">
+      <header className="fixed top-4 left-1/2 z-50 flex w-sm -translate-x-1/2 items-center justify-between gap-4 rounded-full bg-neutral-800/30 px-6 py-4 outline outline-neutral-800 backdrop-blur-md sm:w-xl md:w-3xl lg:w-5xl">
         <Button
           className="cursor-pointer bg-neutral-700"
           size={"icon"}
@@ -89,6 +96,12 @@ const EditNotePage = () => {
         >
           <ArrowLeft />
         </Button>
+        <Input
+          type="text"
+          value={title}
+          onChange={handleTitleChange}
+          className="text-2xl! font-semibold text-white"
+        />
         <div className="flex items-center gap-2">
           {error && <FieldError>{error}</FieldError>}
 

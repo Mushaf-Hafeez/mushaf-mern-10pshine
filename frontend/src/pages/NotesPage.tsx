@@ -25,6 +25,7 @@ export interface User {
 
 interface NoteType {
   _id: string
+  title: string
   content: string
   user: User
   createdAt: Date
@@ -214,13 +215,16 @@ const Notes = () => {
         >
           <ul
             className={`p-6 ${
-              isGrid ? "columns-1 gap-4 sm:columns-2 md:columns-3" : "space-y-4"
+              isGrid
+                ? "grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
+                : "space-y-4"
             }`}
           >
             {notes.map((note) => (
               <Note
                 key={note._id}
                 id={note._id}
+                title={note.title}
                 content={note.content}
                 createdAt={note.createdAt}
                 removeNote={removeNote}
