@@ -178,10 +178,11 @@ export const createNote = async (
       );
     }
 
-    const { content } = result.data;
+    const { title, content } = result.data;
 
     // create note
     const note = await Note.create({
+      title,
       content,
       user: req.user!._id,
     });
@@ -225,12 +226,12 @@ export const updateNote = async (
     }
 
     const { id } = paramsResult.data;
-    const { content } = bodyResult.data;
+    const data = bodyResult.data;
 
     // update the note
     const updatedNote = await Note.findOneAndUpdate(
       { _id: id, user: req.user!._id },
-      { $set: { content } },
+      { $set: data },
       { new: true },
     );
 
