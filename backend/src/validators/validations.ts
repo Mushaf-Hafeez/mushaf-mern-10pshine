@@ -210,16 +210,28 @@ export const noteIdValidation = z.object({
 });
 
 export const createNoteValidation = z.object({
+  title: z
+    .string({
+      error: (iss) =>
+        iss.input === undefined ? "Title is required." : "Invalid title.",
+    })
+    .trim()
+    .min(1, { message: "Title cannot be empty." }),
   content: z
     .string({
       error: (iss) =>
         iss.input === undefined ? "Content is required." : "Invalid content.",
     })
     .trim()
-    .min(1, { error: "Content cannot be empty." }),
+    .min(1, { message: "Content cannot be empty." }),
 });
 
-export const updateNoteValidation = createNoteValidation;
+export const updateNoteValidation = createNoteValidation
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message:
+      "At least one field (title or content) must be provided for update.",
+  });
 
 export const updateProfileValidation = z
   .object({

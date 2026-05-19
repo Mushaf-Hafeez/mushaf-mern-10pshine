@@ -18,6 +18,7 @@ const noteSchema = new Schema<INote>(
     },
     content: {
       type: String,
+      required: true,
     },
     user: {
       type: Schema.Types.ObjectId,

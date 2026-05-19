@@ -9,6 +9,7 @@ import {
   loginValidation,
   noteIdValidation,
   resetPasswordValidation,
+  updateNoteValidation,
   updateProfileValidation,
 } from "../../validators/validations";
 
@@ -21,13 +22,16 @@ describe("emailValidation", () => {
 
     assert.isTrue(result.success);
   });
+
   it("should fail when the email is invalid", () => {
     const result = emailValidation.safeParse({ email: "test" });
 
     assert.isFalse(result.success);
   });
+
   it("should fail when email is empty", () => {
     const result = emailValidation.safeParse({ email: "" });
+
     assert.isFalse(result.success);
   });
 });
@@ -47,6 +51,7 @@ describe("createUserValidation", () => {
 
     assert.isTrue(result.success);
   });
+
   it("should fail when the data is invalid", () => {
     const result = createUserValidation.safeParse({
       name: "Test user",
@@ -58,6 +63,7 @@ describe("createUserValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when passwords do not match", () => {
     const result = createUserValidation.safeParse({
       name: "Test user",
@@ -69,6 +75,7 @@ describe("createUserValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when password has no uppercase letter", () => {
     const result = createUserValidation.safeParse({
       name: "Test user",
@@ -80,6 +87,7 @@ describe("createUserValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when password has no lowercase letter", () => {
     const result = createUserValidation.safeParse({
       name: "Test user",
@@ -91,6 +99,7 @@ describe("createUserValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when password has no digit", () => {
     const result = createUserValidation.safeParse({
       name: "Test user",
@@ -102,6 +111,7 @@ describe("createUserValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when password has no special character.", () => {
     const result = createUserValidation.safeParse({
       name: "Test user",
@@ -113,6 +123,7 @@ describe("createUserValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when password lenght is less than 8", () => {
     const result = createUserValidation.safeParse({
       name: "Test user",
@@ -124,6 +135,7 @@ describe("createUserValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when password lenght is greater than 100", () => {
     const result = createUserValidation.safeParse({
       name: "Test user",
@@ -137,6 +149,7 @@ describe("createUserValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when OTP is not 6 digits", () => {
     const result = createUserValidation.safeParse({
       name: "Test user",
@@ -162,6 +175,7 @@ describe("loginValidation", () => {
 
     assert.isTrue(result.success);
   });
+
   it("should fail when the email is invalid", () => {
     const result = loginValidation.safeParse({
       email: "test@gmail",
@@ -170,6 +184,7 @@ describe("loginValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when email is missing", () => {
     const result = loginValidation.safeParse({
       password: "Tempuser12@",
@@ -177,6 +192,7 @@ describe("loginValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when password is missing", () => {
     const result = loginValidation.safeParse({
       email: "temp@gmail.com",
@@ -184,6 +200,7 @@ describe("loginValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when password does not follow the pattern", () => {
     const result = loginValidation.safeParse({
       email: "temp@gmail.com",
@@ -207,6 +224,7 @@ describe("resetPasswordValidation", () => {
 
     assert.isTrue(result.success);
   });
+
   it("should fail when the reset password token is missing", () => {
     const result = resetPasswordValidation.safeParse({
       password: "Tempuser12@",
@@ -215,6 +233,7 @@ describe("resetPasswordValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when token is invalid", () => {
     const result = resetPasswordValidation.safeParse({
       reset_password_token: "invalid",
@@ -224,6 +243,7 @@ describe("resetPasswordValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when passwords do not match", () => {
     const result = resetPasswordValidation.safeParse({
       reset_password_token: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
@@ -246,6 +266,7 @@ describe("noteIdValidation", () => {
 
     assert.isTrue(result.success);
   });
+
   it("should fail when the ID is invalid", () => {
     const result = noteIdValidation.safeParse({
       id: "507c7f79bcf86cd7994f",
@@ -253,8 +274,10 @@ describe("noteIdValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should fail when ID is empty", () => {
     const result = noteIdValidation.safeParse({ id: "" });
+
     assert.isFalse(result.success);
   });
 });
@@ -265,14 +288,130 @@ describe("noteIdValidation", () => {
 describe("createNoteValidation", () => {
   it("should pass the validation when the data is valid", () => {
     const result = createNoteValidation.safeParse({
+      title: "Test Title",
       content: "This is test note.",
     });
+
     assert.isTrue(result.success);
   });
-  it("should fali the validation when the data is invalid", () => {
+
+  it("should fail the validation when title is missing", () => {
     const result = createNoteValidation.safeParse({
+      content: "This is test note.",
+    });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail the validation when content is missing", () => {
+    const result = createNoteValidation.safeParse({
+      title: "Test Title",
+    });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail the validation when title is empty", () => {
+    const result = createNoteValidation.safeParse({
+      title: "",
+      content: "This is test note.",
+    });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail the validation when content is empty", () => {
+    const result = createNoteValidation.safeParse({
+      title: "Test Title",
       content: "",
     });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail the validation when title contains only spaces", () => {
+    const result = createNoteValidation.safeParse({
+      title: "     ",
+      content: "This is test note.",
+    });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail the validation when content contains only spaces", () => {
+    const result = createNoteValidation.safeParse({
+      title: "Test Title",
+      content: "      ",
+    });
+
+    assert.isFalse(result.success);
+  });
+});
+
+// ========================================================
+//                 updateNoteValidation Test
+// ========================================================
+describe("updateNoteValidation", () => {
+  it("should pass when only title is provided", () => {
+    const result = updateNoteValidation.safeParse({
+      title: "Updated Title",
+    });
+
+    assert.isTrue(result.success);
+  });
+
+  it("should pass when only content is provided", () => {
+    const result = updateNoteValidation.safeParse({
+      content: "Updated content.",
+    });
+
+    assert.isTrue(result.success);
+  });
+
+  it("should pass when both title and content are provided", () => {
+    const result = updateNoteValidation.safeParse({
+      title: "Updated Title",
+      content: "Updated content.",
+    });
+
+    assert.isTrue(result.success);
+  });
+
+  it("should fail when no field is provided", () => {
+    const result = updateNoteValidation.safeParse({});
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail when title is empty", () => {
+    const result = updateNoteValidation.safeParse({
+      title: "",
+    });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail when content is empty", () => {
+    const result = updateNoteValidation.safeParse({
+      content: "",
+    });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail when title contains only spaces", () => {
+    const result = updateNoteValidation.safeParse({
+      title: "     ",
+    });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail when content contains only spaces", () => {
+    const result = updateNoteValidation.safeParse({
+      content: "      ",
+    });
+
     assert.isFalse(result.success);
   });
 });
@@ -364,6 +503,7 @@ describe("deleteAccountValidation", () => {
 
     assert.isFalse(result.success);
   });
+
   it("should pass the validation when the password is correct", () => {
     const result = deleteAccountValidation.safeParse({
       password: "Tempuser123#",
