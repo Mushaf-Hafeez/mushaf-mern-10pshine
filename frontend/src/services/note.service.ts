@@ -27,8 +27,12 @@ export const createNote = async (title: string, content: string) => {
 }
 
 // function to update the note in the backend
-export const updateNote = async (id: string, content: string) => {
-  const response = await api.put(`/notes/${id}`, { content })
+export const updateNote = async (
+  id: string,
+  title: string,
+  content: string
+) => {
+  const response = await api.put(`/notes/${id}`, { title, content })
   return response
 }
 
