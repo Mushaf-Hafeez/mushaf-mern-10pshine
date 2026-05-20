@@ -39,7 +39,6 @@ export const updateProfile = async (
     // validation
     const result = updateProfileValidation.safeParse({
       name: req.body.name,
-      // profile_pic: req?.file?.path,
     });
 
     if (!result.success) {

@@ -10,6 +10,7 @@ import {
   noteIdValidation,
   resetPasswordValidation,
   updateNoteValidation,
+  updateProfilePicValidation,
   updateProfileValidation,
 } from "../../validators/validations";
 
@@ -417,10 +418,10 @@ describe("updateNoteValidation", () => {
 });
 
 // ========================================================
-//                 updateProfileValidation Test
+//              updateProfileValidation Test
 // ========================================================
 describe("updateProfileValidation", () => {
-  it("should pass when only name is provided", () => {
+  it("should pass when valid name is provided", () => {
     const result = updateProfileValidation.safeParse({
       name: "Updated User",
     });
@@ -428,24 +429,7 @@ describe("updateProfileValidation", () => {
     assert.isTrue(result.success);
   });
 
-  it("should pass when only profile picture is provided", () => {
-    const result = updateProfileValidation.safeParse({
-      profile_pic: "https://example.com/profile.jpg",
-    });
-
-    assert.isTrue(result.success);
-  });
-
-  it("should pass when both name and profile picture are provided", () => {
-    const result = updateProfileValidation.safeParse({
-      name: "Updated User",
-      profile_pic: "https://example.com/profile.jpg",
-    });
-
-    assert.isTrue(result.success);
-  });
-
-  it("should fail when both fields are missing", () => {
+  it("should fail when name is missing", () => {
     const result = updateProfileValidation.safeParse({});
 
     assert.isFalse(result.success);
@@ -467,14 +451,6 @@ describe("updateProfileValidation", () => {
     assert.isFalse(result.success);
   });
 
-  it("should fail when profile picture URL is invalid", () => {
-    const result = updateProfileValidation.safeParse({
-      profile_pic: "invalid-url",
-    });
-
-    assert.isFalse(result.success);
-  });
-
   it("should fail when name is empty string", () => {
     const result = updateProfileValidation.safeParse({
       name: "",
@@ -486,6 +462,49 @@ describe("updateProfileValidation", () => {
   it("should fail when name contains only spaces", () => {
     const result = updateProfileValidation.safeParse({
       name: "      ",
+    });
+
+    assert.isFalse(result.success);
+  });
+});
+
+// ========================================================
+//           updateProfilePicValidation Test
+// ========================================================
+describe("updateProfilePicValidation", () => {
+  it("should pass when valid profile picture URL is provided", () => {
+    const result = updateProfilePicValidation.safeParse({
+      profile_pic: "https://example.com/profile.jpg",
+    });
+
+    assert.isTrue(result.success);
+  });
+
+  it("should fail when profile picture is missing", () => {
+    const result = updateProfilePicValidation.safeParse({});
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail when profile picture URL is invalid", () => {
+    const result = updateProfilePicValidation.safeParse({
+      profile_pic: "invalid-url",
+    });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail when profile picture is empty string", () => {
+    const result = updateProfilePicValidation.safeParse({
+      profile_pic: "",
+    });
+
+    assert.isFalse(result.success);
+  });
+
+  it("should fail when profile picture contains only spaces", () => {
+    const result = updateProfilePicValidation.safeParse({
+      profile_pic: "      ",
     });
 
     assert.isFalse(result.success);
