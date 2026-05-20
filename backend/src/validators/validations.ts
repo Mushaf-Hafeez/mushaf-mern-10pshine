@@ -233,19 +233,22 @@ export const updateNoteValidation = createNoteValidation
       "At least one field (title or content) must be provided for update.",
   });
 
-export const updateProfileValidation = z
-  .object({
-    name: z
-      .string()
-      .trim()
-      .min(6, { message: "Name must contain at least 6 characters." })
-      .max(25, { message: "Name cannot contain more than 25 characters." })
-      .optional(),
-    profile_pic: z.string().url().optional(),
-  })
-  .refine((data) => data.name || data.profile_pic, {
-    message: "Provide a name or a profile picture to update.",
-  });
+export const updateProfileValidation = z.object({
+  name: z
+    .string({ error: "Name is required." })
+    .trim()
+    .min(1, { error: "Name is required." }) // catches "" and "   "
+    .min(6, { error: "Name must contain at least 6 characters." })
+    .max(25, { error: "Name cannot contain more than 25 characters." }),
+});
+
+export const updateProfilePicValidation = z.object({
+  profile_pic: z
+    .string({ error: "Profile picture is required." })
+    .trim()
+    .min(1, { error: "Profile picture is required." })
+    .url({ error: "Profile picture URL must be a valid URL." }),
+});
 
 export const deleteAccountValidation = z.object({
   password: z
