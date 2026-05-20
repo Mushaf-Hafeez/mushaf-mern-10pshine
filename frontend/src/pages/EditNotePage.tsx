@@ -86,26 +86,34 @@ const EditNotePage = () => {
   }, [id])
 
   return (
-    <section className="h-screen w-full bg-neutral-900 pt-30 pb-10 text-white">
+    <section className="h-screen w-full bg-card pt-30 pb-10 text-foreground">
       {/* create note header */}
-      <header className="fixed top-4 left-1/2 z-50 flex w-sm -translate-x-1/2 items-center justify-between gap-4 rounded-full bg-neutral-800/30 px-6 py-4 outline outline-neutral-800 backdrop-blur-md sm:w-xl md:w-3xl lg:w-5xl">
+      <header className="fixed top-4 left-1/2 z-50 flex w-sm -translate-x-1/2 items-center justify-between gap-4 rounded-full bg-secondary/30 px-4 py-3 outline outline-border backdrop-blur-md sm:w-xl md:w-3xl lg:w-5xl">
+        {/* Go Back */}
         <Button
-          className="cursor-pointer bg-neutral-700"
-          size={"icon"}
+          type="button"
           onClick={handleGoBack}
+          className="flex items-center justify-center bg-transparent text-foreground hover:bg-secondary"
+          size="icon"
         >
-          <ArrowLeft />
+          <ArrowLeft size={18} />
         </Button>
+
+        {/* Title */}
         <Input
           type="text"
           value={title}
           onChange={handleTitleChange}
-          className="text-2xl! font-semibold text-white"
+          className="flex-1 border-none bg-transparent text-lg font-semibold text-foreground focus-visible:ring-0"
+          placeholder="Note title..."
         />
+
+        {/* Actions */}
         <div className="flex items-center gap-2">
           {error && <FieldError>{error}</FieldError>}
 
           <Button
+            type="button"
             className="flex cursor-pointer items-center gap-2"
             onClick={handleSaveChanges}
             disabled={isUpdating}

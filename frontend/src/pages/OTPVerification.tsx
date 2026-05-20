@@ -4,7 +4,6 @@ import { ArrowLeft, LoaderCircle, RotateCcw } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { logger } from "@/lib/logger"
 
-// importing shadcn ui components
 import {
   InputOTP,
   InputOTPGroup,
@@ -33,6 +32,7 @@ const OTPVerification = () => {
 
   const [email, setEmail] = useState<string>("")
   const [isResending, setIsResending] = useState<boolean>(false)
+
   const {
     setError,
     clearErrors,
@@ -46,7 +46,6 @@ const OTPVerification = () => {
     },
   })
 
-  // Initialize email from localStorage
   useEffect(() => {
     const storedEmail = localStorage.getItem("otp-email")
     if (!storedEmail) {
@@ -59,18 +58,13 @@ const OTPVerification = () => {
     setEmail(storedEmail)
   }, [navigate])
 
-  // function to redirect the user to previous page
   const hanldeGoBack = () => {
     navigate(-1)
   }
 
-  //   handleResendOTP function
   const handleResend = async () => {
     clearErrors("root")
-    setIsResending(false)
-    reset({
-      otp: "",
-    })
+    reset({ otp: "" })
 
     if (!email) {
       logger.warn({}, "OTP resend attempted without email")
@@ -82,6 +76,7 @@ const OTPVerification = () => {
 
     try {
       setIsResending(true)
+
       const response = await OTP({
         name: "",
         email,
@@ -99,16 +94,14 @@ const OTPVerification = () => {
       logger.error({ error: error.message, email }, "Failed to resend OTP")
       setError("root", {
         type: "backend",
-        message: error.response.data.message || "Something went wrong.",
+        message: error?.response?.data?.message || "Something went wrong.",
       })
     } finally {
       setIsResending(false)
     }
   }
 
-  // onSubmit function
   const onSubmit: SubmitHandler<OTPData> = async (data) => {
-    // remove error first
     clearErrors("root")
 
     if (!email) {
@@ -130,11 +123,11 @@ const OTPVerification = () => {
           { userId: response.data.user._id, email: response.data.user.email },
           "User registered successfully"
         )
+
         setUser(response.data.user)
-        // clear email from localStorage after successful signup
         localStorage.removeItem("otp-email")
         reset({ otp: "" })
-        navigate("/") // redirect the user to notes page when it will be created
+        navigate("/")
       }
     } catch (error: any) {
       logger.error({ error: error.message }, "OTP verification failed")
@@ -146,24 +139,22 @@ const OTPVerification = () => {
   }
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-neutral-900 text-white">
+    <section className="relative h-screen w-full overflow-hidden bg-card text-foreground">
       {/* left gradient */}
-      <span className="absolute -top-10 -left-20 z-1 h-96 w-1/2 rounded-full bg-primary/10 blur-3xl md:-left-60 md:h-screen"></span>
+      <span className="absolute -top-10 -left-20 z-10 h-96 w-1/2 rounded-full bg-primary/10 blur-3xl md:-left-60 md:h-screen" />
       {/* right gradient */}
-      <span className="absolute top-100 -right-20 z-2 h-96 w-1/2 rounded-full bg-foreground/30 blur-3xl md:-right-60 md:h-screen"></span>
+      <span className="absolute top-100 -right-20 z-2 h-96 w-1/2 rounded-full bg-primary/10 blur-3xl md:-right-60 md:h-screen"></span>
 
-      {/*  OTPVerification container */}
-      <div className="absolute top-1/2 left-1/2 z-5 h-fit w-10/12 max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-neutral-800/30 p-6 outline outline-neutral-800 backdrop-blur-md md:p-8">
+      <div className="absolute top-1/2 left-1/2 z-50 h-fit w-10/12 max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-secondary/30 p-6 outline outline-border backdrop-blur-md md:p-8">
         <form onSubmit={handleSubmit(onSubmit)} className="col-center gap-4">
-          {/* Heading */}
-          <h2 className="text-center text-2xl font-semibold">
+          <h2 className="text-center text-2xl font-semibold text-foreground">
             OTP Verification
           </h2>
-          <p className="text-center">
+
+          <p className="text-center text-muted-foreground">
             Enter the 6-digit code sent to your email {email}
           </p>
 
-          {/* otp input */}
           <Controller
             name="otp"
             control={control}
@@ -182,40 +173,27 @@ const OTPVerification = () => {
                 pattern={REGEXP_ONLY_DIGITS}
               >
                 <InputOTPGroup>
-                  <InputOTPSlot
-                    index={0}
-                    className="h-12 w-12 border border-neutral-700 bg-neutral-800 text-lg text-white"
-                  />
-                  <InputOTPSlot
-                    index={1}
-                    className="h-12 w-12 border border-neutral-700 bg-neutral-800 text-lg text-white"
-                  />
-                  <InputOTPSlot
-                    index={2}
-                    className="h-12 w-12 border border-neutral-700 bg-neutral-800 text-lg text-white"
-                  />
-                  <InputOTPSlot
-                    index={3}
-                    className="h-12 w-12 border border-neutral-700 bg-neutral-800 text-lg text-white"
-                  />
-                  <InputOTPSlot
-                    index={4}
-                    className="h-12 w-12 border border-neutral-700 bg-neutral-800 text-lg text-white"
-                  />
-                  <InputOTPSlot
-                    index={5}
-                    className="h-12 w-12 border border-neutral-700 bg-neutral-800 text-lg text-white"
-                  />
+                  {[0, 1, 2, 3, 4, 5].map((i) => (
+                    <InputOTPSlot
+                      key={i}
+                      index={i}
+                      className="h-12 w-12 border border-border bg-card text-lg text-foreground"
+                    />
+                  ))}
                 </InputOTPGroup>
               </InputOTP>
             )}
           />
 
-          {/* errors */}
           {errors.otp && <FieldError>{errors.otp.message}</FieldError>}
+
           {errors.root && (
             <FieldError
-              className={errors.root.type === "success" ? "text-green-500" : ""}
+              className={
+                errors.root.type === "success"
+                  ? "text-success"
+                  : "text-destructive"
+              }
             >
               {errors.root.message}
             </FieldError>
@@ -232,22 +210,20 @@ const OTPVerification = () => {
           <div className="flex w-full items-center justify-between">
             <span
               onClick={hanldeGoBack}
-              className="flex cursor-pointer items-center gap-2 text-sm text-neutral-400 transition-all duration-200 hover:text-white"
+              className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground transition-all duration-200 hover:text-foreground"
             >
-              <ArrowLeft size={16} className="cursor-pointer" />
+              <ArrowLeft size={16} />
               Go back
             </span>
+
             <span
               onClick={handleResend}
-              className="flex cursor-pointer items-center gap-2 text-sm text-neutral-400 transition-all duration-200 hover:text-white"
+              className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground transition-all duration-200 hover:text-foreground"
             >
               {isResending ? (
-                <LoaderCircle
-                  size={16}
-                  className={`${isResending && "animate-spin"}`}
-                />
+                <LoaderCircle size={16} className="animate-spin" />
               ) : (
-                <RotateCcw size={16} className="cursor-pointer" />
+                <RotateCcw size={16} />
               )}
               Resend OTP
             </span>

@@ -8,7 +8,7 @@ const Features = () => {
       <h6 className="text-sm font-semibold tracking-[3px] text-primary">
         UNCOMPROMISING TOOLS
       </h6>
-      <h2 className="text-center text-3xl font-bold text-neutral-200 md:text-5xl">
+      <h2 className="text-center text-3xl font-bold text-foreground md:text-5xl">
         Engineered for Clarity
       </h2>
 

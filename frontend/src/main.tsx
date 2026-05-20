@@ -25,7 +25,7 @@ window.onunhandledrejection = (event) => {
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
-    <ThemeProvider>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <App />
     </ThemeProvider>
   </BrowserRouter>

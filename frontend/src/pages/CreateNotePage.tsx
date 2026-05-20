@@ -27,7 +27,6 @@ const CreateNotePage = () => {
 
   const handleSave = async () => {
     setError("")
-
     setIsSaving(true)
 
     try {
@@ -50,27 +49,29 @@ const CreateNotePage = () => {
   }
 
   return (
-    <section className="h-screen w-full bg-neutral-900 pt-30 pb-10 text-white">
-      {/* create note header */}
-      <header className="fixed top-4 left-1/2 z-50 flex w-sm -translate-x-1/2 items-center justify-between gap-4 rounded-full bg-neutral-800/30 px-6 py-4 outline outline-neutral-800 backdrop-blur-md sm:w-xl md:w-3xl lg:w-5xl">
+    <section className="h-screen w-full bg-card pt-30 pb-10 text-foreground">
+      {/* header */}
+      <header className="fixed top-4 left-1/2 z-50 flex w-sm -translate-x-1/2 items-center justify-between gap-4 rounded-full bg-secondary/30 px-6 py-4 outline outline-border backdrop-blur-md sm:w-xl md:w-3xl lg:w-5xl">
         <Button
-          className="cursor-pointer bg-neutral-700"
+          className="cursor-pointer bg-secondary text-secondary-foreground hover:bg-secondary/80"
           size={"icon"}
           onClick={handleGoBack}
         >
           <ArrowLeft />
         </Button>
+
         <Input
           value={title}
           onChange={handleTitleChange}
           placeholder="Title here..."
-          className="text-2xl! font-semibold"
+          className="border-none bg-transparent text-lg font-semibold text-foreground placeholder:text-muted-foreground focus-visible:ring-0"
         />
+
         <div className="flex items-center gap-2">
           {error && <FieldError>{error}</FieldError>}
 
           <Button
-            className="flex cursor-pointer items-center gap-2"
+            className="flex cursor-pointer items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={handleSave}
             disabled={isSaving}
           >

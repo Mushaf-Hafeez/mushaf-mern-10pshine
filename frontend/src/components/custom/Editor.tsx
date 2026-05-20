@@ -52,16 +52,12 @@ const normalizeMarkdown = (markdown: string): string => {
       continue
     }
 
-    // unordered list
     if (/^[*+-]\s+/.test(trimmedLine)) {
       currentListType = "ul"
-    }
-    // ordered list
-    else if (/^\d+\.\s+/.test(trimmedLine)) {
+    } else if (/^\d+\.\s+/.test(trimmedLine)) {
       currentListType = "ol"
     }
 
-    // insert blank line between different list types
     if (
       lastLineWasListItem &&
       currentListType &&
@@ -98,14 +94,14 @@ const Editor = ({ value, onChange }: EditorProps) => {
   }
 
   return (
-    <div className="editor-container mx-auto w-sm rounded-2xl border border-neutral-800 bg-neutral-900/40 md:w-3xl lg:w-5xl">
+    <div className="editor-container mx-auto w-sm rounded-2xl border border-border bg-card/40 text-foreground md:w-3xl lg:w-5xl">
       <MDXEditor
         ref={editorRef}
         markdown={value}
         onChange={handleChange}
         placeholder="type your content here..."
         suppressHtmlProcessing
-        className="dark-theme-editor"
+        className="mdx-theme-fix"
         plugins={[
           headingsPlugin(),
           quotePlugin(),
@@ -120,21 +116,13 @@ const Editor = ({ value, onChange }: EditorProps) => {
             toolbarContents: () => (
               <>
                 <UndoRedo />
-
                 <Separator />
-
                 <BoldItalicUnderlineToggles />
-
                 <Separator />
-
                 <BlockTypeSelect />
-
                 <Separator />
-
                 <ListsToggle />
-
                 <Separator />
-
                 <CreateLink />
                 <InsertThematicBreak />
               </>

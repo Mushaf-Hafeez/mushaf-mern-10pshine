@@ -38,7 +38,6 @@ const ProfilePag = () => {
   const clearUser = useUser((state) => state.clearUser)
   const navigate = useNavigate()
 
-  // logout function
   const handleLogout = async () => {
     setIsLoggingOut(true)
     try {
@@ -69,7 +68,7 @@ const ProfilePag = () => {
         }
       } catch (error: any) {
         logger.error({ error: error.message }, "Failed to fetch profile")
-        setError(error.response?.data?.message || "Something went wrong")
+        setError(error?.response?.data?.message || "Something went wrong")
       } finally {
         setIsLoading(false)
       }
@@ -79,19 +78,20 @@ const ProfilePag = () => {
   }, [])
 
   return (
-    <section className="min-h-screen w-full bg-neutral-900 text-white">
-      {/* header */}
-      <div className="flex w-full items-center justify-between gap-2 border-b border-neutral-800 px-4 py-3 backdrop-blur-sm sm:px-6 sm:py-4">
+    <section className="min-h-screen w-full bg-card text-foreground">
+      <div className="flex w-full items-center justify-between gap-2 border-b border-border bg-card px-4 py-3 backdrop-blur-sm sm:px-6 sm:py-4">
         <div className="flex items-center gap-2">
           <Button
             size={"icon-lg"}
-            className="cursor-pointer bg-transparent transition-all duration-200 hover:bg-neutral-800"
+            className="cursor-pointer bg-transparent text-foreground transition-all duration-200 hover:bg-secondary"
             asChild
           >
             <SidebarTrigger />
           </Button>
 
-          <h2 className="text-base font-medium sm:text-lg">Profile</h2>
+          <h2 className="text-base font-medium text-foreground sm:text-lg">
+            Profile
+          </h2>
         </div>
       </div>
 
@@ -100,10 +100,9 @@ const ProfilePag = () => {
       ) : (
         <div className="flex min-h-[calc(100vh-73px)] items-center justify-center px-4 py-6 sm:px-6">
           {error ? (
-            <p className="text-red-500">{error}</p>
+            <p className="text-destructive">{error}</p>
           ) : (
-            <div className="flex w-full max-w-md flex-col gap-4 rounded-2xl bg-neutral-800/30 p-4 outline outline-neutral-800 sm:gap-6 sm:p-8">
-              {/* profile */}
+            <div className="flex w-full max-w-md flex-col gap-4 rounded-2xl bg-secondary/30 p-4 outline outline-border sm:gap-6 sm:p-8">
               <div className="flex flex-col items-center gap-3 sm:gap-4">
                 <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
                   <AvatarImage src={user!.profile_pic} />
@@ -112,20 +111,20 @@ const ProfilePag = () => {
                   </AvatarFallback>
                 </Avatar>
 
-                <h2 className="text-center text-xl font-semibold sm:text-3xl">
+                <h2 className="text-center text-xl font-semibold text-foreground sm:text-3xl">
                   {user?.name || "Unknown User"}
                 </h2>
               </div>
 
-              {/* info */}
-              <div className="flex flex-col gap-3 text-neutral-400 sm:gap-5">
-                <div className="flex items-center gap-3 rounded-full bg-neutral-800 px-4 py-2 sm:gap-4 sm:px-6 sm:py-3">
-                  <Mail size={18} className="flex-shrink-0 sm:size-5" />
+              <div className="flex flex-col gap-3 text-muted-foreground sm:gap-5">
+                <div className="flex items-center gap-3 rounded-full bg-secondary px-4 py-2 sm:gap-4 sm:px-6 sm:py-3">
+                  <Mail size={18} className="shrink-0 sm:size-5" />
                   <p className="truncate text-sm sm:text-base">{user!.email}</p>
                 </div>
-                <div className="flex items-center gap-3 rounded-full bg-neutral-800 px-4 py-2 sm:gap-4 sm:px-6 sm:py-3">
-                  <Calendar size={18} className="flex-shrink-0 sm:size-5" />
-                  <p className="text-sm sm:text-base">
+
+                <div className="flex items-center gap-3 rounded-full bg-secondary px-4 py-2 sm:gap-4 sm:px-6 sm:py-3">
+                  <Calendar size={18} className="shrink-0 sm:size-5" />
+                  <p className="text-sm text-muted-foreground sm:text-base">
                     {dayjs(
                       new Date(user!.createdAt).toLocaleDateString()
                     ).format("MMMM DD, YYYY")}
@@ -133,11 +132,10 @@ const ProfilePag = () => {
                 </div>
               </div>
 
-              {/* CTAs */}
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <Link
                   to={"/user/settings"}
-                  className="flex-center flex-1 cursor-pointer gap-2 rounded-full bg-neutral-800 py-2 text-center text-xs text-neutral-400 transition-all duration-200 hover:text-white sm:py-3 sm:text-sm"
+                  className="flex-center flex-1 cursor-pointer gap-2 rounded-full bg-secondary py-2 text-center text-xs text-muted-foreground transition-all duration-200 hover:text-foreground sm:py-3 sm:text-sm"
                 >
                   <Pencil size={18} className="sm:size-5" />
                   Edit Profile
@@ -145,22 +143,25 @@ const ProfilePag = () => {
 
                 <AlertDialog open={open} onOpenChange={setOpen}>
                   <AlertDialogTrigger asChild>
-                    <button className="flex-center flex-1 cursor-pointer gap-2 rounded-full bg-red-400/15 py-2 text-center text-xs text-red-300 transition-all duration-200 hover:text-red-400 sm:py-3 sm:text-sm">
+                    <button className="flex-center flex-1 cursor-pointer gap-2 rounded-full bg-destructive/15 py-2 text-center text-xs text-destructive transition-all duration-200 hover:text-destructive sm:py-3 sm:text-sm">
                       <LogOut size={18} className="sm:size-5" />
                       Logout
                     </button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent className="bg-neutral-800">
+
+                  <AlertDialogContent className="bg-card text-foreground">
                     <AlertDialogHeader>
                       <AlertDialogTitle>Logout</AlertDialogTitle>
-                      <AlertDialogDescription className="text-neutral-400">
-                        Are your sure you want to logout?
+                      <AlertDialogDescription className="text-muted-foreground">
+                        Are you sure you want to logout?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogFooter className="border-0 bg-neutral-800">
-                      <AlertDialogCancel className="cursor-pointer ring-0 hover:text-white">
+
+                    <AlertDialogFooter className="border-0 bg-card">
+                      <AlertDialogCancel className="cursor-pointer text-muted-foreground hover:text-foreground">
                         Cancel
                       </AlertDialogCancel>
+
                       <AlertDialogAction
                         onClick={handleLogout}
                         variant={"destructive"}

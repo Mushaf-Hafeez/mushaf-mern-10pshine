@@ -79,14 +79,14 @@ const ForgotPassword = () => {
   }
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-neutral-900 text-white">
+    <section className="relative h-screen w-full overflow-hidden bg-card text-foreground">
       {/* left gradient */}
       <span className="absolute -top-10 -left-20 z-1 h-96 w-1/2 rounded-full bg-primary/10 blur-3xl md:-left-60 md:h-screen"></span>
       {/* right gradient */}
-      <span className="absolute top-100 -right-20 z-2 h-96 w-1/2 rounded-full bg-foreground/30 blur-3xl md:-right-60 md:h-screen"></span>
+      <span className="absolute top-100 -right-20 z-2 h-96 w-1/2 rounded-full bg-primary/10 blur-3xl md:-right-60 md:h-screen"></span>
 
       {/*  OTPVerification container */}
-      <div className="absolute top-1/2 left-1/2 z-5 h-fit w-10/12 max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-neutral-800/30 p-6 outline outline-neutral-800 backdrop-blur-md md:p-8">
+      <div className="absolute top-1/2 left-1/2 z-5 h-fit w-10/12 max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-secondary/30 p-6 outline outline-border backdrop-blur-md md:p-8">
         <form onSubmit={handleSubmit(onSubmit)} className="col-center gap-4">
           {/* Heading */}
           <h2 className="text-center text-2xl font-semibold">
@@ -101,7 +101,7 @@ const ForgotPassword = () => {
               aria-invalid={errors.email ? true : false}
               type="email"
               placeholder={"Enter your email"}
-              className="border border-neutral-700 p-4"
+              className="border border-border p-4"
             />
             {errors && errors.email && (
               <FieldError>{errors.email.message}</FieldError>
@@ -128,9 +128,9 @@ const ForgotPassword = () => {
           <div className="flex w-full items-center justify-between">
             <span
               onClick={hanldeGoBack}
-              className="flex cursor-pointer items-center gap-2 text-sm text-neutral-400 transition-all duration-200 hover:text-white"
+              className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
             >
-              <ArrowLeft size={16} className="cursor-pointer" />
+              <ArrowLeft size={16} />
               Go back
             </span>
           </div>

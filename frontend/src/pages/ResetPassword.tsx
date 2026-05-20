@@ -52,6 +52,7 @@ type ResetPasswordData = z.infer<typeof resetPasswordSchema>
 
 const ResetPassword = () => {
   const clearUser = useUser((state) => state.clearUser)
+
   const {
     register,
     setError,
@@ -66,30 +67,29 @@ const ResetPassword = () => {
     },
     resolver: zodResolver(resetPasswordSchema),
   })
+
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false)
   const [isShowConfirmPassword, setIsShowConfirmPassword] =
     useState<boolean>(false)
+
   const navigate = useNavigate()
   const { token } = useParams()
 
-  // Warn if reset token is missing
   if (!token) {
     logger.warn({}, "Reset password token is missing")
   }
 
-  // function to show/hide the password
   const handleShowPassword = () => {
     setIsShowPassword((prev) => !prev)
   }
 
-  // function to show/hide the confirmPassword
   const handleShowConfirmPassword = () => {
     setIsShowConfirmPassword((prev) => !prev)
   }
 
   const onSubmit: SubmitHandler<ResetPasswordData> = async (data) => {
-    // remove error first
     clearErrors("root")
+
     try {
       const response = await resetPassword(
         token as string,
@@ -107,60 +107,67 @@ const ResetPassword = () => {
       logger.error({ error: error.message }, "Password reset failed")
       setError("root", {
         type: "backend",
-        message: error.response.data.message || "Something went wrong",
+        message: error?.response?.data?.message || "Something went wrong",
       })
     }
   }
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-neutral-900 text-white">
-      {/* left gradient */}
-      <span className="absolute -top-10 -left-20 z-1 h-96 w-1/2 rounded-full bg-primary/10 blur-3xl md:-left-60 md:h-screen"></span>
-      {/* right gradient */}
-      <span className="absolute top-100 -right-20 z-2 h-96 w-1/2 rounded-full bg-foreground/30 blur-3xl md:-right-60 md:h-screen"></span>
+    <section className="relative h-screen w-full overflow-hidden bg-card text-foreground">
+      <span className="absolute -top-10 -left-20 z-10 h-96 w-1/2 rounded-full bg-primary/10 blur-3xl md:-left-60 md:h-screen" />
+      <span className="absolute top-100 -right-20 z-20 h-96 w-1/2 rounded-full bg-foreground/20 blur-3xl md:-right-60 md:h-screen" />
 
-      {/*  OTPVerification container */}
-      <div className="absolute top-1/2 left-1/2 z-5 h-fit w-10/12 max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-neutral-800/30 p-6 outline outline-neutral-800 backdrop-blur-md md:p-8">
+      <div className="absolute top-1/2 left-1/2 z-50 h-fit w-10/12 max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-secondary/30 p-6 outline outline-border backdrop-blur-md md:p-8">
         <form onSubmit={handleSubmit(onSubmit)} className="col-center gap-4">
-          {/* Heading */}
-          <h2 className="text-center text-2xl font-semibold">Reset Password</h2>
-          <p>Change your password</p>
+          <h2 className="text-center text-2xl font-semibold text-foreground">
+            Reset Password
+          </h2>
+
+          <p className="text-center text-muted-foreground">
+            Change your password
+          </p>
 
           <Field>
             <FieldLabel htmlFor="password">PASSWORD</FieldLabel>
+
             <div className="relative flex">
               <Input
                 {...register("password")}
                 id="password"
                 aria-invalid={errors.password ? true : false}
                 type={isShowPassword ? "text" : "password"}
-                placeholder={"Enter your password"}
-                className="border border-neutral-700 p-4"
+                placeholder="Enter your password"
+                className="border border-border bg-card p-4 text-foreground placeholder:text-muted-foreground"
               />
+
               <span
-                className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer"
+                className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
                 onClick={handleShowPassword}
               >
                 {isShowPassword ? <EyeClosed size={20} /> : <Eye size={20} />}
               </span>
             </div>
-            {errors && errors.password && (
+
+            {errors.password && (
               <FieldError>{errors.password.message}</FieldError>
             )}
           </Field>
+
           <Field>
             <FieldLabel htmlFor="confirmPassword">CONFIRM PASSWORD</FieldLabel>
+
             <div className="relative flex">
               <Input
                 {...register("confirmPassword")}
                 id="confirmPassword"
                 aria-invalid={errors.confirmPassword ? true : false}
                 type={isShowConfirmPassword ? "text" : "password"}
-                placeholder={"Enter your confirm password"}
-                className="border border-neutral-700 p-4"
+                placeholder="Enter your confirm password"
+                className="border border-border bg-card p-4 text-foreground placeholder:text-muted-foreground"
               />
+
               <span
-                className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer"
+                className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
                 onClick={handleShowConfirmPassword}
               >
                 {isShowConfirmPassword ? (
@@ -170,12 +177,12 @@ const ResetPassword = () => {
                 )}
               </span>
             </div>
-            {errors && errors.confirmPassword && (
+
+            {errors.confirmPassword && (
               <FieldError>{errors.confirmPassword.message}</FieldError>
             )}
-            {errors && errors.root && (
-              <FieldError>{errors.root.message}</FieldError>
-            )}
+
+            {errors.root && <FieldError>{errors.root.message}</FieldError>}
           </Field>
 
           <Button
