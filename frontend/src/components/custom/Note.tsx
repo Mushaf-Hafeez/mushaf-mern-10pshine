@@ -165,7 +165,12 @@ const Note = ({
                   </AlertDialogHeader>
 
                   <AlertDialogFooter className="border-0 bg-card">
-                    <AlertDialogCancel className="cursor-pointer border-border bg-card text-foreground hover:bg-secondary">
+                    <AlertDialogCancel
+                      onClick={(e) => {
+                        e.stopPropagation()
+                      }}
+                      className="cursor-pointer border-border bg-card text-foreground hover:bg-secondary"
+                    >
                       Cancel
                     </AlertDialogCancel>
 

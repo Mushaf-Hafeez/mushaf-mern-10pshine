@@ -118,12 +118,12 @@ const ProfilePag = () => {
 
               <div className="flex flex-col gap-3 text-muted-foreground sm:gap-5">
                 <div className="flex items-center gap-3 rounded-full bg-secondary px-4 py-2 sm:gap-4 sm:px-6 sm:py-3">
-                  <Mail size={18} className="flex-shrink-0 sm:size-5" />
+                  <Mail size={18} className="shrink-0 sm:size-5" />
                   <p className="truncate text-sm sm:text-base">{user!.email}</p>
                 </div>
 
-                <div className="flex items-center gap-3 rounded-full bg-card px-4 py-2 sm:gap-4 sm:px-6 sm:py-3">
-                  <Calendar size={18} className="flex-shrink-0 sm:size-5" />
+                <div className="flex items-center gap-3 rounded-full bg-secondary px-4 py-2 sm:gap-4 sm:px-6 sm:py-3">
+                  <Calendar size={18} className="shrink-0 sm:size-5" />
                   <p className="text-sm text-muted-foreground sm:text-base">
                     {dayjs(
                       new Date(user!.createdAt).toLocaleDateString()

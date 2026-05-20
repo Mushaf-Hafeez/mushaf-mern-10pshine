@@ -6,49 +6,28 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { updateProfile } from "@/services/profile.service"
+import { updateProfile, updateProfilePic } from "@/services/profile.service"
 import { useUser } from "@/zustand/useUser"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { UploadCloud } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useState, type ChangeEvent } from "react"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 
 import { z } from "zod"
 import ModeToggle from "@/components/custom/ModeToggle"
 
-const updateProfileSchema = z
-  .object({
-    name: z
-      .string()
-      .trim()
-      .min(6, {
-        message: "Name must contain at least 6 characters.",
-      })
-      .max(25, {
-        message: "Name cannot contain more than 25 characters.",
-      })
-      .optional()
-      .or(z.literal("")),
-
-    image: z
-      .any()
-      .optional()
-      .refine((files) => {
-        if (!files?.length) return true
-
-        return files[0]?.type.startsWith("image/")
-      }, "Only image files are allowed")
-      .refine((files) => {
-        if (!files?.length) return true
-
-        return files[0]?.size <= 2 * 1024 * 1024
-      }, "Image size must be less than 2MB"),
-  })
-  .refine((data) => data.name || data.image?.length, {
-    message: "Provide a name or a profile picture to update.",
-    path: ["root"],
-  })
+const updateProfileSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(6, {
+      message: "Name must contain at least 6 characters.",
+    })
+    .max(25, {
+      message: "Name cannot contain more than 25 characters.",
+    }),
+})
 
 type FormValues = z.infer<typeof updateProfileSchema>
 
@@ -56,16 +35,14 @@ const SettingsPage = () => {
   const user = useUser((state) => state.user)
   const setUser = useUser((state) => state.setUser)
 
-  const [preview, setPreview] = useState<string | null>(
-    user?.profile_pic || null
-  )
+  const [isUploading, setIsUploading] = useState<boolean>(false)
+  const [progress, setProgress] = useState<number>(50)
 
   const {
     clearErrors,
     setError,
     register,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     defaultValues: {
@@ -74,25 +51,38 @@ const SettingsPage = () => {
     resolver: zodResolver(updateProfileSchema),
   })
 
-  const navigate = useNavigate()
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return
 
-  const image = watch("image")
+    setIsUploading(true)
+
+    // create formData
+    const formData = new FormData()
+
+    formData.append("image", e.target.files[0])
+
+    try {
+      const response = await updateProfilePic(formData, setProgress)
+
+      if (response.status === 200) {
+        logger.info(
+          { userId: response.data.user._id },
+          "Profile pic updated successfully"
+        )
+        setUser(response.data.user)
+      }
+    } catch (error: any) {
+      logger.error({ error: error.message }, "Failed to update profile pic")
+    } finally {
+      setIsUploading(false)
+    }
+  }
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     clearErrors()
 
-    const formData = new FormData()
-
-    if (data.name?.trim()) {
-      formData.append("name", data.name.trim())
-    }
-
-    if (data.image?.[0]) {
-      formData.append("image", data.image[0])
-    }
-
     try {
-      const response = await updateProfile(formData)
+      const response = await updateProfile(data.name)
 
       if (response.status === 200) {
         logger.info(
@@ -100,7 +90,6 @@ const SettingsPage = () => {
           "Profile updated successfully"
         )
         setUser(response.data.user)
-        navigate("/user/profile")
       }
     } catch (error: any) {
       logger.error({ error: error.message }, "Failed to update profile")
@@ -111,18 +100,6 @@ const SettingsPage = () => {
       })
     }
   }
-
-  useEffect(() => {
-    if (image?.[0]) {
-      const imageUrl = URL.createObjectURL(image[0])
-
-      setPreview(imageUrl)
-
-      return () => {
-        URL.revokeObjectURL(imageUrl)
-      }
-    }
-  }, [image])
 
   return (
     <section className="min-h-screen w-full bg-card text-foreground">
@@ -154,18 +131,12 @@ const SettingsPage = () => {
           >
             <Field>
               <div className="flex-center">
-                {preview ? (
-                  <Avatar className="size-20 sm:size-24">
-                    <AvatarImage src={preview} />
-                    <AvatarFallback>
-                      {user?.name?.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                ) : (
-                  <div className="flex-center size-20 rounded-full bg-secondary sm:size-24">
-                    <UploadCloud size={24} className="text-primary sm:size-8" />
-                  </div>
-                )}
+                <Avatar className="size-20 sm:size-24">
+                  <AvatarImage src={user?.profile_pic} />
+                  <AvatarFallback>
+                    {user?.name?.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
               </div>
 
               <div>
@@ -178,6 +149,21 @@ const SettingsPage = () => {
                 </p>
               </div>
 
+              {/* progress bar */}
+              {isUploading && (
+                <div className="mt-2 col-center gap-2">
+                  <div className="w-full">
+                    <div
+                      style={{
+                        width: `${progress}%`,
+                      }}
+                      className="h-1 rounded-full bg-primary"
+                    ></div>
+                  </div>
+                  <h3 className="font-semibold text-primary">{progress}%</h3>
+                </div>
+              )}
+
               <div className="flex-center">
                 <FieldLabel
                   htmlFor="image"
@@ -188,16 +174,12 @@ const SettingsPage = () => {
               </div>
 
               <Input
-                {...register("image")}
                 id="image"
                 type="file"
                 className="hidden"
                 accept="image/png, image/jpg, image/jpeg"
+                onChange={handleFileChange}
               />
-
-              {errors.image && (
-                <FieldError>{errors.image.message as string}</FieldError>
-              )}
             </Field>
 
             <Field>
