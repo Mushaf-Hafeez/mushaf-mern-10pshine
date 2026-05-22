@@ -30,7 +30,7 @@ const Footer = () => {
               <ul className="space-y-3">
                 {productLinks.map((link) => (
                   <li key={link.name}>
-                    
+                    <a
                       href={link.href}
                       className="text-sm text-muted-foreground transition-colors duration-200 hover:text-primary"
                       onClick={(e) => e.preventDefault()}
@@ -49,7 +49,7 @@ const Footer = () => {
               <ul className="space-y-3">
                 {companyLinks.map((link) => (
                   <li key={link.name}>
-                    
+                    <a
                       href={link.href}
                       className="text-sm text-muted-foreground transition-colors duration-200 hover:text-primary"
                       onClick={(e) => e.preventDefault()}
@@ -72,7 +72,7 @@ const Footer = () => {
             </p>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               {legalLinks.map((link) => (
-                
+                <a
                   key={link.name}
                   href={link.href}
                   className="text-sm text-muted-foreground transition-colors duration-200 hover:text-primary"
