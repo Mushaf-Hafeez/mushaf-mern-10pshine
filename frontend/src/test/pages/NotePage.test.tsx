@@ -10,19 +10,35 @@ vi.mock("@/services/note.service")
 vi.mock("@/services/profile.service")
 
 const mockNavigate = vi.fn()
+const mockUseParams = vi.fn(() => ({ id: "note-1" }))
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom")
   return {
     ...actual,
     useNavigate: () => mockNavigate,
-    useParams: () => ({ id: "note-1" }),
+    useParams: () => mockUseParams(),
   }
 })
 
 describe("NotePage", () => {
   afterEach(() => {
     vi.clearAllMocks()
+    mockUseParams.mockReturnValue({ id: "note-1" })
+  })
+
+  it("handles missing note id in route params", async () => {
+    mockUseParams.mockReturnValue({})
+    vi.mocked(noteService.getNote).mockResolvedValue({
+      status: 200,
+      data: { note: { title: "T", content: "c" } },
+    } as Awaited<ReturnType<typeof noteService.getNote>>)
+
+    render(<NotePage />)
+
+    await waitFor(() => {
+      expect(noteService.getNote).toHaveBeenCalled()
+    })
   })
 
   it("loads and displays note content", async () => {
@@ -54,6 +70,28 @@ describe("NotePage", () => {
 
     await waitFor(() => {
       expect(noteService.getNote).toHaveBeenCalledWith("note-1")
+    })
+  })
+
+  it("handles delete failure without crashing", async () => {
+    vi.mocked(noteService.getNote).mockResolvedValue({
+      status: 200,
+      data: { note: { title: "Delete Me", content: "body" } },
+    } as Awaited<ReturnType<typeof noteService.getNote>>)
+
+    vi.mocked(noteService.deleteNote).mockRejectedValue(new Error("delete failed"))
+
+    const { user } = render(<NotePage />)
+
+    await waitFor(() => {
+      expect(screen.getByText("Delete Me")).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByRole("button", { name: /delete/i }))
+    await user.click(screen.getByRole("button", { name: /^delete$/i }))
+
+    await waitFor(() => {
+      expect(noteService.deleteNote).toHaveBeenCalledWith("note-1")
     })
   })
 

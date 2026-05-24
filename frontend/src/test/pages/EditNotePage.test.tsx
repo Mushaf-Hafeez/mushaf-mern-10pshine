@@ -112,4 +112,46 @@ describe("EditNotePage", () => {
       expect(screen.getByText("Not found")).toBeInTheDocument()
     })
   })
+
+  it("shows update error when save fails", async () => {
+    vi.mocked(noteService.getNote).mockResolvedValue({
+      status: 200,
+      data: { note: { title: "T", content: "Body" } },
+    } as Awaited<ReturnType<typeof noteService.getNote>>)
+
+    vi.mocked(noteService.updateNote).mockRejectedValue({
+      message: "fail",
+      response: { data: { message: "Update failed" } },
+    })
+
+    const { user } = render(<EditNotePage />)
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /save changes/i })).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByRole("button", { name: /save changes/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText("Update failed")).toBeInTheDocument()
+    })
+  })
+
+  it("navigates back on back button click", async () => {
+    vi.mocked(noteService.getNote).mockResolvedValue({
+      status: 200,
+      data: { note: { title: "T", content: "Body" } },
+    } as Awaited<ReturnType<typeof noteService.getNote>>)
+
+    const { user } = render(<EditNotePage />)
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "" })).toBeInTheDocument()
+    })
+
+    const backButton = screen.getAllByRole("button")[0]
+    await user.click(backButton)
+
+    expect(mockNavigate).toHaveBeenCalledWith(-1)
+  })
 })

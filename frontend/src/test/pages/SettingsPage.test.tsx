@@ -124,4 +124,41 @@ describe("SettingsPage", () => {
       expect(mockSetUser).toHaveBeenCalled()
     })
   })
+
+  it("shows error when profile update fails", async () => {
+    vi.mocked(profileService.updateProfile).mockRejectedValue({
+      message: "fail",
+      response: { data: { message: "Update failed" } },
+    })
+
+    const { user } = render(<SettingsPage />, { withSidebar: true })
+
+    const nameInput = screen.getByPlaceholderText(/enter your name/i)
+    await user.clear(nameInput)
+    await user.type(nameInput, "Valid Name")
+    await user.click(screen.getByRole("button", { name: /update/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText(/update failed/i)).toBeInTheDocument()
+    })
+  })
+
+  it("handles profile picture upload failure", async () => {
+    vi.mocked(profileService.updateProfilePic).mockRejectedValue({
+      message: "upload failed",
+    })
+
+    render(<SettingsPage />, { withSidebar: true })
+
+    const file = new File(["img"], "photo.png", { type: "image/png" })
+    const input = document.getElementById("image") as HTMLInputElement
+
+    Object.defineProperty(input, "files", { value: [file] })
+    input.dispatchEvent(new Event("change", { bubbles: true }))
+
+    await waitFor(() => {
+      expect(profileService.updateProfilePic).toHaveBeenCalled()
+      expect(mockSetUser).not.toHaveBeenCalled()
+    })
+  })
 })

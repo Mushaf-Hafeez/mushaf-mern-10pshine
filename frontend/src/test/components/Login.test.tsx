@@ -104,10 +104,9 @@ describe("Login", () => {
 
   it("shows forgot password link", () => {
     render(<Login />)
-    expect(screen.getByRole("link", { name: /forgot password/i })).toHaveAttribute(
-      "href",
-      "/forgot-password"
-    )
+    expect(
+      screen.getByRole("link", { name: /forgot password/i })
+    ).toHaveAttribute("href", "/forgot-password")
   })
 
   it("toggles password visibility", async () => {
@@ -115,7 +114,10 @@ describe("Login", () => {
     const passwordInput = screen.getByLabelText(/^password$/i)
     expect(passwordInput).toHaveAttribute("type", "password")
 
-    await user.click(passwordInput.parentElement?.querySelector("span")!)
+    const toggleButton = screen.getByRole("button", {
+      name: /toggle password visibility/,
+    })
+    await user.click(toggleButton)
     expect(passwordInput).toHaveAttribute("type", "text")
   })
 })

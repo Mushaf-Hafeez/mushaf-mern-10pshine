@@ -22,10 +22,10 @@ import remarkGfm from "remark-gfm"
 
 const NotePage = () => {
   const [open, setOpen] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>()
   const [title, setTitle] = useState<string>("")
   const [content, setContent] = useState<string>("")
-  const [error, setError] = useState<string>("")
+  const [error, setError] = useState<string>()
 
   const navigate = useNavigate()
   const params = useParams()

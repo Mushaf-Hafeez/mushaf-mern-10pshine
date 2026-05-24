@@ -29,7 +29,7 @@ import ReactMarkdown from "react-markdown"
 import rehypeRaw from "rehype-raw"
 import { deleteNote } from "@/services/note.service"
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Button } from "../ui/button"
 
 dayjs.extend(relativeTime)
@@ -51,16 +51,14 @@ const Note = ({
 }: NoteProp) => {
   const [open, setOpen] = useState<boolean>(false)
 
-  const navigate = useNavigate()
-
   const fromNow = dayjs().to(dayjs(createdAt))
 
   const averageWordsPerMinute = 200
   const averageWordsPerSecond = averageWordsPerMinute / 60
 
   const textOnlyContent = content
-    .replace(/[#_*~`>\-\[\]\(\)]/g, "")
-    .replace(/\n/g, " ")
+    .replaceAll(/[#_*~`>\-\[\]\(\)]/g, "")
+    .replaceAll("\n", " ")
 
   const wordCount = textOnlyContent.split(/\s+/).filter(Boolean).length
 
@@ -76,10 +74,6 @@ const Note = ({
   } else {
     const hours = Math.ceil(totalSeconds / 3600)
     readingTimeText = `${hours} hr read`
-  }
-
-  const goToNotePage = (id: string) => {
-    navigate(`/notes/${id}`)
   }
 
   const handleDelete = async (noteId: string) => {
@@ -104,191 +98,182 @@ const Note = ({
   }
 
   return (
-    <li
-      onClick={() => goToNotePage(id)}
-      className="group flex h-87.5 w-full min-w-0 cursor-pointer break-inside-avoid flex-col justify-between gap-4 overflow-hidden rounded-2xl bg-secondary/30 p-6 outline outline-border transition-all duration-200 hover:outline-primary md:px-8"
-    >
-      <div className="flex w-full items-start justify-between gap-2">
-        <h2 className="line-clamp-2 min-w-0 flex-1 text-2xl font-semibold wrap-break-word text-foreground">
-          {title}
-        </h2>
+    <li className="group break-inside-avoid">
+      <div className="relative flex h-87.5 w-full min-w-0 flex-col justify-between gap-4 overflow-hidden rounded-2xl bg-secondary/30 p-6 outline outline-border transition-all duration-200 focus-within:outline-primary hover:outline-primary md:px-8">
+        {/* clickable area */}
+        <Link
+          to={`/notes/${id}`}
+          className="absolute inset-0 z-0 rounded-2xl"
+          aria-label={`Open note ${title}`}
+        />
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              size={"icon"}
-              onClick={(e) => e.stopPropagation()}
-              className="shrink-0 cursor-pointer bg-card text-muted-foreground transition-all duration-200 hover:text-foreground"
-            >
-              <EllipsisVertical size={20} />
-            </Button>
-          </DropdownMenuTrigger>
+        {/* content */}
+        <div className="relative z-10 flex w-full items-start justify-between gap-2">
+          <h2 className="line-clamp-2 min-w-0 flex-1 text-2xl font-semibold break-words text-foreground">
+            {title}
+          </h2>
 
-          <DropdownMenuContent
-            align="end"
-            className="w-30 border-border bg-card! text-foreground"
-          >
-            <DropdownMenuGroup className="space-y-2 p-1">
-              <DropdownMenuItem
-                asChild
-                className="cursor-pointer rounded text-foreground! hover:bg-secondary focus:bg-secondary"
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                size="icon"
+                className="shrink-0 bg-card text-muted-foreground transition-all duration-200 hover:text-foreground"
               >
-                <Link
-                  to={`/notes/edit/${id}`}
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-2 p-2"
-                >
-                  <Edit2 size={18} />
-                  Edit
-                </Link>
-              </DropdownMenuItem>
+                <EllipsisVertical size={20} />
+              </Button>
+            </DropdownMenuTrigger>
 
-              <AlertDialog open={open} onOpenChange={setOpen}>
-                <AlertDialogTrigger asChild>
-                  <button
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex w-full cursor-pointer items-center gap-2 rounded p-2 text-sm text-red-400 transition-all duration-200 hover:bg-secondary"
+            <DropdownMenuContent
+              align="end"
+              className="w-30 border-border bg-card! text-foreground"
+            >
+              <DropdownMenuGroup className="space-y-2 p-1">
+                <DropdownMenuItem asChild>
+                  <Link
+                    to={`/notes/edit/${id}`}
+                    className="flex items-center gap-2 p-2"
                   >
-                    <Trash2 size={18} />
-                    Delete
-                  </button>
-                </AlertDialogTrigger>
+                    <Edit2 size={18} />
+                    Edit
+                  </Link>
+                </DropdownMenuItem>
 
-                <AlertDialogContent className="border-border bg-card text-foreground">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Note?</AlertDialogTitle>
-
-                    <AlertDialogDescription className="text-muted-foreground">
-                      This action cannot be undone. This will permanently delete
-                      your note.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-
-                  <AlertDialogFooter className="border-0 bg-card">
-                    <AlertDialogCancel
-                      onClick={(e) => {
-                        e.stopPropagation()
-                      }}
-                      className="cursor-pointer border-border bg-card text-foreground hover:bg-secondary"
+                <AlertDialog open={open} onOpenChange={setOpen}>
+                  <AlertDialogTrigger asChild>
+                    <button
+                      type="button"
+                      className="flex w-full items-center gap-2 rounded p-2 text-sm text-red-400 hover:bg-secondary"
                     >
-                      Cancel
-                    </AlertDialogCancel>
-
-                    <AlertDialogAction
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleDelete(id)
-                      }}
-                      className="cursor-pointer bg-red-600 text-white hover:bg-red-700"
-                    >
+                      <Trash2 size={18} />
                       Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+                    </button>
+                  </AlertDialogTrigger>
 
-      <div className="markdown-revert min-w-0 flex-1 overflow-hidden wrap-break-word">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeRaw]}
-          components={{
-            p(props) {
-              return (
-                <p className="mb-2 line-clamp-4 overflow-hidden text-ellipsis">
-                  {props.children}
-                </p>
-              )
-            },
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Note?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete your note.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
 
-            h1(props) {
-              return (
-                <h1 className="line-clamp-2 text-xl font-bold">
-                  {props.children}
-                </h1>
-              )
-            },
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
 
-            h2(props) {
-              return (
-                <h2 className="line-clamp-2 text-lg font-semibold">
-                  {props.children}
-                </h2>
-              )
-            },
-
-            h3(props) {
-              return (
-                <h3 className="line-clamp-2 text-base font-medium">
-                  {props.children}
-                </h3>
-              )
-            },
-
-            ul(props) {
-              return (
-                <ul className="line-clamp-5 list-disc overflow-hidden pl-5">
-                  {props.children}
-                </ul>
-              )
-            },
-
-            ol(props) {
-              return (
-                <ol className="line-clamp-5 list-decimal overflow-hidden pl-5">
-                  {props.children}
-                </ol>
-              )
-            },
-
-            li(props) {
-              return <li className="truncate">{props.children}</li>
-            },
-
-            code(props) {
-              return (
-                <code className="rounded bg-card px-1 py-0.5 text-sm break-words whitespace-pre-wrap">
-                  {props.children}
-                </code>
-              )
-            },
-
-            pre(props) {
-              return (
-                <pre className="line-clamp-4 max-w-full overflow-hidden rounded-lg bg-card p-4">
-                  {props.children}
-                </pre>
-              )
-            },
-
-            table(props) {
-              return (
-                <div className="overflow-hidden rounded-lg border border-border">
-                  <table className="w-full overflow-hidden text-sm">
-                    {props.children}
-                  </table>
-                </div>
-              )
-            },
-
-            img() {
-              return null
-            },
-          }}
-        >
-          {content}
-        </ReactMarkdown>
-      </div>
-
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <CheckCircle size={14} />
-          <p>{fromNow}</p>
+                      <AlertDialogAction onClick={() => handleDelete(id)}>
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <p>{readingTimeText}</p>
+
+        {/* markdown preview */}
+        <div className="relative z-10 min-w-0 flex-1 overflow-hidden">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
+            components={{
+              p(props) {
+                return (
+                  <p className="mb-2 line-clamp-4 overflow-hidden text-ellipsis">
+                    {" "}
+                    {props.children}{" "}
+                  </p>
+                )
+              },
+              h1(props) {
+                return (
+                  <h1 className="line-clamp-2 text-xl font-bold">
+                    {" "}
+                    {props.children}{" "}
+                  </h1>
+                )
+              },
+              h2(props) {
+                return (
+                  <h2 className="line-clamp-2 text-lg font-semibold">
+                    {" "}
+                    {props.children}{" "}
+                  </h2>
+                )
+              },
+              h3(props) {
+                return (
+                  <h3 className="line-clamp-2 text-base font-medium">
+                    {" "}
+                    {props.children}{" "}
+                  </h3>
+                )
+              },
+              ul(props) {
+                return (
+                  <ul className="line-clamp-5 list-disc overflow-hidden pl-5">
+                    {" "}
+                    {props.children}{" "}
+                  </ul>
+                )
+              },
+              ol(props) {
+                return (
+                  <ol className="line-clamp-5 list-decimal overflow-hidden pl-5">
+                    {" "}
+                    {props.children}{" "}
+                  </ol>
+                )
+              },
+              li(props) {
+                return <li className="truncate">{props.children}</li>
+              },
+              code(props) {
+                return (
+                  <code className="rounded bg-card px-1 py-0.5 text-sm break-words whitespace-pre-wrap">
+                    {" "}
+                    {props.children}{" "}
+                  </code>
+                )
+              },
+              pre(props) {
+                return (
+                  <pre className="line-clamp-4 max-w-full overflow-hidden rounded-lg bg-card p-4">
+                    {" "}
+                    {props.children}{" "}
+                  </pre>
+                )
+              },
+              table(props) {
+                return (
+                  <div className="overflow-hidden rounded-lg border border-border">
+                    {" "}
+                    <table className="w-full overflow-hidden text-sm">
+                      {" "}
+                      {props.children}{" "}
+                    </table>{" "}
+                  </div>
+                )
+              },
+              img() {
+                return null
+              },
+            }}
+          >
+            {content}
+          </ReactMarkdown>
+        </div>
+
+        {/* footer */}
+        <div className="relative z-10 flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <CheckCircle size={14} />
+            <p>{fromNow}</p>
+          </div>
+          <p>{readingTimeText}</p>
+        </div>
       </div>
     </li>
   )

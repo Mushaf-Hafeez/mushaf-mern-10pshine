@@ -208,15 +208,19 @@ const OTPVerification = () => {
           </Button>
 
           <div className="flex w-full items-center justify-between">
-            <span
+            <Button
+              type="button"
+              variant={"ghost"}
               onClick={hanldeGoBack}
               className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground transition-all duration-200 hover:text-foreground"
             >
               <ArrowLeft size={16} />
               Go back
-            </span>
+            </Button>
 
-            <span
+            <Button
+              type="button"
+              variant={"ghost"}
               onClick={handleResend}
               className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground transition-all duration-200 hover:text-foreground"
             >
@@ -226,7 +230,7 @@ const OTPVerification = () => {
                 <RotateCcw size={16} />
               )}
               Resend OTP
-            </span>
+            </Button>
           </div>
         </form>
       </div>

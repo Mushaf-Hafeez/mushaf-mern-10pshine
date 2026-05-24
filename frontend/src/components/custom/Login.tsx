@@ -18,24 +18,16 @@ import { login } from "@/services/auth.service"
 import { useUser } from "@/zustand/useUser"
 
 const loginSchema = z.object({
-  email: z
-    .string({
-      error: (iss) =>
-        iss.input === undefined ? "Email is required." : "Invalid email.",
-    })
-    .trim()
-    .min(1, { error: "Email is required." })
-    .email({ error: "Invalid email." }),
+  email: z.email("Email is required."),
   password: z
     .string({
-      error: (iss) =>
-        iss.input === undefined ? "Password is required." : "Invalid password.",
+      error: () => "Password is required.",
     })
     .min(8, { error: "Password must be at least 8 characters" })
     .max(100, { error: "Password is too long" })
     .regex(/[a-z]/, { error: "Must contain at least one lowercase letter" })
     .regex(/[A-Z]/, { error: "Must contain at least one uppercase letter" })
-    .regex(/[0-9]/, { error: "Must contain at least one number" })
+    .regex(/\d/, { error: "Must contain at least one number" })
     .regex(/[^a-zA-Z0-9]/, {
       error: "Must contain at least one special character",
     }),
@@ -102,15 +94,13 @@ const Login = () => {
         <FieldLabel htmlFor="email">EMAIL ADDRESS</FieldLabel>
         <Input
           {...register("email")}
-          aria-invalid={errors.email ? true : false}
+          aria-invalid={!!errors.email}
           id="email"
           type="email"
           placeholder={"Enter your email"}
           className="border border-border p-4"
         />
-        {errors && errors.email && (
-          <FieldError>{errors.email.message}</FieldError>
-        )}
+        {errors?.email && <FieldError>{errors.email.message}</FieldError>}
       </Field>
       <Field>
         <div className="flex w-full justify-between">
@@ -125,22 +115,24 @@ const Login = () => {
         <div className="relative flex">
           <Input
             {...register("password")}
-            aria-invalid={errors.password ? true : false}
+            aria-invalid={!!errors.password}
             id="password"
             type={isShowPassword ? "text" : "password"}
             placeholder="Enter your password"
             className="border border-border p-4"
           />
-          <span
+          <Button
+            type="button"
+            size={"icon"}
+            variant={"ghost"}
+            aria-label="toggle password visibility"
             className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer"
             onClick={handleShowPassword}
           >
             {isShowPassword ? <EyeClosed size={20} /> : <Eye size={20} />}
-          </span>
+          </Button>
         </div>
-        {errors && errors.password && (
-          <FieldError>{errors.password.message}</FieldError>
-        )}
+        {errors?.password && <FieldError>{errors.password.message}</FieldError>}
       </Field>
       {errors.root && <FieldError>{errors.root.message}</FieldError>}
       <Button

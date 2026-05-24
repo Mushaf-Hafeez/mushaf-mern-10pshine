@@ -36,4 +36,14 @@ describe("AppSidebar", () => {
     expect(screen.getByText("Test User")).toBeInTheDocument()
     expect(screen.getByText("test@test.com")).toBeInTheDocument()
   })
+
+  it("highlights the active navigation link", () => {
+    render(<AppSidebar />, {
+      withSidebar: true,
+      routerProps: { initialEntries: ["/user/notes"] },
+    })
+
+    const notesLink = screen.getByRole("link", { name: /notes/i })
+    expect(notesLink.className).toMatch(/bg-primary/)
+  })
 })

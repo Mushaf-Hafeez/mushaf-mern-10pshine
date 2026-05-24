@@ -40,8 +40,14 @@ describe("ResetPassword", () => {
 
   it("renders password fields", () => {
     render(<ResetPassword />)
-    expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument()
+
+    expect(
+      screen.getByLabelText(/^password$/i, { selector: "input" })
+    ).toBeInTheDocument()
+
+    expect(
+      screen.getByLabelText(/confirm password/i, { selector: "input" })
+    ).toBeInTheDocument()
   })
 
   it("validates empty submit", async () => {
@@ -60,8 +66,17 @@ describe("ResetPassword", () => {
 
     const { user } = render(<ResetPassword />)
 
-    await user.type(screen.getByLabelText(/^password$/i), validPassword)
-    await user.type(screen.getByLabelText(/confirm password/i), validPassword)
+    const password = screen.getByLabelText("PASSWORD", {
+      selector: "input",
+    })
+
+    const confirmPassword = screen.getByLabelText("CONFIRM PASSWORD", {
+      selector: "input",
+    })
+
+    await user.type(password, validPassword)
+    await user.type(confirmPassword, validPassword)
+
     await user.click(screen.getByRole("button", { name: /reset password/i }))
 
     await waitFor(() => {
@@ -83,8 +98,17 @@ describe("ResetPassword", () => {
 
     const { user } = render(<ResetPassword />)
 
-    await user.type(screen.getByLabelText(/^password$/i), validPassword)
-    await user.type(screen.getByLabelText(/confirm password/i), validPassword)
+    const password = screen.getByLabelText("PASSWORD", {
+      selector: "input",
+    })
+
+    const confirmPassword = screen.getByLabelText("CONFIRM PASSWORD", {
+      selector: "input",
+    })
+
+    await user.type(password, validPassword)
+    await user.type(confirmPassword, validPassword)
+
     await user.click(screen.getByRole("button", { name: /reset password/i }))
 
     await waitFor(() => {
@@ -94,8 +118,70 @@ describe("ResetPassword", () => {
 
   it("toggles password visibility", async () => {
     const { user } = render(<ResetPassword />)
+
     const password = screen.getByLabelText(/^password$/i)
-    await user.click(password.parentElement?.querySelector("span")!)
-    expect(password).toHaveAttribute("type", "text")
+
+    const toggleButton = screen.getByRole("button", {
+      name: /toggle password visibility/i,
+    })
+
+    await user.click(toggleButton)
+
+    // re-query after state update
+    const updatedPassword = screen.getByLabelText(/^password$/i)
+
+    expect(updatedPassword).toHaveAttribute("type", "text")
+  })
+
+  it("toggles confirm password visibility", async () => {
+    const { user } = render(<ResetPassword />)
+
+    const confirmToggle = screen.getByRole("button", {
+      name: /toggle confirm password visibility/i,
+    })
+
+    await user.click(confirmToggle)
+
+    expect(
+      screen.getByLabelText(/confirm password/i, { selector: "input" })
+    ).toHaveAttribute("type", "text")
+  })
+
+  it("shows mismatch error when passwords differ", async () => {
+    const { user } = render(<ResetPassword />)
+
+    await user.type(
+      screen.getByLabelText("PASSWORD", { selector: "input" }),
+      validPassword
+    )
+    await user.type(
+      screen.getByLabelText("CONFIRM PASSWORD", { selector: "input" }),
+      "Password2!"
+    )
+    await user.click(screen.getByRole("button", { name: /reset password/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText(/passwords don't match/i)).toBeInTheDocument()
+    })
+  })
+
+  it("shows weak password validation errors", async () => {
+    const { user } = render(<ResetPassword />)
+
+    await user.type(
+      screen.getByLabelText("PASSWORD", { selector: "input" }),
+      "short"
+    )
+    await user.type(
+      screen.getByLabelText("CONFIRM PASSWORD", { selector: "input" }),
+      "short"
+    )
+    await user.click(screen.getByRole("button", { name: /reset password/i }))
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/password must be at least 8 characters/i)
+      ).toBeInTheDocument()
+    })
   })
 })
