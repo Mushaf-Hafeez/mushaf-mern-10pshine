@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "ts-mocha \"src/tests/**/*.ts\"",
+    "test:coverage": "nyc --reporter=lcov --reporter=text ts-mocha \"src/tests/**/*.ts\"",
     "build": "npx tsc",
     "start": "node dist/index.js",
     "dev": "nodemon --exec ts-node src/index.ts",
@@ -27,6 +28,7 @@
     "multer": "^2.1.1",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^8.0.5",
+    "nyc": "^18.0.0",
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
     "pino-pretty": "^13.1.3",
