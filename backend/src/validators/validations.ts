@@ -13,45 +13,31 @@ export const sendOTPValidation = z
   .object({
     name: z
       .string({
-        error: (iss) =>
-          iss.input === undefined ? "Name is required." : "Name is required.",
+        error: () => "Name is required.",
       })
       .trim()
       .min(1, { error: "Name is required." })
       .min(6, { error: "Name must contain at least 6 characters." })
       .max(25, { error: "Name cannot contain more than 25 characters." }),
 
-    email: z
-      .string({
-        error: (iss) =>
-          iss.input === undefined ? "Email is required." : "Invalid email.",
-      })
-      .trim()
-      .min(1, { error: "Email is required." })
-      .email({ error: "Invalid email." }),
+    email: z.email("Email is required."),
 
     password: z
       .string({
-        error: (iss) =>
-          iss.input === undefined
-            ? "Password is required."
-            : "Invalid password.",
+        error: () => "Password is required.",
       })
       .min(8, { error: "Password must be at least 8 characters" })
       .max(100, { error: "Password is too long" })
       .regex(/[a-z]/, { error: "Must contain at least one lowercase letter" })
       .regex(/[A-Z]/, { error: "Must contain at least one uppercase letter" })
-      .regex(/[0-9]/, { error: "Must contain at least one number" })
+      .regex(/\d/, { error: "Must contain at least one number" })
       .regex(/[^a-zA-Z0-9]/, {
         error: "Must contain at least one special character",
       }),
 
     confirmPassword: z
       .string({
-        error: (iss) =>
-          iss.input === undefined
-            ? "Please confirm your password"
-            : "Please confirm your password",
+        error: () => "Please confirm your password",
       })
       .min(1, { error: "Please confirm your password" }),
   })
@@ -61,19 +47,11 @@ export const sendOTPValidation = z
   });
 
 export const signupWithOTPValidation = z.object({
-  email: z
-    .string({
-      error: (iss) =>
-        iss.input === undefined ? "Email is required." : "Invalid email.",
-    })
-    .trim()
-    .min(1, { error: "Email is required." })
-    .email({ error: "Invalid email." }),
+  email: z.email("Email is requried."),
 
   otp: z
     .string({
-      error: (iss) =>
-        iss.input === undefined ? "OTP is required" : "OTP is required",
+      error: () => "OTP is required",
     })
     .min(1, { error: "OTP is required" })
     .length(6, { error: "OTP must be exactly 6 digits" })
@@ -84,22 +62,14 @@ export const createUserValidation = z
   .object({
     name: z
       .string({
-        error: (iss) =>
-          iss.input === undefined ? "Name is required." : "Name is required.",
+        error: () => "Name is required.",
       })
       .trim()
       .min(1, { error: "Name is required." })
       .min(6, { error: "Name must contain at least 6 characters." })
       .max(25, { error: "Name cannot contain more than 25 characters." }),
 
-    email: z
-      .string({
-        error: (iss) =>
-          iss.input === undefined ? "Email is required." : "Invalid email.",
-      })
-      .trim()
-      .min(1, { error: "Email is required." })
-      .email({ error: "Invalid email." }),
+    email: z.email("Email is required."),
 
     password: z
       .string({
@@ -112,24 +82,20 @@ export const createUserValidation = z
       .max(100, { error: "Password is too long" })
       .regex(/[a-z]/, { error: "Must contain at least one lowercase letter" })
       .regex(/[A-Z]/, { error: "Must contain at least one uppercase letter" })
-      .regex(/[0-9]/, { error: "Must contain at least one number" })
+      .regex(/\d/, { error: "Must contain at least one number" })
       .regex(/[^a-zA-Z0-9]/, {
         error: "Must contain at least one special character",
       }),
 
     confirmPassword: z
       .string({
-        error: (iss) =>
-          iss.input === undefined
-            ? "Please confirm your password"
-            : "Please confirm your password",
+        error: () => "Please confirm your password",
       })
       .min(1, { error: "Please confirm your password" }),
 
     otp: z
       .string({
-        error: (iss) =>
-          iss.input === undefined ? "OTP is required" : "OTP is required",
+        error: () => "OTP is required",
       })
       .min(1, { error: "OTP is required" })
       .length(6, { error: "OTP must be exactly 6 digits" })
@@ -141,24 +107,16 @@ export const createUserValidation = z
   });
 
 export const loginValidation = z.object({
-  email: z
-    .string({
-      error: (iss) =>
-        iss.input === undefined ? "Email is required." : "Invalid email.",
-    })
-    .trim()
-    .min(1, { error: "Email is required." })
-    .email({ error: "Invalid email." }),
+  email: z.email("Email is required."),
   password: z
     .string({
-      error: (iss) =>
-        iss.input === undefined ? "Password is required." : "Invalid password.",
+      error: () => "Password is required.",
     })
     .min(8, { error: "Password must be at least 8 characters" })
     .max(100, { error: "Password is too long" })
     .regex(/[a-z]/, { error: "Must contain at least one lowercase letter" })
     .regex(/[A-Z]/, { error: "Must contain at least one uppercase letter" })
-    .regex(/[0-9]/, { error: "Must contain at least one number" })
+    .regex(/\d/, { error: "Must contain at least one number" })
     .regex(/[^a-zA-Z0-9]/, {
       error: "Must contain at least one special character",
     }),
@@ -167,31 +125,24 @@ export const loginValidation = z.object({
 export const resetPasswordValidation = z
   .object({
     reset_password_token: z.uuid({
-      error: (iss) =>
-        iss.input === undefined ? "token is required" : "invalid token",
+      error: () => "token is required",
     }),
     password: z
       .string({
-        error: (iss) =>
-          iss.input === undefined
-            ? "Password is required."
-            : "Invalid password.",
+        error: () => "Password is required.",
       })
       .min(8, { error: "Password must be at least 8 characters" })
       .max(100, { error: "Password is too long" })
       .regex(/[a-z]/, { error: "Must contain at least one lowercase letter" })
       .regex(/[A-Z]/, { error: "Must contain at least one uppercase letter" })
-      .regex(/[0-9]/, { error: "Must contain at least one number" })
+      .regex(/\d/, { error: "Must contain at least one number" })
       .regex(/[^a-zA-Z0-9]/, {
         error: "Must contain at least one special character",
       }),
 
     confirmPassword: z
       .string({
-        error: (iss) =>
-          iss.input === undefined
-            ? "Please confirm your password"
-            : "Please confirm your password",
+        error: () => "Please confirm your password",
       })
       .min(1, { error: "Please confirm your password" }),
   })
@@ -212,15 +163,13 @@ export const noteIdValidation = z.object({
 export const createNoteValidation = z.object({
   title: z
     .string({
-      error: (iss) =>
-        iss.input === undefined ? "Title is required." : "Invalid title.",
+      error: () => "Title is required.",
     })
     .trim()
     .min(1, { message: "Title cannot be empty." }),
   content: z
     .string({
-      error: (iss) =>
-        iss.input === undefined ? "Content is required." : "Invalid content.",
+      error: () => "Content is required.",
     })
     .trim()
     .min(1, { message: "Content cannot be empty." }),
@@ -253,14 +202,13 @@ export const updateProfilePicValidation = z.object({
 export const deleteAccountValidation = z.object({
   password: z
     .string({
-      error: (iss) =>
-        iss.input === undefined ? "Password is required." : "Invalid password.",
+      error: () => "Password is required.",
     })
     .min(8, { error: "Password must be at least 8 characters" })
     .max(100, { error: "Password is too long" })
     .regex(/[a-z]/, { error: "Must contain at least one lowercase letter" })
     .regex(/[A-Z]/, { error: "Must contain at least one uppercase letter" })
-    .regex(/[0-9]/, { error: "Must contain at least one number" })
+    .regex(/\d/, { error: "Must contain at least one number" })
     .regex(/[^a-zA-Z0-9]/, {
       error: "Must contain at least one special character",
     }),
