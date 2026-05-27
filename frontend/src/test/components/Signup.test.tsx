@@ -38,15 +38,28 @@ describe("Signup", () => {
 
   it("renders all signup fields", () => {
     render(<Signup />)
-    expect(screen.getByLabelText(/^name$/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/email address/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument()
+
+    expect(screen.getByRole("textbox", { name: /name/i })).toBeInTheDocument()
+
+    expect(
+      screen.getByRole("textbox", { name: /email address/i })
+    ).toBeInTheDocument()
+
+    expect(
+      screen.getByLabelText(/^password$/i, { selector: "input" })
+    ).toBeInTheDocument()
+
+    expect(
+      screen.getByLabelText(/confirm password/i, { selector: "input" })
+    ).toBeInTheDocument()
   })
 
   it("shows validation errors on empty submit", async () => {
     const { user } = render(<Signup />)
-    await user.click(screen.getByRole("button", { name: /create your account/i }))
+
+    await user.click(
+      screen.getByRole("button", { name: /create your account/i })
+    )
 
     await waitFor(() => {
       expect(screen.getByText(/name is required/i)).toBeInTheDocument()
@@ -54,17 +67,32 @@ describe("Signup", () => {
   })
 
   it("submits OTP request and navigates on success", async () => {
-    vi.mocked(authService.OTP).mockResolvedValue({ status: 200 } as Awaited<
-      ReturnType<typeof authService.OTP>
-    >)
+    vi.mocked(authService.OTP).mockResolvedValue({
+      status: 200,
+    } as Awaited<ReturnType<typeof authService.OTP>>)
 
     const { user } = render(<Signup />)
 
-    await user.type(screen.getByLabelText(/^name$/i), "Test User")
-    await user.type(screen.getByLabelText(/email address/i), "test@test.com")
-    await user.type(screen.getByLabelText(/^password$/i), validPassword)
-    await user.type(screen.getByLabelText(/confirm password/i), validPassword)
-    await user.click(screen.getByRole("button", { name: /create your account/i }))
+    await user.type(screen.getByRole("textbox", { name: /name/i }), "Test User")
+
+    await user.type(
+      screen.getByRole("textbox", { name: /email address/i }),
+      "test@test.com"
+    )
+
+    await user.type(
+      screen.getByLabelText(/^password$/i, { selector: "input" }),
+      validPassword
+    )
+
+    await user.type(
+      screen.getByLabelText(/confirm password/i, { selector: "input" }),
+      validPassword
+    )
+
+    await user.click(
+      screen.getByRole("button", { name: /create your account/i })
+    )
 
     await waitFor(() => {
       expect(authService.OTP).toHaveBeenCalled()
@@ -81,40 +109,118 @@ describe("Signup", () => {
 
     const { user } = render(<Signup />)
 
-    await user.type(screen.getByLabelText(/^name$/i), "Test User")
-    await user.type(screen.getByLabelText(/email address/i), "test@test.com")
-    await user.type(screen.getByLabelText(/^password$/i), validPassword)
-    await user.type(screen.getByLabelText(/confirm password/i), validPassword)
-    await user.click(screen.getByRole("button", { name: /create your account/i }))
+    await user.type(screen.getByRole("textbox", { name: /name/i }), "Test User")
+
+    await user.type(
+      screen.getByRole("textbox", { name: /email address/i }),
+      "test@test.com"
+    )
+
+    await user.type(
+      screen.getByLabelText(/^password$/i, { selector: "input" }),
+      validPassword
+    )
+
+    await user.type(
+      screen.getByLabelText(/confirm password/i, { selector: "input" }),
+      validPassword
+    )
+
+    await user.click(
+      screen.getByRole("button", { name: /create your account/i })
+    )
 
     await waitFor(() => {
-      expect(screen.getByText("Email already exists")).toBeInTheDocument()
+      expect(screen.getByText(/email already exists/i)).toBeInTheDocument()
     })
   })
 
   it("toggles password visibility", async () => {
     const { user } = render(<Signup />)
-    const password = screen.getByLabelText(/^password$/i)
-    await user.click(password.parentElement?.querySelector("span")!)
+
+    const password = screen.getByLabelText(/^password$/i, {
+      selector: "input",
+    })
+
+    const toggleButton = screen.getByRole("button", {
+      name: /toggle password visibility/i,
+    })
+
+    await user.click(toggleButton)
+
     expect(password).toHaveAttribute("type", "text")
   })
 
   it("toggles confirm password visibility", async () => {
     const { user } = render(<Signup />)
-    const confirm = screen.getByLabelText(/confirm password/i)
-    await user.click(confirm.parentElement?.querySelector("span")!)
+
+    const confirm = screen.getByLabelText(/confirm password/i, {
+      selector: "input",
+    })
+
+    const confirmToggleButton = screen.getByRole("button", {
+      name: /toggle confirm password visibility/i,
+    })
+
+    await user.click(confirmToggleButton)
+
     expect(confirm).toHaveAttribute("type", "text")
   })
 
   it("shows mismatch error when passwords differ", async () => {
     const { user } = render(<Signup />)
-    await user.type(screen.getByLabelText(/^name$/i), "Test User")
-    await user.type(screen.getByLabelText(/email address/i), "test@test.com")
-    await user.type(screen.getByLabelText(/^password$/i), validPassword)
-    await user.type(screen.getByLabelText(/confirm password/i), "Password2!")
-    await user.click(screen.getByRole("button", { name: /create your account/i }))
+
+    await user.type(screen.getByRole("textbox", { name: /name/i }), "Test User")
+
+    await user.type(
+      screen.getByRole("textbox", { name: /email address/i }),
+      "test@test.com"
+    )
+
+    await user.type(
+      screen.getByLabelText(/^password$/i, { selector: "input" }),
+      validPassword
+    )
+
+    await user.type(
+      screen.getByLabelText(/confirm password/i, { selector: "input" }),
+      "Password2!"
+    )
+
+    await user.click(
+      screen.getByRole("button", { name: /create your account/i })
+    )
+
     await waitFor(() => {
       expect(screen.getByText(/passwords don't match/i)).toBeInTheDocument()
+    })
+  })
+
+  it("shows password strength validation errors", async () => {
+    const { user } = render(<Signup />)
+
+    await user.type(screen.getByRole("textbox", { name: /name/i }), "Test User")
+    await user.type(
+      screen.getByRole("textbox", { name: /email address/i }),
+      "test@test.com"
+    )
+    await user.type(
+      screen.getByLabelText(/^password$/i, { selector: "input" }),
+      "password"
+    )
+    await user.type(
+      screen.getByLabelText(/confirm password/i, { selector: "input" }),
+      "password"
+    )
+
+    await user.click(
+      screen.getByRole("button", { name: /create your account/i })
+    )
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/must contain at least one uppercase letter/i)
+      ).toBeInTheDocument()
     })
   })
 })

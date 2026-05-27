@@ -19,45 +19,31 @@ const signupSchema = z
   .object({
     name: z
       .string({
-        error: (iss) =>
-          iss.input === undefined ? "Name is required." : "Name is required.",
+        error: () => "Name is required.",
       })
       .trim()
       .min(1, { error: "Name is required." })
       .min(6, { error: "Name must contain at least 6 characters." })
       .max(25, { error: "Name cannot contain more than 25 characters." }),
 
-    email: z
-      .string({
-        error: (iss) =>
-          iss.input === undefined ? "Email is required." : "Invalid email.",
-      })
-      .trim()
-      .min(1, { error: "Email is required." })
-      .email({ error: "Invalid email." }),
+    email: z.email("Email is required."),
 
     password: z
       .string({
-        error: (iss) =>
-          iss.input === undefined
-            ? "Password is required."
-            : "Invalid password.",
+        error: () => "Password is required.",
       })
       .min(8, { error: "Password must be at least 8 characters" })
       .max(100, { error: "Password is too long" })
       .regex(/[a-z]/, { error: "Must contain at least one lowercase letter" })
       .regex(/[A-Z]/, { error: "Must contain at least one uppercase letter" })
-      .regex(/[0-9]/, { error: "Must contain at least one number" })
+      .regex(/\d/, { error: "Must contain at least one number" })
       .regex(/[^a-zA-Z0-9]/, {
         error: "Must contain at least one special character",
       }),
 
     confirmPassword: z
       .string({
-        error: (iss) =>
-          iss.input === undefined
-            ? "Please confirm your password"
-            : "Please confirm your password",
+        error: () => "Please confirm your password",
       })
       .min(1, { error: "Please confirm your password" }),
   })
@@ -136,64 +122,66 @@ const Signup = () => {
         <FieldLabel htmlFor="name">NAME</FieldLabel>
         <Input
           {...register("name")}
-          aria-invalid={errors.name ? true : false}
+          aria-invalid={!!errors.name}
           id="name"
           type="text"
           placeholder={"Enter your name"}
           className="border border-border p-4"
         />
-        {errors && errors.name && (
-          <FieldError>{errors.name.message}</FieldError>
-        )}
+        {errors?.name && <FieldError>{errors.name.message}</FieldError>}
       </Field>
       <Field>
         <FieldLabel htmlFor="email">EMAIL ADDRESS</FieldLabel>
         <Input
           {...register("email")}
-          aria-invalid={errors.email ? true : false}
+          aria-invalid={!!errors.email}
           id="email"
           type="email"
           placeholder={"Enter your email"}
           className="border border-border p-4"
         />
-        {errors && errors.email && (
-          <FieldError>{errors.email.message}</FieldError>
-        )}
+        {errors?.email && <FieldError>{errors.email.message}</FieldError>}
       </Field>
       <Field>
         <FieldLabel htmlFor="password">PASSWORD</FieldLabel>
         <div className="relative flex">
           <Input
             {...register("password")}
-            aria-invalid={errors.password ? true : false}
+            aria-invalid={!!errors.password}
             id="password"
             type={isShowPassword ? "text" : "password"}
             placeholder="Enter your password"
             className="border border-border p-4"
           />
-          <span
+          <Button
+            type="button"
+            size={"icon"}
+            variant={"ghost"}
+            aria-label="toggle password visibility"
             className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer"
             onClick={handleShowPassword}
           >
             {isShowPassword ? <EyeClosed size={20} /> : <Eye size={20} />}
-          </span>
+          </Button>
         </div>
-        {errors && errors.password && (
-          <FieldError>{errors.password.message}</FieldError>
-        )}
+        {errors?.password && <FieldError>{errors.password.message}</FieldError>}
       </Field>
       <Field>
         <FieldLabel htmlFor="confirmPassword">CONFIRM PASSWORD</FieldLabel>
         <div className="relative flex">
           <Input
             {...register("confirmPassword")}
-            aria-invalid={errors.confirmPassword ? true : false}
+            aria-invalid={!!errors.confirmPassword}
             id="confirmPassword"
             type={isShowConfirmPassword ? "text" : "password"}
             placeholder="Enter your password again"
             className="border border-border p-4"
           />
-          <span
+          <Button
+            type="button"
+            size={"icon"}
+            variant={"ghost"}
+            aria-label="toggle confirm password visibility"
             className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer"
             onClick={handleShowConfirmPassword}
           >
@@ -202,9 +190,9 @@ const Signup = () => {
             ) : (
               <Eye size={20} />
             )}
-          </span>
+          </Button>
         </div>
-        {errors && errors.confirmPassword && (
+        {errors?.confirmPassword && (
           <FieldError>{errors.confirmPassword.message}</FieldError>
         )}
       </Field>

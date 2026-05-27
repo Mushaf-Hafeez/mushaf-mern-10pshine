@@ -38,7 +38,7 @@ const passwordSchema = z.object({
     .max(100, { error: "Password is too long" })
     .regex(/[a-z]/, { error: "Must contain at least one lowercase letter" })
     .regex(/[A-Z]/, { error: "Must contain at least one uppercase letter" })
-    .regex(/[0-9]/, { error: "Must contain at least one number" })
+    .regex(/\d/, { error: "Must contain at least one number" })
     .regex(/[^a-zA-Z0-9]/, {
       error: "Must contain at least one special character",
     }),
@@ -129,7 +129,11 @@ const DeleteAccount = () => {
                     placeholder="Enter your password..."
                     className="my-2 w-full text-foreground"
                   />
-                  <span
+                  <Button
+                    type="button"
+                    variant={"ghost"}
+                    size={"icon"}
+                    aria-label="toggle password visibility"
                     className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer"
                     onClick={handleShowPassword}
                   >
@@ -138,14 +142,12 @@ const DeleteAccount = () => {
                     ) : (
                       <Eye size={20} />
                     )}
-                  </span>
+                  </Button>
                 </div>
-                {errors && errors.password && (
+                {errors?.password && (
                   <FieldError>{errors.password.message}</FieldError>
                 )}
-                {errors && errors.root && (
-                  <FieldError>{errors.root.message}</FieldError>
-                )}
+                {errors?.root && <FieldError>{errors.root.message}</FieldError>}
               </Field>
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -23,7 +23,15 @@ vi.mock("react-router-dom", async () => {
 vi.mock("@/zustand/useUser", () => ({
   useUser: vi.fn((selector) =>
     selector({
-      user: { _id: "1", name: "Test", email: "t@t.com", profile_pic: "", createdAt: "", updatedAt: "", __v: 0 },
+      user: {
+        _id: "1",
+        name: "Test",
+        email: "t@t.com",
+        profile_pic: "",
+        createdAt: "",
+        updatedAt: "",
+        __v: 0,
+      },
       setUser: vi.fn(),
       clearUser: mockClearUser,
     })
@@ -79,7 +87,11 @@ describe("DeleteAccount", () => {
     const { user } = render(<DeleteAccount />)
     await user.click(screen.getByRole("button", { name: /delete account/i }))
     const password = screen.getByPlaceholderText(/enter your password/i)
-    await user.click(password.parentElement?.querySelector("span")!)
+
+    const toggleButton = screen.getByRole("button", {
+      name: /toggle password visibility/i,
+    })
+    await user.click(toggleButton)
     expect(password).toHaveAttribute("type", "text")
   })
 

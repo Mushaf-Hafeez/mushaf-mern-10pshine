@@ -160,4 +160,48 @@ describe("OTPVerification", () => {
       expect(screen.getByText(/otp has been sent/i)).toBeInTheDocument()
     })
   })
+
+  it("shows error when resend fails", async () => {
+    vi.mocked(authService.OTP).mockRejectedValue({
+      message: "fail",
+      response: { data: { message: "Rate limited" } },
+    })
+
+    const { user } = render(<OTPVerification />)
+
+    await waitFor(() => {
+      expect(screen.getByText(/resend otp/i)).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByText(/resend otp/i))
+
+    await waitFor(() => {
+      expect(screen.getByText(/rate limited/i)).toBeInTheDocument()
+    })
+  })
+
+  it("navigates back on go back click", async () => {
+    const { user } = render(<OTPVerification />)
+
+    await waitFor(() => {
+      expect(screen.getByText(/go back/i)).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByText(/go back/i))
+    expect(mockNavigate).toHaveBeenCalledWith(-1)
+  })
+
+  it("requires OTP before submit", async () => {
+    const { user } = render(<OTPVerification />)
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /verify account/i })).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByRole("button", { name: /verify account/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText(/otp is required/i)).toBeInTheDocument()
+    })
+  })
 })

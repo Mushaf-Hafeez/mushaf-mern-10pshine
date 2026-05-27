@@ -14,6 +14,7 @@ const removeNote = vi.fn()
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom")
+
   return {
     ...actual,
     useNavigate: () => mockNavigate,
@@ -23,7 +24,15 @@ vi.mock("react-router-dom", async () => {
 vi.mock("@/zustand/useUser", () => ({
   useUser: vi.fn((selector) =>
     selector({
-      user: { _id: "1", name: "Test", email: "t@t.com", profile_pic: "", createdAt: "", updatedAt: "", __v: 0 },
+      user: {
+        _id: "1",
+        name: "Test",
+        email: "t@t.com",
+        profile_pic: "",
+        createdAt: "",
+        updatedAt: "",
+        __v: 0,
+      },
       setUser: vi.fn(),
       clearUser: vi.fn(),
     })
@@ -51,8 +60,10 @@ describe("Note", () => {
 
   it("navigates to note page on card click", async () => {
     const { user } = render(<Note {...defaultProps} />)
-    await user.click(screen.getByText("Test Note"))
-    expect(mockNavigate).toHaveBeenCalledWith("/notes/note-1")
+
+    const link = screen.getByRole("link", { name: /test note/i })
+
+    expect(link).toHaveAttribute("href", "/notes/note-1")
   })
 
   it("deletes note on confirmation", async () => {
@@ -90,13 +101,13 @@ describe("Note", () => {
   })
 
   it("shows hour read for long content", () => {
-    const longContent = Array(15000).fill("word").join(" ")
+    const longContent = new Array(15000).fill("word").join(" ")
     render(<Note {...defaultProps} content={longContent} />)
     expect(screen.getByText(/hr read/i)).toBeInTheDocument()
   })
 
   it("shows minute read for medium content", () => {
-    const mediumContent = Array(500).fill("word").join(" ")
+    const mediumContent = new Array(500).fill("word").join(" ")
     render(<Note {...defaultProps} content={mediumContent} />)
     expect(screen.getByText(/min read/i)).toBeInTheDocument()
   })

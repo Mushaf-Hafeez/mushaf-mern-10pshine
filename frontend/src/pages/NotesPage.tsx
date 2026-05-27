@@ -171,9 +171,9 @@ const Notes = () => {
             variant={isGrid ? "default" : "outline"}
             onClick={() => setIsGrid((prev) => !prev)}
             className={`hidden cursor-pointer transition-all duration-200 md:flex ${
-              !isGrid
-                ? "bg-secondary/30 text-muted-foreground hover:text-foreground"
-                : "hover:bg-primary/80"
+              isGrid
+                ? "hover:bg-primary/80"
+                : "bg-secondary/30 text-muted-foreground hover:text-foreground"
             }`}
           >
             <Grid2X2 />

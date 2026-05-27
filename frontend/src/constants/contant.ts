@@ -105,13 +105,14 @@ export const legalLinks: LinkItem[] = [
 ]
 
 export interface SidebarLink {
+  id: number
   title: string
   icon: LucideIcon
   path: string
 }
 
 export const sidebarLinks: SidebarLink[] = [
-  { title: "Notes", icon: FileText, path: "/user/notes" },
-  { title: "Profile", icon: CircleUserRound, path: "/user/profile" },
-  { title: "Settings", icon: Settings, path: "/user/settings" },
+  { id: 1, title: "Notes", icon: FileText, path: "/user/notes" },
+  { id: 2, title: "Profile", icon: CircleUserRound, path: "/user/profile" },
+  { id: 3, title: "Settings", icon: Settings, path: "/user/settings" },
 ]

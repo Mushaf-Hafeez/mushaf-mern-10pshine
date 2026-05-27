@@ -4,7 +4,10 @@ import react from "@vitejs/plugin-react"
 import path from "path"
 import process from "node:process"
 
-const nodeMajor = Number.parseInt(process.versions.node.split(".")[0] ?? "0", 10)
+const nodeMajor = Number.parseInt(
+  process.versions.node.split(".")[0] ?? "0",
+  10
+)
 
 // Node 25+ exposes a broken global localStorage (empty object) that shadows jsdom.
 const testExecArgv =
@@ -26,12 +29,10 @@ export default defineConfig({
 
     coverage: {
       provider: "v8",
-      reporter: ["text", "html"],
+      reporter: ["text", "html", "lcov"],
       include: ["src/**/*.{ts,tsx}"],
       exclude: [
         "src/main.tsx",
-        "src/App.tsx",
-        "src/services/axios.ts",
         "src/constants/**",
         "src/components/ui/**",
         "src/index.css",
@@ -41,8 +42,8 @@ export default defineConfig({
       thresholds: {
         lines: 90,
         statements: 89,
-        functions: 79,
-        branches: 73,
+        functions: 85,
+        branches: 80,
       },
     },
   },

@@ -1,5 +1,3 @@
-import { useState } from "react"
-
 import { ArrowLeft } from "lucide-react"
 import { logger } from "@/lib/logger"
 
@@ -18,11 +16,7 @@ import Spinner from "@/components/custom/Spinner"
 import { forgotPassword } from "@/services/auth.service"
 
 const emailSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .nonempty("Email is required.")
-    .email("Invalid email."),
+  email: z.email("Email is required."),
 })
 
 type EmailData = z.infer<typeof emailSchema>
@@ -98,15 +92,13 @@ const ForgotPassword = () => {
             <Input
               {...register("email")}
               id="email"
-              aria-invalid={errors.email ? true : false}
+              aria-invalid={!!errors.email}
               type="email"
               placeholder={"Enter your email"}
               className="border border-border p-4"
             />
-            {errors && errors.email && (
-              <FieldError>{errors.email.message}</FieldError>
-            )}
-            {errors && errors.root && (
+            {errors?.email && <FieldError>{errors.email.message}</FieldError>}
+            {errors?.root && (
               <FieldError
                 className={
                   errors.root.type === "success" ? "text-green-500" : ""
@@ -126,13 +118,15 @@ const ForgotPassword = () => {
           </Button>
 
           <div className="flex w-full items-center justify-between">
-            <span
+            <Button
+              type="button"
+              variant={"ghost"}
               onClick={hanldeGoBack}
               className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
             >
               <ArrowLeft size={16} />
               Go back
-            </span>
+            </Button>
           </div>
         </form>
       </div>

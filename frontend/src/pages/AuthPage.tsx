@@ -38,9 +38,9 @@ const AuthPage = () => {
           <Link
             to="/auth?mode=signup"
             className={`text-lg transition-all duration-200 hover:text-foreground ${
-              !isLogin
-                ? "border-b-2 border-primary pb-3 font-semibold text-foreground"
-                : "text-muted-foreground"
+              isLogin
+                ? "text-muted-foreground"
+                : "border-b-2 border-primary pb-3 font-semibold text-foreground"
             }`}
           >
             Signup
