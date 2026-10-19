@@ -1,3 +1,5 @@
+import dns from "node:dns/promises";
+
 import express from "express";
 import type { Application, Request, Response, NextFunction } from "express";
 
@@ -18,6 +20,8 @@ import cookieParser from "cookie-parser";
 // environment variables
 import { config } from "dotenv";
 config();
+
+dns.setServers(["0.0.0.0", "1.1.1.1", "8.8.8.8"]);
 
 const PORT = process.env.PORT || 3000;
 
